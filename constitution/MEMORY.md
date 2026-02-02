@@ -1,59 +1,61 @@
-# MEMORY - Knowledge Base & Context
+# MEMORY.md
 
-## Purpose
-This document serves as the collective memory for the Clawd system, capturing learnings, decisions, and context that inform future work.
+## Project Knowledge Base
 
-## Project Context
+### Asset Library
 
-### Current Focus
-- Egyptian-themed slot game MVP
-- Mobile-first optimization
-- PBR workflow standardization
+**Egyptian Theme**
+- Symbol sets: Scarab, Eye of Ra, Ankh, Pyramid, Sphinx
+- Background elements: Temple columns, hieroglyphics, sand dunes
+- Win effects: Golden glow, particle bursts, coin showers
 
-### Active Themes
-- Egyptian mythology and symbols
-- Ancient temple environments
-- Gold and treasure aesthetics
-- Mystical effects and particles
+**Asset Specifications**
+- All Egyptian symbols: ~1500 triangles each
+- Background elements: ~800-1200 triangles
+- Effect objects: ~500 triangles
 
-## Learnings & Best Practices
+### Workflow History
 
-### Asset Generation
-- **Egyptian Symbols**: Hieroglyphics and deity representations work best with clear reference images
-- **Backgrounds**: Temple and tomb environments require careful lighting setup
-- **Win Effects**: Particle-heavy effects need LOD considerations for mobile
+**Successful Patterns**
+- Meshy.ai prompt templates yield consistent results
+- Batch processing reduces iteration time
+- Early mobile testing prevents optimization issues
+- Standardized naming prevents integration errors
 
-### Performance Insights
-- Target poly count: < 5K for symbols, < 20K for backgrounds
-- Texture budget: 2K max for mobile, 4K for high-end
-- Material complexity: Keep shader instructions under budget for older devices
+**Lessons Learned**
+- Triangle budgets must be enforced during generation, not after
+- PBR textures require validation before Unity import
+- Animation timing must account for mobile frame rates
+- Asset dependencies should be documented immediately
 
-### Workflow Optimizations
-- Batch similar requests to Meshy.ai to maintain style consistency
-- Use Blender for final polish rather than extensive manual modeling
-- Establish clear approval checkpoints to avoid late-stage revisions
+### Technical Decisions
 
-## Decision Log
+**Unity FBX Import**
+- Axis conversion: -Z forward, Y up
+- Scale factor: 1.0
+- Normals: Import from model
+- Materials: Extract and convert to Standard Shader
 
-### Recent Decisions
-- Adopted PBR workflow as standard (metallic/roughness)
-- Committed to Unity URP for mobile performance
-- Established Egyptian theme as first major project
-- Standardized asset naming conventions
+**Mobile Optimization**
+- ETC2 texture compression mandatory
+- Level of Detail (LOD) for assets >1000 tris
+- Occlusion culling for background elements
+- Texture atlasing for symbol sets
 
-## Common Issues & Solutions
+### Pipeline Configurations
 
-### Issue: Inconsistent Art Style
-**Solution**: Create mood boards and reference sheets before generation
+**Meshy.ai Settings**
+- Style: Low-poly, game-ready
+- Poly count target: 1500-2000
+- Texture resolution: 1024x1024
+- Export format: FBX
 
-### Issue: Assets Too Heavy for Mobile
-**Solution**: Implement LOD system and aggressive optimization passes
+**Blender Processing**
+- Clean up geometry
+- Optimize UVs
+- Validate normals
+- Export with Unity presets
 
-### Issue: Long Approval Cycles
-**Solution**: Use Slack previews for quick feedback loops
+## Active Projects
 
-## Future Considerations
-- Expand to additional themes beyond Egyptian
-- Explore real-time procedural generation
-- Investigate AI-driven animation
-- Consider web-based preview tools
+Current focus: Egyptian-themed MVP slot game with mobile optimization priority.

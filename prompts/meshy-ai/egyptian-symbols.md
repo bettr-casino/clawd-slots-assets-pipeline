@@ -1,70 +1,74 @@
 # Egyptian Symbols - Meshy.ai Prompts
 
-## Overview
-Prompts for generating Egyptian-themed slot symbols using Meshy.ai. Focus on iconic imagery that resonates with players and fits slot game aesthetics.
+## General Settings
 
-## Primary Symbols (High Value)
+- **Style**: Low-poly, game-ready
+- **Target Triangle Count**: 1500-2000
+- **Texture Resolution**: 1024x1024
+- **Material**: PBR (Albedo, Normal, Metallic, Roughness)
+- **Export Format**: FBX
 
-### Pharaoh
+## Symbol Prompts
+
+### Scarab Beetle
+
 ```
-A golden pharaoh mask in ancient Egyptian style, highly detailed with blue and gold striped headdress (nemes), cobra emblem (uraeus) on forehead, intricate hieroglyphic engravings, polished gold material with lapis lazuli inlays, studio lighting, game-ready 3D model
+Create a low-poly ancient Egyptian scarab beetle symbol for a slot game.
+Golden metallic material with hieroglyphic engravings on the back.
+Game-ready model with clean topology, approximately 1500 triangles.
+Include PBR textures: gold albedo, detailed normal map, high metallic value.
+Mobile-optimized, stylized appearance.
 ```
 
-### Cleopatra
+### Eye of Ra
+
 ```
-Portrait of Cleopatra in regal Egyptian queen attire, ornate gold headdress with cobra, kohl-lined eyes, elegant jewelry, rich purple and gold fabrics, beautiful face with ancient Egyptian makeup, mystical aura, detailed 3D game asset
+Create a low-poly Eye of Ra (Eye of Horus) symbol for a casino slot game.
+Ancient Egyptian style with golden and lapis lazuli blue colors.
+Game-ready model, clean topology, approximately 1500 triangles.
+Include PBR textures with ornate details in normal map.
+Slightly raised 3D relief suitable for spinning reel symbol.
 ```
 
 ### Ankh
-```
-Ancient Egyptian ankh symbol, ornate gold with turquoise gemstone inlays, hieroglyphic engravings along the loop and cross, glowing mystical energy, weathered yet regal appearance, low-poly game-ready model
-```
 
-### Scarab Beetle
 ```
-Golden scarab beetle amulet in Egyptian style, spread wings with intricate feather details, lapis lazuli and turquoise stone inlays, hieroglyphic patterns on the body, polished gold surface, suitable for slot game symbol
-```
-
-## Secondary Symbols (Medium Value)
-
-### Eye of Horus
-```
-Eye of Horus (Wadjet) in vibrant Egyptian colors, gold outline with lapis lazuli fill, turquoise accents, glowing magical effect, hieroglyphic details, clean geometric design, game-ready 3D asset
+Create a low-poly Egyptian Ankh symbol for a slot game.
+Golden material with ornate hieroglyphic patterns.
+Game-ready model with clean topology, approximately 1500 triangles.
+Include PBR textures: gold albedo with aged patina, detailed normal map.
+Mobile-optimized with clear silhouette for readability at small sizes.
 ```
 
 ### Pyramid
+
 ```
-Egyptian pyramid under desert sun, golden limestone blocks, mystical glow from the capstone, palm trees at base, sand dunes, dramatic shadows, optimized for slot game background or symbol
+Create a low-poly Egyptian pyramid symbol for a slot game.
+Stone material with golden capstone and hieroglyphic details.
+Game-ready model, clean topology, approximately 1800 triangles.
+Include PBR textures: sandstone albedo, detailed normal map with weathering.
+Compact design suitable for slot reel display.
 ```
 
 ### Sphinx
+
 ```
-Great Sphinx of Giza, majestic lion body with pharaoh head, weathered stone texture, golden headdress, mysterious and powerful presence, desert sand base, game-ready model
+Create a low-poly Egyptian Sphinx head symbol for a slot game.
+Golden and sandstone materials with regal headdress.
+Game-ready model, clean topology, approximately 2000 triangles.
+Include PBR textures: detailed facial features in normal map, mixed materials.
+Front-facing composition optimized for slot reel symbol.
 ```
 
-## Wild & Scatter Symbols
+## Quality Checklist
 
-### Golden Book
-```
-Ancient Egyptian book of spells, golden covers with hieroglyphic engravings, magical papyrus pages visible, glowing mystical runes, ornate clasps and gemstones, floating particles effect, scatter symbol for slot game
-```
-
-### Sun God Ra
-```
-Egyptian sun god Ra with falcon head, golden solar disk crown, holding was-scepter, ornate ceremonial attire with hieroglyphics, divine radiant glow, powerful and majestic, game asset
-```
-
-## Style Guidelines
-- **Materials**: PBR metallic/roughness workflow
-- **Poly Count**: 3000-5000 triangles per symbol
-- **Textures**: 2K resolution (2048x2048)
-- **Colors**: Gold, lapis lazuli blue, turquoise, white, black
-- **Lighting**: Consider god rays and mystical glows
-- **Details**: Balance between detail and readability at small sizes
-
-## Post-Processing Notes
-- Import to Blender for cleanup
-- Optimize topology for mobile
-- Bake lighting where appropriate
-- Create LODs for performance
-- Ensure symbols read well at 128x128 pixels
+- [ ] Triangle count within budget (1500-2000)
+- [ ] Clean quad/triangle topology
+- [ ] Proper UV unwrapping without stretching
+- [ ] PBR textures at 1024x1024 resolution
+- [ ] Albedo map has appropriate color values
+- [ ] Normal map provides sufficient detail
+- [ ] Metallic/Roughness maps properly configured
+- [ ] Model exports correctly as FBX
+- [ ] Silhouette is clear and readable
+- [ ] Suitable for mobile rendering

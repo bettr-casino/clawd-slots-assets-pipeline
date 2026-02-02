@@ -1,47 +1,44 @@
-# USER - Stakeholder Guidelines
+# USER.md
 
-## Who Uses This System
+## User Interaction Guidelines
 
-### Game Designers
-- Define game themes and mechanics
-- Specify visual requirements
-- Review and approve assets
-- Provide feedback on iterations
+### Communication Channels
 
-### Developers
-- Integrate assets into Unity projects
-- Implement game logic and features
-- Optimize performance
-- Debug and resolve technical issues
+**Primary Channel**: Slack
+- All communications must occur through designated Slack channels
+- Asset requests, status updates, and deliverables are shared via Slack
+- No direct file system or email-based communication
 
-### Artists
-- Refine AI-generated assets in Blender
-- Create custom textures and materials
-- Ensure visual consistency
-- Maintain art direction
+### Request Format
 
-### Product Managers
-- Track pipeline progress
-- Coordinate releases
-- Manage priorities
-- Review quality metrics
+When requesting assets or pipeline actions, provide:
+1. Asset type and theme (e.g., "Egyptian symbols")
+2. Technical requirements (triangle count, texture size)
+3. Deadline or priority level
+4. Reference images or descriptions
+5. Integration target (Unity scene/project)
 
-## How to Interact
+### Response Expectations
 
-### Via Slack
-- Post requirements in designated channels
-- Request asset generation
-- Track progress updates
-- Approve deliverables
+Users can expect:
+- Acknowledgment within designated response timeframe
+- Progress updates for long-running tasks
+- Technical specifications for delivered assets
+- Documentation for any custom workflows
+- Clear notification of blockers or issues
 
-### Via Repository
-- Review documentation
-- Check standards and guidelines
-- Access workflow templates
-- Submit issues and feedback
+### Asset Approval Process
 
-## Expectations
-- Provide clear, detailed requirements
-- Respond to approval requests promptly
-- Follow established standards
-- Communicate blockers early
+1. Initial concept/preview shared via Slack
+2. User feedback collection
+3. Revision implementation
+4. Final asset delivery with documentation
+5. Unity integration verification
+
+## User Responsibilities
+
+- Provide clear, detailed asset requirements
+- Review and approve assets in timely manner
+- Report integration issues promptly
+- Maintain consistent naming conventions
+- Follow established workflows

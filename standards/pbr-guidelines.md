@@ -1,304 +1,343 @@
-# PBR Guidelines - Physically Based Rendering
+# PBR Guidelines
 
 ## Overview
-Standards for creating PBR (Physically Based Rendering) materials for slot game assets. Ensures visual consistency, realistic lighting, and optimal performance across devices.
 
-## PBR Workflow
+Physically Based Rendering (PBR) ensures assets look consistent and realistic across different lighting conditions. This document outlines PBR workflows and standards for casino slot game assets.
 
-### Metallic/Roughness Workflow
-We use the **metallic/roughness** workflow (not specular/glossiness) for consistency with Unity URP and mobile optimization.
+## PBR Fundamentals
 
-### Core Texture Maps
-1. **Albedo/Base Color** - RGB channels
-2. **Normal** - RGB channels (tangent space)
-3. **Metallic** - Grayscale (often packed)
-4. **Roughness** - Grayscale (often packed)
-5. **Ambient Occlusion (AO)** - Grayscale (often baked into albedo)
-6. **Emission** - RGB channels (optional, use sparingly)
+### Core Principles
 
-## Albedo Map Guidelines
+1. **Energy Conservation**: Surface never reflects more light than it receives
+2. **Microsurface Detail**: Normal maps represent small-scale surface variation
+3. **Metallic Workflow**: Clear distinction between metallic and non-metallic materials
+4. **Real-World Values**: Use physically accurate material properties
 
-### Color Range
-- **Avoid pure white** (255, 255, 255) - Use (240, 240, 240) max
-- **Avoid pure black** (0, 0, 0) - Use (15, 15, 15) min
-- Keep values in realistic range: 50-240 for most surfaces
-- Use color picker from photo references
+### PBR Texture Maps
 
-### Material-Specific Albedo Values
+| Map Type | Purpose | Color Space |
+|----------|---------|-------------|
+| Albedo | Base color (no lighting) | sRGB |
+| Normal | Surface detail/bumps | Linear |
+| Metallic | Metal vs. non-metal | Linear |
+| Roughness | Surface smoothness | Linear |
+| Ambient Occlusion | Cavity shadows | Linear |
+| Emissive | Self-illumination | sRGB |
 
-**Metals (before metallic):**
-- Gold: RGB (255, 215, 0) to (212, 175, 55)
-- Silver: RGB (192, 192, 192) to (180, 180, 180)
-- Bronze: RGB (205, 127, 50) to (140, 85, 30)
-- Copper: RGB (184, 115, 51)
+## Texture Specifications
 
-**Non-Metals:**
-- Stone: RGB (140, 130, 120) to (180, 170, 160)
-- Wood: RGB (160, 120, 80) to (120, 80, 50)
-- Fabric: RGB (100, 90, 85) to (200, 190, 180)
-- Gemstones: Saturated colors, values 150-220
+### Albedo Map (Base Color)
 
-### Albedo Rules
-- No lighting information (no shadows, highlights, or AO)
-- Use AO in separate map or bake into albedo for mobile
-- Uniform lighting (should look flat)
-- Detail comes from normal and roughness, not albedo
-- Use texture for color variation, not shading
+**Purpose**: Pure surface color without lighting information
 
-## Metallic Map Guidelines
+**Guidelines**:
+- No lighting, shadows, or highlights baked in
+- Use reference values:
+  - Gold: RGB(255, 215, 0) to (218, 165, 32)
+  - Stone/Sandstone: RGB(200, 180, 150) to (160, 140, 110)
+  - Lapis Lazuli Blue: RGB(38, 66, 139) to (26, 72, 118)
+- Avoid pure black (0,0,0) or pure white (255,255,255)
+- Typical value range: 30-240 for most surfaces
+- Metals should have muted, desaturated colors
+- Non-metals can be saturated
 
-### Value Ranges
-- **Metallic (1.0)**: Pure metals (gold, silver, bronze, steel)
-  - Value: 255 (white)
-- **Non-Metallic (0.0)**: Everything else (stone, wood, fabric, paint)
-  - Value: 0 (black)
-- **No in-between values** - Binary decision (0 or 255)
+**Egyptian Theme Values**:
+- Gold metal: RGB(255, 220, 100)
+- Aged stone: RGB(180, 160, 130)
+- Painted blue: RGB(40, 80, 150)
+- Terracotta: RGB(180, 100, 70)
 
-### Common Metals in Egyptian Theme
-- Gold ornaments: 255 (fully metallic)
-- Silver details: 255 (fully metallic)
-- Bronze accents: 255 (fully metallic)
-- Painted metal: 0 (non-metallic - paint is not metal)
+### Normal Map
 
-### Common Non-Metals
-- Stone (limestone, sandstone): 0
-- Painted surfaces: 0
-- Fabrics: 0
-- Gemstones: 0 (gems are dielectric)
-- Wood: 0
+**Purpose**: Adds surface detail without extra geometry
 
-## Roughness Map Guidelines
+**Guidelines**:
+- Use tangent-space normal maps (purple/blue appearance)
+- DirectX format (Y+) for Unity
+- Neutral value: RGB(128, 128, 255) for flat surface
+- Bake from high-poly mesh or generate from albedo
+- Intensity: Moderate for mobile (not extreme)
+- Resolution: Match or half of albedo resolution
 
-### Value Ranges
-- **0.0 (Smooth)**: Value 0 (black) - Mirror finish, polished metal
-- **0.5 (Semi-rough)**: Value 128 (mid-gray) - Most common surfaces
-- **1.0 (Rough)**: Value 255 (white) - Matte, diffuse surfaces
+**Best Practices**:
+- Use for hieroglyphics, engravings, surface texture
+- Don't overdo detail (keep it readable from game distance)
+- Test in-engine to ensure proper appearance
+- Avoid seams on UV boundaries
 
-### Material-Specific Roughness
+### Metallic Map
 
-**Smooth (0.0 - 0.3):**
-- Polished gold: 0.2
-- Glass: 0.05
-- Polished stone: 0.3
-- Water: 0.0
+**Purpose**: Defines which areas are metal (white) vs. non-metal (black)
 
-**Medium (0.3 - 0.7):**
-- Painted metal: 0.5
-- Most stone: 0.6
-- Wood (varnished): 0.4
-- Most fabrics: 0.7
+**Guidelines**:
+- Binary choice: 0 (non-metal) or 1 (metal)
+- Gold, silver, copper: 1 (white)
+- Stone, wood, fabric: 0 (black)
+- No gradual transitions (not physically accurate)
+- Can combine with roughness in same texture (metallic in R channel)
 
-**Rough (0.7 - 1.0):**
-- Sand: 0.9
-- Rough stone: 0.8
-- Unfinished wood: 0.8
-- Fabric (matte): 0.9
+**Egyptian Materials**:
+- Gold jewelry/symbols: 1 (metallic)
+- Stone pyramids/walls: 0 (non-metallic)
+- Bronze decorations: 1 (metallic)
+- Painted surfaces: 0 (non-metallic)
 
-### Roughness Rules
-- Vary roughness for visual interest (use subtle texture)
-- Scratches and wear increase roughness
-- Fingerprints and smudges decrease roughness locally
-- Edge wear typically reduces roughness on metals
+### Roughness/Smoothness Map
 
-## Normal Map Guidelines
+**Purpose**: Defines surface glossiness
 
-### Tangent Space
-- Use tangent-space normals (standard)
-- RGB channels: R=X, G=Y, B=Z
-- Blue-dominant appearance (Z pointing up)
-- Value range: 0-255 (normalized to -1 to 1)
+**Guidelines**:
+- **Roughness**: 0 = smooth/glossy, 1 = rough/matte
+- **Smoothness**: Inverse of roughness (0 = rough, 1 = smooth)
+- Unity uses Smoothness by default
+- Reference values:
+  - Polished gold: 0.1 roughness (0.9 smoothness)
+  - Brushed metal: 0.3-0.5 roughness
+  - Matte stone: 0.8-0.9 roughness
+  - Glossy paint: 0.2-0.3 roughness
+- Add variation for realism (not uniform)
 
-### Strength
-- **High Detail (0.5 - 1.0)**: Close-up viewing, hero assets
-- **Medium Detail (0.3 - 0.5)**: Standard symbols
-- **Low Detail (0.1 - 0.3)**: Background objects, mobile optimization
+**Egyptian Materials**:
+- Polished gold: 0.2 roughness
+- Aged gold: 0.4 roughness
+- Smooth stone: 0.6 roughness
+- Weathered stone: 0.85 roughness
+- Painted surfaces: 0.3-0.5 roughness
 
-### Best Practices
-- Bake from high-poly to low-poly in Blender
-- Use consistent tangent space calculation
-- Avoid pure flat blue (128, 128, 255) - add subtle detail
-- Consider mip-map appearance at distance
-- Test under different lighting conditions
+### Ambient Occlusion (AO)
 
-## Ambient Occlusion (AO)
+**Purpose**: Adds soft shadows in crevices and corners
 
-### Purpose
-- Simulates indirect shadow in crevices
-- Adds depth perception
-- Multiplied with albedo or used separately
+**Guidelines**:
+- Grayscale: White (1) = no occlusion, Black (0) = full occlusion
+- Bake from 3D model geometry
+- Should be subtle (not too dark)
+- Typically multiplied with albedo in Unity
+- Resolution: Can be lower than albedo (512×512 often sufficient)
 
-### For Mobile
-- Bake AO into albedo to save texture lookups
-- Multiply AO (grayscale) with albedo (RGB)
-- Keep AO subtle (0.5 - 1.0 range, not 0 - 1.0)
+**Usage**:
+- Bake in Blender or Meshy.ai
+- Helps define depth in hieroglyphics and engravings
+- Particularly useful for background elements
+- Can be packed into texture channels (often G channel)
 
-### For Desktop/High-End
-- Use separate AO map
-- Blend in shader for flexibility
-- Can be real-time (SSAO) or baked
+### Emissive Map
 
-## Texture Packing
+**Purpose**: Self-illuminating areas (glow effects)
 
-### Standard Packing
-To optimize texture usage, pack multiple grayscale maps:
-
-**ORM Pack** (Recommended):
-- **R**: Ambient Occlusion
-- **G**: Roughness
-- **B**: Metallic
-- **A**: (unused or height)
-
-**MR Pack** (Alternative):
-- **R**: Metallic
-- **G**: Roughness
-- **B**: (unused)
-- **A**: Transparency (if needed)
-
-### Benefits
-- Reduces texture count from 3-4 to 1
-- Better for mobile (fewer texture lookups)
-- Standard in many engines including Unity
-
-## Emission Map
-
-### When to Use
-- Glowing effects (magic, energy)
-- Self-illuminated objects (lamps, crystals)
-- Highlights and sparkles
+**Guidelines**:
+- Color of emitted light
+- Used for magical effects, energy, highlights
+- HDR values possible (>1.0 intensity)
+- Should be black (0,0,0) where no emission
 - Use sparingly for performance
 
-### Guidelines
-- Start with albedo as base
-- Add glow in emission (bright values: 200-255)
-- Control intensity with material parameters
-- Consider HDR values for bloom effect
-- Optimize for mobile (emission is expensive)
+**Egyptian Theme Usage**:
+- Glowing hieroglyphics (magic effects)
+- Eye of Ra glow
+- Win celebration golden glow
+- Scarab mystical energy
 
-## Material Values Reference
+## Material Workflows
 
-### Egyptian Theme Examples
+### Metallic/Roughness Workflow (Recommended)
 
-**Polished Gold:**
-- Albedo: RGB (212, 175, 55)
-- Metallic: 1.0 (255)
-- Roughness: 0.2 (51)
-- AO: Subtle in crevices
+**Texture Set**:
+1. Albedo (RGB) - sRGB
+2. Normal (RGB) - Linear
+3. Metallic (R) + Roughness (G) + AO (B) - Linear (packed)
+4. Emissive (RGB) - sRGB (if needed)
 
-**Weathered Stone (Sandstone):**
-- Albedo: RGB (194, 178, 128)
-- Metallic: 0.0 (0)
-- Roughness: 0.7 (179)
-- AO: Strong in gaps
+**Advantages**:
+- Efficient: 3-4 textures total
+- Good for mobile performance
+- Clear material definitions
 
-**Lapis Lazuli (Gemstone):**
-- Albedo: RGB (38, 97, 156)
-- Metallic: 0.0 (0)
-- Roughness: 0.3 (77)
-- AO: Minimal
+### Unity Standard Shader Setup
 
-**Painted Wood:**
-- Albedo: RGB (varies by paint)
-- Metallic: 0.0 (0)
-- Roughness: 0.6 (153)
-- AO: In grain and edges
-
-## Texture Resolution
-
-### Symbol Assets
-- **Desktop**: 2K (2048x2048)
-- **Mobile**: 1K (1024x1024)
-- **Low-End**: 512x512
-
-### Background Assets
-- **Desktop**: 4K (4096x4096)
-- **Mobile**: 2K (2048x2048)
-- **Low-End**: 1K (1024x1024)
-
-### Compression
-- Use appropriate compression per platform
-- ASTC or PVRTC for iOS
-- ETC2 for Android
-- Maintain quality in roughness/metallic
-
-## Blender Setup
-
-### PBR Material Node Setup
+**Import Settings**:
 ```
-Image Texture (Albedo) → Principled BSDF (Base Color)
-Image Texture (Normal) → Normal Map → Principled BSDF (Normal)
-Image Texture (ORM) → Separate RGB:
-  - R → Principled BSDF (Ambient Occlusion via mix)
-  - G → Principled BSDF (Roughness)
-  - B → Principled BSDF (Metallic)
+Albedo Map:
+- sRGB (Color Texture): ON
+- Alpha Source: From Gray Scale (if transparency needed)
+
+Normal Map:
+- Texture Type: Normal map
+- Create from Grayscale: OFF (if already normal map)
+
+Metallic/Smoothness:
+- sRGB: OFF (Linear)
+- Alpha Source: From Gray Scale
 ```
 
-### Baking Settings
-- Use Cycles render engine for baking
-- Bake with sufficient samples (128-256)
-- Use Blender's built-in PBR workflow
-- Export to Unity-compatible formats
+**Material Properties**:
+```
+Rendering Mode: Opaque (default)
+Metallic: Controlled by texture
+Smoothness: Controlled by texture (Metallic Alpha channel)
+Normal Map: Enabled, intensity 1.0
+Occlusion: If separate map, strength 0.5-1.0
+Emission: Only if emissive map present
+```
 
-## Unity Setup
+## Mobile Optimization
 
-### URP/Lit Shader
-- Use URP/Lit as standard
-- Import textures correctly:
-  - Albedo: sRGB color space
-  - Normal: Normal map type
-  - ORM: Linear color space
-- Set up material properties
-- Enable GPU instancing
+### Texture Resolution
 
-### Material Parameters
-- Smoothness source: Albedo Alpha or Metallic/Roughness
-- Metallic/Smoothness map in appropriate slot
-- Normal map with appropriate strength
-- Emission if needed (keep intensity low)
+- **Symbols**: 1024×1024 (can reduce to 512×512 if needed)
+- **Backgrounds**: 1024×1024 (distant elements: 512×512)
+- **Effects**: 512×512 or 256×256
+
+### Texture Compression
+
+- **Android**: ETC2 (RGB or RGBA)
+- **iOS**: PVRTC or ASTC
+- **Quality**: Normal (not High Quality for mobile)
+
+### Texture Packing
+
+Combine maps to reduce texture count:
+```
+Combined Texture (RGBA):
+- R: Metallic
+- G: AO (Ambient Occlusion)
+- B: Detail mask (optional)
+- A: Smoothness
+```
+
+### Shader Simplification
+
+For mobile:
+- Use Unity Mobile shaders when possible
+- Limit texture samples
+- Disable features not needed (e.g., parallax)
+- Avoid transparency/alpha blending where possible
+
+## Texture Creation Workflow
+
+### From Meshy.ai
+
+1. **Generate** asset with PBR textures
+2. **Download** FBX with embedded textures
+3. **Extract** textures in Unity or Blender
+4. **Validate** each map for correctness
+5. **Optimize** resolution and compression
+
+### Manual Creation
+
+1. **Albedo**: Paint base colors (no lighting)
+2. **Normal**: Bake from high-poly or generate from albedo
+3. **Metallic**: Paint mask (white=metal, black=non-metal)
+4. **Roughness**: Paint variation based on material
+5. **AO**: Bake from 3D model
+6. **Emissive**: Paint glow areas (optional)
+
+### Texture Baking in Blender
+
+**Ambient Occlusion**:
+```
+Render Properties > Bake
+Bake Type: Ambient Occlusion
+Samples: 64-128
+Distance: 0.1-0.5 (adjust for scale)
+```
+
+**Normal Map**:
+```
+Bake Type: Normal
+Space: Tangent
+From high-poly to low-poly mesh
+```
 
 ## Quality Assurance
 
-### Checklist
-- [ ] Albedo has no lighting information
-- [ ] Metallic is binary (0 or 255)
-- [ ] Roughness values are in realistic range
-- [ ] Normal map is tangent space
-- [ ] AO baked into albedo for mobile
-- [ ] Textures are power-of-2 dimensions
-- [ ] Correct sRGB vs Linear color space
-- [ ] Materials use consistent workflow
-- [ ] Tested under different lighting
-- [ ] Performance acceptable on target device
+### Validation Checklist
 
-## Testing
+- [ ] Albedo has no lighting baked in
+- [ ] Normal map appears purple/blue (tangent space)
+- [ ] Metallic is binary (0 or 1, no gradients)
+- [ ] Roughness has variation (not uniform)
+- [ ] AO is subtle (not too dark)
+- [ ] Emissive is black where no glow
+- [ ] All textures are same resolution (or intentional mismatch)
+- [ ] Correct color space (sRGB vs Linear)
+- [ ] No visible seams on UVs
 
-### Visual Tests
-- Test under neutral lighting
-- Test in target game lighting
-- Verify metal appearance
-- Check edge definition
-- Review at different distances
+### Testing in Unity
 
-### Technical Tests
-- Profile texture memory usage
-- Check shader compilation
-- Verify batching compatibility
-- Test on target devices
-- Measure draw calls
+1. **Import** all textures
+2. **Assign** to Standard Shader material
+3. **Test** under different lighting:
+   - Direct light
+   - Ambient light only
+   - Point lights
+4. **Verify** appearance matches expectations
+5. **Check** on actual mobile device
 
 ## Common Mistakes
 
-❌ Baked lighting in albedo
-❌ Gray values in metallic map (should be 0 or 255)
-❌ Roughness too uniform (add variation)
-❌ Normal map too strong (subtle is better)
-❌ Pure black or white in albedo
-✅ Clean separation of maps
-✅ Realistic material values
-✅ Optimized for target platform
+### Albedo Issues
+- ❌ Baked lighting/shadows in albedo
+- ❌ Too dark (pure black) or too bright (pure white)
+- ❌ Oversaturated colors for metals
+
+### Normal Map Issues
+- ❌ Using OpenGL format (Y-) instead of DirectX (Y+)
+- ❌ Saved as sRGB instead of Linear
+- ❌ Too intense (extreme bumps)
+- ❌ Seams visible at UV boundaries
+
+### Metallic Issues
+- ❌ Using gradients instead of binary values
+- ❌ Wrong materials marked as metal
+- ❌ Saved in sRGB color space
+
+### Roughness Issues
+- ❌ Uniform roughness across entire surface
+- ❌ Too smooth (unrealistic mirror surfaces)
+- ❌ Inverted (using roughness when shader expects smoothness)
+
+## Egyptian Theme Material Library
+
+### Gold (Polished)
+- Albedo: RGB(255, 220, 100)
+- Metallic: 1.0
+- Smoothness: 0.85
+- Normal: Subtle engravings
+
+### Gold (Aged)
+- Albedo: RGB(218, 165, 32)
+- Metallic: 1.0
+- Smoothness: 0.6
+- Normal: Wear and scratches
+- AO: Darker in crevices
+
+### Sandstone
+- Albedo: RGB(180, 160, 130)
+- Metallic: 0.0
+- Smoothness: 0.15
+- Normal: Rough texture
+- AO: Strong in carved areas
+
+### Lapis Lazuli
+- Albedo: RGB(40, 80, 150)
+- Metallic: 0.0
+- Smoothness: 0.7
+- Normal: Polished surface
+
+### Painted Surface
+- Albedo: RGB(varies by paint color)
+- Metallic: 0.0
+- Smoothness: 0.5
+- Normal: Slight texture
 
 ## Resources
 
-- **Disney PBR Guide**: Industry standard reference
-- **Substance Academy**: Texture creation tutorials
-- **Unity PBR Documentation**: Engine-specific guidelines
-- **Real-world References**: Photo reference libraries
+- **PBR Guide**: https://learnopengl.com/PBR/Theory
+- **Material Values**: https://docs.unrealengine.com/en-US/Engine/Rendering/Materials/PhysicallyBased/
+- **Unity Standard Shader**: https://docs.unity3d.com/Manual/StandardShaderMaterialParameters.html
+- **Texture.com**: Free PBR textures for reference
+
+## Updates and Revisions
+
+Document any project-specific PBR adjustments or discoveries in `/constitution/MEMORY.md` for future reference.

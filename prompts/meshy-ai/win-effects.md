@@ -1,112 +1,110 @@
 # Win Effects - Meshy.ai Prompts
 
-## Overview
-Particle effects, animations, and celebratory visuals for wins, bonuses, and special features in Egyptian-themed slots. Balance visual impact with mobile performance.
+## General Settings
 
-## Standard Win Effects
+- **Style**: Low-poly, animated effect objects
+- **Target Triangle Count**: 300-500
+- **Texture Resolution**: 512x512 (effects are often animated/particle-based)
+- **Material**: PBR with emissive properties
+- **Export Format**: FBX with animation support
 
-### Golden Coin Burst
-```
-Explosion of golden Egyptian coins with hieroglyphic engravings, spinning and tumbling through air, glowing particles, warm golden light rays, celebratory but not overwhelming, game particle effect
-```
+## Effect Object Prompts
 
-### Hieroglyphic Symbols Swirl
-```
-Glowing Egyptian hieroglyphic symbols floating and swirling in magical pattern, bright gold and turquoise colors, mystical energy trails, celebratory animation for slot game win
-```
+### Golden Glow Aura
 
-### Scarab Flight
 ```
-Group of golden scarab beetles flying in formation leaving sparkle trails, magical and elegant motion, warm lighting, celebration effect for slot game
-```
-
-## Big Win Effects
-
-### Pyramid Power Blast
-```
-Egyptian pyramid releasing powerful golden energy beam upward, hieroglyphic symbols orbiting, dramatic light rays, ground particles lifting, epic big win effect for slot game
+Create a low-poly glowing aura effect for Egyptian slot game wins.
+Circular/radial design with Egyptian motif patterns.
+Game-ready model, clean topology, approximately 400 triangles.
+Include PBR textures: emissive gold albedo, subtle normal map for detail.
+Designed to scale and animate (pulsing, expanding) in Unity.
+Simple geometry suitable for shader-based animation.
 ```
 
-### Pharaoh's Blessing
+### Coin Burst
+
 ```
-Golden pharaoh face materializing with divine radiance, shimmering particles, ethereal glow, god rays, majestic and powerful, big win celebration effect
+Create a low-poly ancient Egyptian coin for win effect animations.
+Circular coin with hieroglyphic or pharaoh profile on faces.
+Game-ready model, clean topology, approximately 300 triangles.
+Include PBR textures: metallic gold albedo, normal map for embossed details.
+Lightweight for use in particle systems (multiple instances).
+Will be animated in Unity for cascading/bursting effects.
 ```
 
-### Treasure Shower
+### Scarab Particle
+
 ```
-Cascade of golden treasures, coins, jewels, and artifacts falling from above with impact sparkles, abundant and celebratory, big win animation for slots
+Create a low-poly miniature scarab beetle for particle win effects.
+Simplified Egyptian scarab design suitable for small scale display.
+Game-ready model, clean topology, approximately 250 triangles.
+Include PBR textures: golden metallic material, minimal normal detail.
+Ultra-lightweight for particle systems with many instances.
+Will be animated flying/swarming around winning symbols.
 ```
 
-## Feature Triggers
+### Ra Sun Disc
 
-### Free Spins Portal
 ```
-Swirling Egyptian portal opening with hieroglyphics rotating around edge, mystical blue and gold energy, sand particles being pulled in, gateway animation for bonus feature
-```
-
-### Bonus Unlock
-```
-Ancient Egyptian door or seal breaking open with golden light bursting out, hieroglyphic fragments floating away, magical unlock effect for bonus game
-```
-
-### Multiplier Build
-```
-Egyptian ankh symbol glowing brighter with pulsing energy rings, numbers forming in hieroglyphic style, power-up sensation, multiplier increase effect
+Create a low-poly Egyptian sun disc (solar symbol) for win effects.
+Circular disc with radiating rays and winged motif.
+Game-ready model, clean topology, approximately 500 triangles.
+Include PBR textures: bright emissive albedo, golden rays, detailed normal map.
+Center piece for major win celebrations.
+Designed to rotate and emit particles in Unity.
 ```
 
-## Wild Transformations
+### Pyramid Beam
 
-### Wild Expansion
 ```
-Golden scarab transforming into expanding ankh symbol with ripple effect, hieroglyphic particles, mystical transformation, wild symbol expansion animation
-```
-
-### Sticky Wild Lock
-```
-Symbol position getting sealed with golden Egyptian seal, hieroglyphic lock effect, chain animation locking in place, sticky wild mechanic visual
-```
-
-## Ambient Effects
-
-### Win Line Trace
-```
-Golden energy line tracing winning symbol combination, hieroglyphic trail effect, elegant flowing motion, highlights winning payline in slots
+Create a low-poly pyramid with light beam for win effects.
+Small pyramid emitting upward light/energy beam.
+Game-ready model, clean topology, approximately 400 triangles.
+Include PBR textures: stone base with emissive beam material.
+Designed for scaling animation (beam extending upward).
+Suitable for progressive win indicators.
 ```
 
-### Symbol Glow
+### Ankh Sparkle
+
 ```
-Winning symbol surrounded by pulsing golden aura, subtle particle sparkles, hieroglyphic rings emanating outward, attention-drawing but not distracting
+Create a low-poly miniature Ankh symbol for sparkle/twinkle effects.
+Simplified Ankh design suitable for small decorative particles.
+Game-ready model, clean topology, approximately 200 triangles.
+Include PBR textures: golden emissive material, high metallic value.
+Ultra-lightweight for dense particle effects.
+Will twinkle/spin around winning combinations.
 ```
 
-### Anticipation Build
+### Hieroglyph Runes
+
 ```
-Subtle sand particles and mystical sparkles gathering around reels before big reveal, building tension, pre-win anticipation effect
+Create a low-poly set of glowing hieroglyphic runes for win effects.
+Individual symbols that float and glow during wins.
+Game-ready models, clean topology, approximately 150-200 triangles each.
+Include PBR textures: emissive glowing albedo with hieroglyph detail.
+Multiple variations for variety in particle systems.
+Lightweight for abundant use in celebration sequences.
 ```
 
-## Style Guidelines
-- **Performance**: Optimize for mobile (limit particle count)
-- **Duration**: 1-3 seconds for normal wins, 3-5 for big wins
-- **Colors**: Gold primary, blue/turquoise accents
-- **Transparency**: Use alpha carefully for mobile performance
-- **Scale**: Adjust intensity based on win size
-- **Audio Sync**: Design with audio cues in mind
+## Animation Guidelines
 
-## Technical Specifications
-- **Particle Count**: 50-200 for normal, 200-500 for big wins
-- **Texture Size**: 512x512 or 1024x1024 for particle sprites
-- **Animation**: 24-30 FPS for smooth motion
-- **Blending**: Additive for glows, alpha blend for smoke/dust
-- **Layers**: Foreground effects in front of symbols
+**Suggested Animations** (to be created in Unity):
+- **Scaling**: Expand/contract effects
+- **Rotation**: Spinning coins, rotating sun discs
+- **Emission**: Pulsing glow intensity
+- **Translation**: Bursting/cascading movements
+- **Opacity**: Fade in/out for lifetime
 
-## Unity Integration
-- Use Unity Particle System (Shuriken)
-- Create prefabs for each effect type
-- Implement pooling for performance
-- Support different device quality tiers
-- Test on target mobile devices
+## Quality Checklist
 
-## Variation Notes
-- Create 3-5 variants of each effect for variety
-- Randomize some parameters (rotation, scale, speed)
-- Tier effects: small win, medium win, big win, mega win
-- Consider cultural sensitivity in designs
+- [ ] Triangle count minimal (200-500)
+- [ ] Optimized for instancing (many copies)
+- [ ] Emissive materials properly configured
+- [ ] Suitable for Unity particle systems
+- [ ] Clean geometry for shader effects
+- [ ] Textures at 512x512 or lower
+- [ ] Pivot points centered for rotation
+- [ ] Scale appropriate for effect use
+- [ ] LOD not necessary (effects are small/distant)
+- [ ] Mobile performance validated

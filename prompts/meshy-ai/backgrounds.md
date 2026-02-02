@@ -1,83 +1,84 @@
-# Egyptian Backgrounds - Meshy.ai Prompts
+# Background Elements - Meshy.ai Prompts
 
-## Overview
-Environment and background generation prompts for Egyptian-themed slot games. Designed to create immersive, atmospheric settings that enhance gameplay without overwhelming the symbols.
+## General Settings
 
-## Main Game Backgrounds
+- **Style**: Low-poly, game-ready background elements
+- **Target Triangle Count**: 800-1200
+- **Texture Resolution**: 1024x1024
+- **Material**: PBR (Albedo, Normal, Occlusion)
+- **Export Format**: FBX
 
-### Temple Interior
-```
-Ancient Egyptian temple interior, massive stone columns with hieroglyphic carvings, golden statues of gods, flickering torch light creating dramatic shadows, sandstone walls with painted murals, mystical atmosphere, dusty light rays, optimized for game background
-```
+## Background Prompts
 
-### Pharaoh's Tomb
-```
-Egyptian pharaoh's burial chamber, ornate golden sarcophagus, walls covered in colorful hieroglyphics and murals, treasure piles in corners, soft ambient lighting from mysterious source, ancient and untouched feel, game environment
-```
+### Temple Columns
 
-### Desert Pyramid
 ```
-Egyptian pyramids at sunset, golden desert sand, dramatic orange and purple sky, palm tree oasis in foreground, distant Nile river, mysterious atmosphere, cinematic lighting, mobile game background
-```
-
-### Throne Room
-```
-Ancient Egyptian throne room, golden pharaoh throne with gemstones, massive columns on both sides, red ceremonial carpets, hieroglyphic walls, torches providing warm lighting, regal and powerful atmosphere, game-ready environment
+Create a low-poly Egyptian temple column for a slot game background.
+Ancient sandstone material with hieroglyphic carvings and papyrus capital.
+Game-ready model with clean topology, approximately 1000 triangles.
+Include PBR textures: weathered sandstone albedo, carved details in normal map, ambient occlusion.
+Suitable for background parallax layers, mobile-optimized.
 ```
 
-## Special Feature Backgrounds
+### Hieroglyphic Wall Panel
 
-### Treasure Chamber (Bonus Round)
 ```
-Egyptian treasure vault, piles of golden coins and artifacts, ornate chests overflowing with jewels, hieroglyphic walls, warm golden lighting, magical sparkle effects, rich and abundant feel, bonus game background
-```
-
-### Sacred Obelisk
-```
-Tall Egyptian obelisk in temple courtyard, hieroglyphic inscriptions glowing with magic, stone pavement, palm trees, night sky with stars, mystical blue lighting effects, atmospheric game environment
+Create a low-poly Egyptian wall panel with hieroglyphics for a slot game background.
+Ancient stone texture with carved hieroglyphic symbols and reliefs.
+Game-ready model, clean topology, approximately 800 triangles.
+Include PBR textures: sandstone albedo with age weathering, detailed normal map for depth.
+Tileable design for repeated use in backgrounds.
 ```
 
-### Nile Riverbank
+### Sand Dunes
+
 ```
-Ancient Egyptian Nile riverbank, papyrus reeds, distant pyramids on horizon, golden sunset reflection on water, lotus flowers, peaceful yet mysterious atmosphere, slot game background
+Create a low-poly stylized desert sand dune for a slot game background.
+Warm golden sand material with subtle ripple patterns.
+Game-ready model, clean topology, approximately 600 triangles.
+Include PBR textures: sand albedo with color variation, subtle normal map for texture.
+Multiple variations for background layering, mobile-optimized.
 ```
 
-## Animated Background Elements
+### Temple Gateway
 
-### God Ray Effect
 ```
-Volumetric god rays streaming through temple opening, dust particles visible in light beams, warm golden color, slow animated movement, atmospheric lighting effect for game
-```
-
-### Floating Sand
-```
-Gentle desert sand particles floating in air, mystical shimmer, slow swirling motion, transparent particle effect, suitable for foreground overlay in slot game
+Create a low-poly Egyptian temple gateway (pylon) for a slot game background.
+Massive stone structure with hieroglyphic decorations and doorway.
+Game-ready model, clean topology, approximately 1200 triangles.
+Include PBR textures: weathered sandstone, detailed carvings in normal map, occlusion for depth.
+Suitable as background focal point, mobile-optimized.
 ```
 
-### Torch Fire
+### Oasis Palm Trees
+
 ```
-Egyptian wall torch with animated flame, warm orange glow, subtle flickering animation, casting dancing shadows, game-ready particle effect
+Create a low-poly stylized Egyptian palm tree for a slot game background.
+Simple trunk and frond design with desert aesthetic.
+Game-ready model, clean topology, approximately 800 triangles.
+Include PBR textures: bark and leaf textures, normal map for frond detail.
+Multiple size variations, mobile-optimized for background layers.
 ```
 
-## Style Guidelines
-- **Resolution**: 4K for backgrounds (downscale for mobile)
-- **Aspect Ratio**: 16:9 or wider for slots
-- **Depth**: Create sense of depth without cluttering
-- **Color Palette**: Warm golds, oranges, cool blues for contrast
-- **Lighting**: Dramatic but not too dark
-- **Detail Level**: Rich but not distracting from symbols
-- **Performance**: Keep draw calls low, use baked lighting
+### Sphinx Statue (Background)
 
-## Technical Requirements
-- Support portrait and landscape orientations
-- Parallax layers for depth effect
-- Animated elements on separate layers
-- Mobile optimization critical
-- File formats: PNG (backgrounds), FBX (3D elements)
+```
+Create a low-poly Egyptian Sphinx statue for a slot game background.
+Large-scale background element with weathered stone material.
+Game-ready model, clean topology, approximately 1200 triangles.
+Include PBR textures: sandstone with weathering, detailed normal map, ambient occlusion.
+Suitable for distant background placement, mobile-optimized.
+```
 
-## Integration Notes
-- Import backgrounds as planes in Unity
-- Use Unity's Particle System for effects
-- Consider multiple variants for visual variety
-- Test readability with symbols overlaid
-- Ensure sufficient contrast for UI elements
+## Quality Checklist
+
+- [ ] Triangle count within budget (800-1200)
+- [ ] Efficient topology for background rendering
+- [ ] UV layout optimized for texture atlasing
+- [ ] Textures at 1024x1024 or lower for backgrounds
+- [ ] Normal maps provide depth without excessive detail
+- [ ] Ambient occlusion enhances depth perception
+- [ ] Models work well in layered parallax setup
+- [ ] Suitable for mobile performance
+- [ ] LOD (Level of Detail) variants if needed
+- [ ] Elements can be tiled or repeated efficiently

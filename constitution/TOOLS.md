@@ -1,53 +1,69 @@
-# TOOLS - Technology Stack
+# TOOLS.md
 
-## Development Environment
+## Development Tools
 
-### Kimi K-2.5 LLM
-- **Purpose**: AI-powered development assistant
-- **Use Cases**:
-  - Code generation and review
-  - Documentation automation
-  - Workflow orchestration
-  - Natural language interfaces
+### 3D Asset Generation
 
-### Slack
-- **Purpose**: Team communication and automation hub
-- **Integrations**:
-  - Status notifications
-  - Approval workflows
-  - File sharing and previews
-  - Bot commands for common tasks
+**Meshy.ai**
+- Primary tool for mesh and texture generation
+- Supports text-to-3D and image-to-3D workflows
+- Outputs low-poly models with PBR textures
+- Generates FBX and GLB formats
 
-## 3D Asset Pipeline
+**Blender**
+- Asset refinement and optimization
+- Manual modeling and UV unwrapping
+- Animation adjustments
+- Batch processing scripts
 
-### Meshy.ai
-- **Purpose**: AI-driven 3D model generation
-- **Features**:
-  - Text-to-3D generation
-  - Image-to-3D conversion
-  - Style transfer
-  - Automated UV mapping
-- **Output Formats**: FBX, OBJ, glTF
+### Game Engine
 
-### Blender
-- **Purpose**: 3D modeling and refinement
-- **Use Cases**:
-  - Asset cleanup and optimization
-  - Material and texture authoring
-  - Animation creation
-  - Batch processing scripts
-- **Version**: 3.x or higher
+**Unity**
+- Target platform for all assets
+- Asset import and configuration
+- Material setup and shader assignment
+- Performance testing and optimization
 
-### Unity
-- **Purpose**: Game engine and runtime environment
-- **Features**:
-  - Asset integration
-  - Material setup (URP/HDRP)
-  - Performance profiling
-  - Mobile build optimization
-- **Version**: 2021.3 LTS or higher
+### Communication
 
-## Supporting Tools
-- **Git/GitHub**: Version control and collaboration
-- **Python**: Pipeline automation scripts
-- **Node.js**: Build tools and utilities
+**Slack**
+- All project communication
+- Asset request tracking
+- Status updates and notifications
+- File sharing and previews
+
+### AI/LLM
+
+**Kimi K-2.5**
+- Code generation and automation
+- Documentation creation
+- Pipeline scripting
+- Workflow optimization
+
+## Technical Specifications
+
+### Asset Export Settings
+
+- **Format**: FBX 2020
+- **Axis Convention**: -Z forward, Y up (Unity standard)
+- **Scale**: 1 unit = 1 meter
+- **Triangulation**: Applied on export
+- **Smoothing**: Normal-based
+
+### Texture Settings
+
+- **Compression**: ETC2 for mobile
+- **Max Resolution**: 1024x1024 for main textures
+- **Format**: PNG for source, compressed in Unity
+- **Channels**: 
+  - Albedo (RGB)
+  - Normal (RGB)
+  - Metallic/Smoothness (R/A)
+  - Occlusion (G)
+
+### Performance Targets
+
+- Triangle count: <2000 per asset
+- Draw calls: Minimize through atlasing
+- Texture memory: <4MB per asset set
+- Animation clips: <60 frames for loops

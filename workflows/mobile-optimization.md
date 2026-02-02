@@ -1,307 +1,253 @@
 # Mobile Optimization Workflow
 
 ## Overview
-Comprehensive workflow for optimizing social casino slot assets and games for mobile devices. Focuses on performance, memory usage, and visual quality balance.
 
-## Target Devices & Specifications
+Comprehensive workflow for ensuring all assets meet mobile performance requirements for iOS and Android casino slot games.
 
-### Minimum Spec (Low-End)
-- **Device**: iPhone 8, Samsung Galaxy A series (2018-2020)
-- **GPU**: Apple A11, Adreno 506
-- **RAM**: 2GB
-- **Resolution**: 750x1334 to 1080x1920
-- **Target FPS**: 30 FPS stable
+## Target Specifications
 
-### Target Spec (Mid-Range)
-- **Device**: iPhone 11/12, Samsung Galaxy S20
-- **GPU**: Apple A13/A14, Adreno 650
-- **RAM**: 4GB
-- **Resolution**: 1125x2436 to 1440x3040
-- **Target FPS**: 60 FPS
+### Device Targets
+- **Primary**: iPhone 12/13, Samsung Galaxy S21/S22
+- **Secondary**: iPhone 8/X, Samsung Galaxy S10
+- **Minimum**: iPhone 7, Samsung Galaxy S9
 
-### High Spec (High-End)
-- **Device**: iPhone 13/14/15, Samsung Galaxy S22/S23
-- **GPU**: Apple A15+, Adreno 730
-- **RAM**: 6GB+
-- **Resolution**: 1170x2532 to 1440x3200
-- **Target FPS**: 60 FPS with enhanced effects
+### Performance Goals
+- **Frame Rate**: Consistent 60fps
+- **Texture Memory**: <100MB total for all assets
+- **Draw Calls**: <50 per frame
+- **Triangle Count**: <100k total visible triangles
 
-## Performance Budgets
+## Phase 1: Asset Budget Planning
 
-### Rendering Budget
-- **Draw Calls**: < 50 per frame
-- **Triangles**: < 100K per frame
-- **Vertices**: < 150K per frame
-- **Fill Rate**: < 50M pixels per frame
-- **Shader Instructions**: < 50 per material
+### 1.1 Define Budgets
+- [ ] Calculate total triangle budget
+  - Symbols: 8 assets × 2000 tris = 16k
+  - Background: 10 elements × 1000 tris = 10k
+  - Effects: 20 instances × 500 tris = 10k
+  - UI: 5k triangles
+  - **Total: ~41k triangles**
 
-### Memory Budget
-- **Textures**: < 100MB
-- **Meshes**: < 20MB
-- **Audio**: < 30MB
-- **Code & Other**: < 50MB
-- **Total Runtime**: < 200MB
+- [ ] Calculate texture memory budget
+  - Symbols: 8 × 1024² × 4 bytes = ~32MB
+  - Backgrounds: 1024² × 4 bytes = ~4MB (atlased)
+  - Effects: 512² × 4 bytes = ~1MB
+  - **Total: ~37MB uncompressed**
 
-### Asset Budget (Per Symbol)
-- **Triangles**: 3K-5K
-- **Texture**: 2K max (1K preferred)
-- **Draw Calls**: 1 per symbol
-- **Materials**: 1 per symbol
+### 1.2 Set Per-Asset Limits
+- [ ] Document maximum values per asset type
+- [ ] Share budget constraints with team via Slack
+- [ ] Integrate checks into pipeline validation
 
-## Optimization Workflow
+## Phase 2: Geometry Optimization
 
-## Step 1: Asset Preparation (Blender)
+### 2.1 Triangle Count Reduction
+- [ ] Review each asset's polygon count
+- [ ] Identify and remove hidden/unnecessary faces
+- [ ] Simplify areas not visible in gameplay
+- [ ] Use decimation modifier in Blender if needed
+- [ ] Target reductions:
+  - Symbols: <2000 tris (hard limit)
+  - Backgrounds: <1200 tris
+  - Effects: <500 tris
 
-### 1.1 Mesh Optimization
-```
-- [ ] Use Decimate modifier for poly reduction
-- [ ] Target triangle count: 3K-5K per symbol
-- [ ] Remove hidden/interior geometry
-- [ ] Merge vertices (threshold: 0.001)
-- [ ] Remove doubles and loose geometry
-- [ ] Optimize edge flow for deformation
-```
+### 2.2 LOD (Level of Detail) Setup
+- [ ] Create LOD levels for prominent assets:
+  - LOD0: 100% triangles (close view)
+  - LOD1: 60% triangles (medium distance)
+  - LOD2: 30% triangles (far distance)
+- [ ] Configure LOD distances in Unity
+- [ ] Test transitions for visual artifacts
 
-### 1.2 UV Optimization
-```
-- [ ] Single UV map per mesh
-- [ ] Maximize UV space utilization (>80%)
-- [ ] Avoid overlapping UVs (unless intentional)
-- [ ] Maintain texel density consistency
-- [ ] Pack UVs efficiently
-```
+### 2.3 Batching Optimization
+- [ ] Group assets with shared materials
+- [ ] Create texture atlases for symbol sets
+- [ ] Ensure static objects are marked static
+- [ ] Validate dynamic batching compatibility
+- [ ] Target: Reduce draw calls by 50%
 
-### 1.3 Material Setup
-```
-- [ ] Use PBR metallic/roughness workflow
-- [ ] Limit to 1 material per object
-- [ ] Combine textures where possible (RGB packing)
-- [ ] Avoid complex shader networks
-- [ ] Bake complex lighting to textures
-```
+## Phase 3: Texture Optimization
 
-### 1.4 LOD Creation
-```
-- [ ] LOD0: Full detail (100%)
-- [ ] LOD1: 60% triangle count
-- [ ] LOD2: 30% triangle count
-- [ ] Test visual quality at typical viewing distances
-- [ ] Set up LOD switching distances
-```
+### 3.1 Texture Resolution
+- [ ] Audit all texture sizes
+- [ ] Reduce resolution where possible:
+  - Background distant elements: 512×512
+  - Repeated patterns: 256×256
+  - Small effects: 256×256 or less
+- [ ] Maintain 1024×1024 only for primary symbols
 
-## Step 2: Texture Optimization
+### 3.2 Texture Compression
+- [ ] Configure Unity texture import settings:
+  - **iOS**: PVRTC or ASTC
+  - **Android**: ETC2
+  - **Quality**: Normal (not High Quality)
+- [ ] Enable "Generate Mip Maps" for 3D objects
+- [ ] Disable "Read/Write Enabled" to save memory
+- [ ] Use "Clamp" wrap mode where appropriate
 
-### 2.1 Texture Resolution
-```
-High Priority (Symbols):
-- [ ] Albedo: 2048x2048 → downsample to 1024 for mobile
-- [ ] Normal: 1024x1024
-- [ ] Metallic/Roughness: 1024x1024 (packed)
-- [ ] AO: Bake into albedo
+### 3.3 Texture Atlasing
+- [ ] Combine related textures into atlases
+- [ ] Group by material type (opaque, transparent, emissive)
+- [ ] Pack efficiently using Unity Sprite Packer or manual tools
+- [ ] Update UV coordinates and materials
+- [ ] Target: 3-4 texture atlases maximum
 
-Backgrounds:
-- [ ] Main BG: 2048x2048 (mobile), 4096x4096 (tablet)
-- [ ] Detail textures: 1024x1024
-- [ ] Particle sprites: 512x512
-```
+### 3.4 Channel Packing
+- [ ] Pack multiple maps into single textures:
+  - Metallic (R) + Smoothness (A) + Occlusion (G)
+  - Combine grayscale maps to save memory
+- [ ] Adjust shader to read from correct channels
+- [ ] Validate visual quality after packing
 
-### 2.2 Texture Compression
-```
-iOS:
-- [ ] RGB: PVRTC 4bpp or ASTC 6x6
-- [ ] RGBA: PVRTC 4bpp or ASTC 6x6
-- [ ] Normal maps: ASTC 6x6
+## Phase 4: Shader and Material Optimization
 
-Android:
-- [ ] RGB: ETC2
-- [ ] RGBA: ETC2 with alpha
-- [ ] Normal maps: ETC2 or ASTC 6x6
-```
+### 4.1 Shader Selection
+- [ ] Use Unity Mobile shaders where possible
+- [ ] Prefer simpler shaders (Mobile/Diffuse, Mobile/Specular)
+- [ ] Avoid expensive features:
+  - Avoid parallax mapping
+  - Limit transparency/alpha blending
+  - Minimize shader keywords
 
-### 2.3 Texture Atlasing
-```
-- [ ] Combine small textures into atlases
-- [ ] Use Unity Sprite Atlas for UI
-- [ ] Maintain power-of-2 dimensions
-- [ ] Add 2-pixel padding between sprites
-- [ ] Group by usage pattern (loading together)
-```
+### 4.2 Material Consolidation
+- [ ] Reduce total material count
+- [ ] Reuse materials across assets where appropriate
+- [ ] Share material instances for same properties
+- [ ] Target: <10 unique materials
 
-## Step 3: Unity Optimization
+### 4.3 Lighting Optimization
+- [ ] Use baked lighting where possible
+- [ ] Minimize real-time lights
+- [ ] Prefer Light Probes over per-pixel lighting
+- [ ] Disable shadows for most assets
+- [ ] Enable shadows only for key focal elements
 
-### 3.1 Project Settings
-```
-Quality Settings:
-- [ ] Disable shadows for low-end devices
-- [ ] Limit pixel light count to 1-2
-- [ ] Reduce shadow distance to 20m
-- [ ] Use low-quality shadows
-- [ ] Disable anti-aliasing or use FXAA
+## Phase 5: Animation and Effects Optimization
 
-Graphics Settings:
-- [ ] Use URP (Universal Render Pipeline)
-- [ ] Enable SRP Batcher
-- [ ] Enable GPU Instancing
-- [ ] Disable HDR rendering for mobile
-- [ ] Set appropriate color space (Linear preferred)
-```
+### 5.1 Animation Efficiency
+- [ ] Reduce keyframe count in animations
+- [ ] Use animation compression in Unity
+- [ ] Limit bone count for skinned meshes (<30 bones)
+- [ ] Share animation clips across similar objects
 
-### 3.2 Material Optimization
-```
-- [ ] Use URP/Lit or URP/SimpleLit shaders
-- [ ] Minimize shader variants
-- [ ] Avoid transparent materials (use alpha cutout)
-- [ ] Batch materials where possible
-- [ ] Use shader LOD
-```
+### 5.2 Particle System Optimization
+- [ ] Limit max particle count (<50 per emitter)
+- [ ] Use simple particle sprites
+- [ ] Disable collision for particles
+- [ ] Reduce particle size with distance
+- [ ] Use GPU instancing where possible
+- [ ] Cull particles not visible to camera
 
-### 3.3 Rendering Optimization
-```
-Static Batching:
-- [ ] Mark non-moving objects as static
-- [ ] Use static batching for backgrounds
-- [ ] Combine static meshes where beneficial
+### 5.3 Effect Object Optimization
+- [ ] Use billboards for distant effects
+- [ ] Implement object pooling for repeated effects
+- [ ] Disable effects when off-screen
+- [ ] Limit effect duration to minimum needed
 
-Dynamic Batching:
-- [ ] Keep vertex count < 300 per mesh
-- [ ] Use same material across objects
-- [ ] Avoid scaling on batched objects
+## Phase 6: Unity Build Settings
 
-GPU Instancing:
-- [ ] Enable on repeated symbols
-- [ ] Use for particle systems
-- [ ] Verify instancing is working (Frame Debugger)
-```
+### 6.1 Graphics API
+- [ ] iOS: Metal
+- [ ] Android: Vulkan with OpenGL ES 3.0 fallback
+- [ ] Disable unused graphics APIs
 
-### 3.4 Particle Optimization
-```
-- [ ] Limit particle count: 50-200 per effect
-- [ ] Use simple particle shaders
-- [ ] Prefer Mesh particles over Billboard
-- [ ] Disable collision on particles
-- [ ] Use pooling for particle systems
-- [ ] Limit simultaneous particle systems to 3-5
-```
+### 6.2 Quality Settings
+- [ ] Create mobile-specific quality preset
+- [ ] Configure settings:
+  - Pixel Light Count: 1
+  - Texture Quality: Medium
+  - Anisotropic Textures: Per Texture
+  - Anti Aliasing: 2x or disabled
+  - Soft Particles: Disabled
+  - Shadows: Soft shadows, low resolution
 
-## Step 4: Code Optimization
+### 6.3 Build Options
+- [ ] Enable "Strip Engine Code"
+- [ ] Use IL2CPP for better performance
+- [ ] Enable "Optimize Mesh Data"
+- [ ] Configure compression (LZ4 for faster loading)
 
-### 4.1 Object Pooling
-```csharp
-// Implement pooling for frequently spawned objects
-- [ ] Pool symbol instances
-- [ ] Pool particle effects
-- [ ] Pool UI elements
-- [ ] Prewarm pools on load
-```
+## Phase 7: Profiling and Testing
 
-### 4.2 Update Loop Optimization
-```csharp
-- [ ] Minimize Update() calls
-- [ ] Use FixedUpdate only when necessary
-- [ ] Cache component references
-- [ ] Avoid GetComponent in loops
-- [ ] Use object pooling instead of Instantiate/Destroy
-```
+### 7.1 Unity Profiler Analysis
+- [ ] Profile on actual devices (not simulator)
+- [ ] Monitor key metrics:
+  - CPU: <16ms per frame (60fps)
+  - GPU: <16ms per frame
+  - Memory: Total heap <200MB
+  - Rendering: Draw calls, triangles, vertices
+  - Scripts: Update/LateUpdate time
 
-### 4.3 Animation Optimization
-```
-- [ ] Use Animation Events instead of polling
-- [ ] Disable Animator when not animating
-- [ ] Use Animator culling modes
-- [ ] Prefer DOTween for simple animations
-- [ ] Avoid complex state machines
-```
+### 7.2 Device-Specific Testing
+- [ ] Test on minimum spec device
+- [ ] Verify thermal performance (no throttling)
+- [ ] Check battery consumption
+- [ ] Test various screen resolutions
+- [ ] Validate aspect ratio handling
 
-## Step 5: Testing & Profiling
+### 7.3 Optimization Iteration
+- [ ] Identify bottlenecks from profiler
+- [ ] Prioritize issues by impact
+- [ ] Implement optimizations incrementally
+- [ ] Re-test after each change
+- [ ] Document changes and results
 
-### 5.1 Unity Profiler
-```
-Monitor:
-- [ ] CPU usage (target: < 16ms per frame for 60fps)
-- [ ] GPU usage
-- [ ] Memory allocation
-- [ ] GC allocations (minimize per frame)
-- [ ] Draw calls and batching efficiency
-```
+## Phase 8: Validation and Documentation
 
-### 5.2 Device Testing
-```
-Test on actual devices:
-- [ ] Frame rate (use on-screen display)
-- [ ] Battery drain
-- [ ] Device temperature
-- [ ] Memory warnings
-- [ ] Loading times
-```
+### 8.1 Performance Validation
+- [ ] Confirm 60fps on all target devices
+- [ ] Verify memory stays within budgets
+- [ ] Check build size (<150MB)
+- [ ] Validate load times (<5 seconds)
 
-### 5.3 Memory Profiling
-```
-- [ ] Take memory snapshot on low-end device
-- [ ] Identify largest assets
-- [ ] Check for memory leaks
-- [ ] Verify proper unloading
-- [ ] Test extended play sessions
-```
+### 8.2 Documentation
+- [ ] Record final asset specifications
+- [ ] Document optimization techniques used
+- [ ] Note any trade-offs or compromises
+- [ ] Update standards and guidelines
+- [ ] Share findings via Slack and in `/constitution/MEMORY.md`
 
-## Step 6: Quality Tiers
+## Optimization Checklist Summary
 
-### 6.1 Device Detection
-```csharp
-// Implement device quality detection
-- [ ] Detect device capabilities on startup
-- [ ] Set quality tier (Low/Medium/High)
-- [ ] Adjust settings accordingly
-- [ ] Allow manual override in settings
-```
+**Geometry:**
+- [x] All assets under triangle budget
+- [x] LOD implemented for key assets
+- [x] Draw calls minimized through batching
 
-### 6.2 Quality Settings Per Tier
+**Textures:**
+- [x] Compression enabled (ETC2/PVRTC)
+- [x] Appropriate resolutions used
+- [x] Texture atlasing implemented
+- [x] Channel packing applied
 
-**Low Tier (30 FPS target):**
-- Use LOD2 models
-- 1K textures maximum
-- Simplified particle effects
-- No shadows
-- Minimal post-processing
+**Materials:**
+- [x] Mobile shaders used
+- [x] Material count minimized
+- [x] Lighting optimized
 
-**Medium Tier (60 FPS target):**
-- Use LOD1 models
-- 2K textures
-- Standard particle effects
-- Simple shadows
-- Basic post-processing (bloom)
+**Performance:**
+- [x] 60fps on target devices
+- [x] Memory within budget
+- [x] No thermal throttling
 
-**High Tier (60 FPS+ target):**
-- Use LOD0 models
-- 2K textures
-- Full particle effects
-- Dynamic shadows
-- Full post-processing
+## Common Mobile Issues and Solutions
 
-## Checklist: Pre-Release Optimization
+| Issue | Solution |
+|-------|----------|
+| Low frame rate | Reduce triangle count, optimize shaders |
+| High memory usage | Compress textures, reduce resolution |
+| Excessive draw calls | Texture atlasing, static batching |
+| Long load times | Compress assets, use AssetBundles |
+| Thermal throttling | Reduce GPU work, limit particles |
+| Visual artifacts | Check normal maps, validate UVs |
 
-- [ ] All symbols under 5K triangles
-- [ ] All textures compressed appropriately
-- [ ] Static batching enabled for backgrounds
-- [ ] GPU instancing enabled where applicable
-- [ ] Object pooling implemented
-- [ ] LODs created and configured
-- [ ] Particle counts optimized
-- [ ] Quality tiers implemented
-- [ ] Tested on minimum spec device
-- [ ] Memory budget met
-- [ ] No GC allocations during gameplay
-- [ ] Loading times < 5 seconds
-- [ ] APK/IPA size < 100MB
+## Tools and Resources
 
-## Tools & Commands
+- Unity Profiler
+- Unity Frame Debugger
+- Xcode Instruments (iOS)
+- Android Studio Profiler
+- RenderDoc for GPU analysis
 
-### Unity Built-in Tools
-- Frame Debugger: Analyze draw calls
-- Profiler: Monitor performance
-- Memory Profiler: Track memory usage
-- Build Report: Analyze build size
+## Continuous Improvement
 
-### External Tools
-- RenderDoc: GPU debugging
-- Xcode Instruments: iOS profiling
-- Android Profiler: Android profiling
+After each project, review optimization results and update this workflow with new techniques and lessons learned.

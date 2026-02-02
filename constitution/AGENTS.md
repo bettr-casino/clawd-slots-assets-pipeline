@@ -1,33 +1,42 @@
-# AGENTS - AI & Automation Components
+# AGENTS.md
 
-## Primary Agents
+## Agent Capabilities
 
-### Kimi K-2.5 LLM
-- **Role**: Natural language processing, code generation, documentation, and workflow coordination
-- **Capabilities**: 
-  - Interpret design requirements
-  - Generate technical specifications
-  - Assist with code reviews and debugging
-  - Coordinate between different tools and platforms
+### AI Model Integration
+
+- **Primary LLM**: Kimi K-2.5
+- **Purpose**: Code generation, documentation, pipeline automation
+- **Use Cases**: Script writing, asset metadata generation, workflow optimization
 
 ### Meshy.ai Integration
-- **Role**: 3D asset generation and processing
-- **Capabilities**:
-  - Generate 3D models from text/image prompts
-  - Create themed assets (Egyptian, fantasy, etc.)
-  - Produce backgrounds, symbols, and effects
-  - Optimize meshes for real-time rendering
 
-### Slack Bot
-- **Role**: Communication hub and notification system
+- **Function**: 3D asset generation
 - **Capabilities**:
-  - Status updates on pipeline progress
-  - Alert team to issues or blockers
-  - Coordinate task assignments
-  - Share previews and approvals
+  - Low-poly mesh creation
+  - PBR texture generation
+  - Basic animation sequences
+- **Output Format**: FBX, GLB compatible with Unity
 
-## Integration Points
-- Slack ↔ Kimi: Natural language task management
-- Kimi ↔ Meshy.ai: Automated 3D asset generation
-- Meshy.ai ↔ Unity/Blender: Asset import and refinement
-- Unity/Blender ↔ Slack: Progress updates and previews
+### Workflow Automation
+
+- Asset naming validation
+- Batch processing scripts
+- Quality assurance checks
+- Unity import automation
+
+## Agent Communication Protocol
+
+All agent activities and decisions must be communicated via Slack channels:
+- Asset generation requests
+- Pipeline status updates
+- Quality check results
+- Integration confirmations
+
+## Agent Responsibilities
+
+1. Monitor asset requirements
+2. Generate assets via Meshy.ai
+3. Validate technical specifications
+4. Prepare assets for Unity import
+5. Document all processes
+6. Report issues and blockers

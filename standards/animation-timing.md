@@ -1,351 +1,387 @@
 # Animation Timing Standards
 
 ## Overview
-Standardized timing guidelines for animations in social casino slot games. Ensures responsive gameplay, consistent pacing, and optimal player experience.
 
-## Core Principles
+Consistent animation timing ensures responsive gameplay feel and optimal performance across casino slot game interactions and visual effects.
 
-### Feel
-- **Responsive**: Players should feel in control
-- **Satisfying**: Animations should feel complete and polished
-- **Clear**: Communicate game state and outcomes clearly
-- **Performant**: Maintain target frame rate at all times
+## Target Frame Rate
 
-### Timing Philosophy
-- **Fast enough**: Don't bore players
-- **Slow enough**: Don't confuse players
-- **Consistent**: Similar actions should take similar time
-- **Tunable**: Use variables, not hard-coded values
+**Mobile Target**: 60 FPS (16.67ms per frame)
+- All animations must perform smoothly at 60fps
+- Budget no more than 8-10ms for animation systems
+- Test on lowest-spec target device
 
-## Reel Spin Animations
+## Animation Categories
 
-### Spin Start (Anticipation)
-- **Duration**: 100-150ms
-- **Easing**: Ease Out Cubic
-- **Purpose**: Quick acceleration into spin
+### 1. Reel Spin Animations
 
-### Main Spin Loop
-- **Speed**: 20-30 symbols/second per reel
-- **Duration**: 1.5-3.0 seconds (adjustable by player)
-- **Easing**: Linear (constant speed)
-- **Variation**: Each reel stops with 200-400ms stagger
+**Reel Spin Duration**
+- **Initial Spin**: 2.0-2.5 seconds
+- **Deceleration**: 0.5-1.0 seconds per reel
+- **Stagger**: 0.3-0.5 seconds between reels stopping
 
-### Spin Stop (Landing)
-- **Duration**: 150-200ms per reel
-- **Easing**: Ease Out Back (slight overshoot)
-- **Bounce**: 1-2 symbols of overshoot, then settle
-- **Purpose**: Satisfying landing feel
-
-### Quick Spin (Player Option)
-- **Total Duration**: 0.8-1.2 seconds
-- **Start**: 50ms
-- **Main Spin**: 0.5-0.8s
-- **Stop**: 100ms per reel
-
-### Example Timing Sequence
+**Timing Pattern**:
 ```
-Normal Spin:
-- Start: 0.15s
-- Spin: 2.0s
-- Reel 1 Stop: 0.2s (at 2.15s)
-- Reel 2 Stop: 0.2s (at 2.35s)
-- Reel 3 Stop: 0.2s (at 2.55s)
-- Reel 4 Stop: 0.2s (at 2.75s)
-- Reel 5 Stop: 0.2s (at 2.95s)
-Total: 3.15s
-
-Quick Spin:
-- Start: 0.05s
-- Spin: 0.6s
-- Reel 1-5 Stop: 0.1s each (0.05s stagger)
-Total: 0.9s
+Reel 1: Stops at 2.0s
+Reel 2: Stops at 2.4s (+0.4s)
+Reel 3: Stops at 2.8s (+0.4s)
+Reel 4: Stops at 3.2s (+0.4s)
+Reel 5: Stops at 3.6s (+0.4s)
 ```
 
-## Symbol Animations
+**Easing**:
+- Spin: Linear or slight ease-in-out
+- Stop: Strong ease-out (deceleration curve)
+- Anticipation: Small ease-in before stop (optional)
 
-### Symbol Land
-- **Duration**: 100-150ms
-- **Easing**: Ease Out Quad
-- **Effect**: Slight squash/stretch or bounce
-- **Purpose**: Feedback that symbol has landed
+**Performance**:
+- Max symbols visible: 15-20 simultaneously
+- Update rate: Every frame (60fps)
+- Use texture animation or sprite sheets for blur effect
 
-### Symbol Anticipation (Pre-Win)
-- **Duration**: 500-800ms
-- **Animation**: Pulse, glow, or subtle shake
-- **Purpose**: Build tension before revealing win
-- **Frequency**: 1-2 symbols at most
+### 2. Symbol Animations
 
-### Symbol Highlight (Win)
-- **Duration**: 300-500ms
-- **Easing**: Ease In Out Sine
-- **Animation**: Scale up 1.1-1.2x, glow pulse
-- **Repetitions**: 2-3 times
-- **Purpose**: Draw attention to winning symbols
+**Idle/Breathing Animation**
+- **Duration**: 2.0-4.0 seconds
+- **Loop**: Seamless
+- **Intensity**: Subtle (scale 0.98-1.02 or slight rotation ±2°)
+- **Offset**: Randomize start time per symbol (avoid sync)
 
-### Wild Symbol Transform
-- **Duration**: 400-600ms
-- **Easing**: Ease Out Back
-- **Animation**: Expand from center with particle burst
-- **Purpose**: Exciting transformation
+**Win Celebration**
+- **Duration**: 1.0-1.5 seconds
+- **Stages**:
+  - Anticipation (0.1s): Slight scale down
+  - Pop (0.3s): Scale up to 1.2x, brighten
+  - Settle (0.6s): Return to 1.0x with bounce
+- **Easing**: Elastic or bounce easing on pop
+- **FX**: Spawn particles at peak (0.4s mark)
 
-## Win Animations
+**Expand/Feature Trigger**
+- **Duration**: 0.8-1.2 seconds
+- **Expand**: Scale from 1.0x to 2.0-3.0x
+- **Rotation**: Optional 360° spin during expansion
+- **Glow**: Increase emissive intensity
+- **Audio sync**: Peak animation at 0.5s for audio hit
 
-### Small Win (1x - 5x bet)
-- **Duration**: 800-1200ms
-- **Particle Duration**: 600ms
-- **Sound Peak**: 200-300ms in
-- **Win Amount Display**: Fade in over 200ms
-- **Purpose**: Quick acknowledgment
+**Anticipation (Pre-win)**
+- **Duration**: 0.5-1.0 seconds
+- **Effect**: Gentle wobble or glow pulse
+- **Purpose**: Build tension before win reveal
+- **Frequency**: 2-3 Hz wobble/pulse
 
-### Medium Win (5x - 20x bet)
-- **Duration**: 1500-2000ms
-- **Particle Duration**: 1200ms
-- **Win Line Trace**: 300-500ms
-- **Win Amount Display**: Count up over 500-800ms
-- **Purpose**: Satisfying celebration
+### 3. Win Effect Animations
 
-### Big Win (20x - 100x bet)
-- **Duration**: 2500-4000ms
-- **Particle Duration**: 2000ms
-- **Camera**: Slight zoom or shake
-- **Win Amount Display**: Count up over 1500-2500ms
-- **Screen Effect**: Fade/flash overlay 200ms
-- **Purpose**: Memorable excitement
+**Particle Burst**
+- **Spawn Time**: 0.1s burst
+- **Lifetime**: 1.0-2.0 seconds per particle
+- **Count**: 20-50 particles per burst
+- **Velocity**: Radial outward, slow decay
+- **Gravity**: Slight downward pull after 0.5s
 
-### Mega Win (100x+ bet)
-- **Duration**: 4000-6000ms
-- **Particle Duration**: 3000ms
-- **Camera**: Dramatic zoom/movement
-- **Win Amount Display**: Slow dramatic count up
-- **Screen Effect**: Multiple pulses/flashes
-- **Celebration**: Full screen effect
-- **Purpose**: Epic moment
+**Glow/Aura Effect**
+- **Fade In**: 0.2 seconds
+- **Hold**: 0.5-1.0 seconds
+- **Pulse**: 1.0-2.0 second cycle (optional)
+- **Fade Out**: 0.3 seconds
+- **Total**: 1.0-3.5 seconds
 
-### Win Count-Up
-- **Algorithm**: Exponential or logarithmic speed
-- **Start**: Fast initial counting
-- **End**: Slow down as approaching final value
-- **Skip**: Allow player to tap to complete instantly
-- **Sound**: Tick sound per increment (throttled)
+**Coin Cascade**
+- **Duration**: 2.0-4.0 seconds total
+- **Spawn Rate**: 5-10 coins per second
+- **Fall Speed**: 2-3 units per second
+- **Bounce**: 1-2 bounces on landing
+- **Despawn**: Fade out after 1.0s on ground
 
-```javascript
-// Example count-up timing
-duration = baseTime * log(winAmount)
-start_speed = 0.01s per increment
-end_speed = 0.1s per increment
-// Exponential easing between start and end speeds
-```
+**Light Beam**
+- **Rise Time**: 0.5 seconds
+- **Hold**: 0.5-1.0 seconds
+- **Dissipate**: 0.3 seconds
+- **Total**: 1.3-1.8 seconds
+- **Intensity**: Fade-in/fade-out curve
 
-## UI Animations
+### 4. UI Animations
 
-### Button Press
-- **Duration**: 100-150ms
-- **Easing**: Ease Out Quad
-- **Scale**: 0.95x on press, 1.0x on release
-- **Purpose**: Tactile feedback
+**Button Press**
+- **Down**: 0.05 seconds (fast response)
+- **Up**: 0.1 seconds
+- **Scale**: 0.95x on press
+- **Color**: Slight darken (0.9x)
+- **Audio**: Trigger on press start
 
-### Button Hover (Desktop)
-- **Duration**: 200ms
-- **Easing**: Ease Out Sine
-- **Scale/Glow**: 1.05x or subtle glow
-- **Purpose**: Visual affordance
+**Button Hover (Desktop)**
+- **Scale**: 1.05x
+- **Duration**: 0.15 seconds
+- **Easing**: Ease-out
 
-### Panel Transition
-- **Duration**: 300-400ms
-- **Easing**: Ease In Out Cubic
-- **Type**: Slide, fade, or scale
-- **Purpose**: Smooth state change
+**Panel Slide In/Out**
+- **Duration**: 0.3-0.5 seconds
+- **Easing**: Ease-out for in, Ease-in for out
+- **Distance**: Full screen width/height
+- **Overshoot**: Optional 5% bounce on slide-in
 
-### Modal Open/Close
-- **Open**: 250-350ms (Ease Out Back)
-- **Close**: 200-250ms (Ease In Cubic)
-- **Background Fade**: 200ms
-- **Purpose**: Clear hierarchy
+**Number Counter (Win Amount)**
+- **Duration**: 1.0-2.0 seconds
+- **Easing**: Ease-out (fast start, slow end)
+- **Increment**: Calculate to reach target smoothly
+- **Audio**: Tick sound every 0.05-0.1s
 
-### Notification Toast
-- **Slide In**: 300ms (Ease Out Cubic)
-- **Display**: 2000-4000ms
-- **Slide Out**: 250ms (Ease In Cubic)
-- **Purpose**: Non-intrusive info
+### 5. Background Animations
 
-## Particle Effects
+**Parallax Scrolling**
+- **Speed**: Based on layer depth
+  - Far: 0.1x speed
+  - Mid: 0.3x speed
+  - Near: 0.6x speed
+- **Update**: Every frame
+- **Loop**: Seamless repeating texture
 
-### Coin Burst (Small Win)
-- **Spawn Duration**: 200ms
-- **Particle Lifetime**: 800-1200ms
-- **Count**: 20-50 particles
-- **Velocity**: Medium
+**Ambient Movement**
+- **Duration**: 10-30 seconds per cycle
+- **Intensity**: Very subtle (1-2% scale or position change)
+- **Purpose**: Add life without distraction
+- **Examples**:
+  - Palm trees sway: 8 second cycle
+  - Sand shimmer: 15 second cycle
+  - Cloud drift: 30 second cycle
 
-### Coin Shower (Big Win)
-- **Spawn Duration**: 800ms
-- **Particle Lifetime**: 1500-2500ms
-- **Count**: 100-200 particles
-- **Velocity**: Fast at start, slow at end
+**Lighting Effects**
+- **Day/Night**: 60+ seconds full cycle (if used)
+- **Torch flicker**: 0.5-1.5 second random intervals
+- **Glow pulse**: 2-4 second cycles
 
-### Sparkle Effect
-- **Duration**: 600-1000ms
-- **Particle Lifetime**: 400-800ms
-- **Count**: 10-30 particles
-- **Purpose**: Magical enhancement
+## Animation Implementation
 
-### Glow Pulse
-- **Duration**: 800-1200ms (loop)
-- **Easing**: Sine wave
-- **Intensity**: 0.5x to 1.5x
-- **Purpose**: Attention draw
+### Unity Animation Clips
 
-## Bonus Features
+**Frame Rate**: 60 FPS for all animation clips
+- Ensures smooth playback on target devices
+- Matches game engine update rate
 
-### Free Spins Trigger
-- **Transition In**: 800-1200ms
-- **Celebration**: 2000-3000ms
-- **Transition Out**: 800-1200ms
-- **Total**: 3600-5400ms
-- **Purpose**: Big moment, worth the time
+**Compression**: Keyframe reduction
+- Unity: "Optimal" compression
+- Remove redundant keyframes
+- Maintain visual quality
 
-### Free Spin Individual
-- **Duration**: 60-80% of normal spin
-- **Auto-play**: Slightly faster progression
-- **Purpose**: Faster pace in bonus
+**Loop Settings**:
+- Enable "Loop Time" for idle animations
+- Disable for one-shot animations (wins, transitions)
+- Use "Loop Pose" for seamless loops
 
-### Wheel Spin (Bonus Wheel)
-- **Acceleration**: 300-500ms
-- **Full Speed**: 1500-2000ms
-- **Deceleration**: 1000-1500ms
-- **Final Tick**: 100-150ms per segment
-- **Total**: 3000-4500ms
-- **Purpose**: Build anticipation
+### Animator State Machines
 
-### Pick Game
-- **Object Reveal**: 300-500ms per pick
-- **Outcome Display**: 800-1200ms
-- **Between Picks**: 300-500ms delay
-- **Purpose**: Clear progression
+**Transition Duration**:
+- Fast transitions: 0.05-0.1 seconds (responsive)
+- Smooth transitions: 0.2-0.3 seconds (blend)
+- Keep transitions short for gameplay responsiveness
 
-## Idle Animations
+**State Priority**:
+- Win > Spin > Idle
+- Allow interrupts for immediate feedback
 
-### Symbol Idle (Attract Mode)
-- **Duration**: 3000-5000ms (loop)
-- **Easing**: Ease In Out Sine
-- **Animation**: Subtle float or pulse
-- **Purpose**: Visual interest when not playing
+### Scripted Animations
 
-### Background Ambient
-- **Duration**: 5000-10000ms (loop)
-- **Animation**: Gentle movement (particles, lighting)
-- **Purpose**: Atmosphere without distraction
-
-### UI Pulsing (Call-to-Action)
-- **Duration**: 1500-2000ms (loop)
-- **Easing**: Sine wave
-- **Scale**: 1.0x to 1.05x
-- **Purpose**: Gentle prompting
-
-## Easing Functions Reference
-
-### Common Easing Types
-- **Linear**: Constant speed (use rarely)
-- **Ease In**: Slow start, fast end (closing, hiding)
-- **Ease Out**: Fast start, slow end (opening, showing)
-- **Ease In Out**: Slow start, slow end (smooth transitions)
-
-### Specific Easings
-- **Ease Out Back**: Overshoot then settle (satisfying stop)
-- **Ease Out Elastic**: Bouncy spring effect (playful)
-- **Ease Out Bounce**: Multiple bounces (cartoonish)
-- **Ease In Out Cubic**: Smooth and professional
-
-### When to Use
-- **Ease Out Cubic**: Most UI and symbol animations
-- **Ease Out Back**: Reel stops, button releases
-- **Ease In Out Sine**: Gentle loops and cycles
-- **Linear**: Constant motion (reel spinning)
-
-## Performance Considerations
-
-### Frame Rate Targets
-- **Desktop**: 60 FPS (16.67ms per frame)
-- **Mobile High**: 60 FPS (16.67ms per frame)
-- **Mobile Low**: 30 FPS (33.33ms per frame)
-
-### Animation Budget
-- **Active Animations**: Maximum 10-15 simultaneous
-- **Particle Systems**: Maximum 5 active
-- **Tweens**: Lightweight, use extensively
-- **Skeletal Animations**: Minimize on mobile
-
-### Optimization Tips
-- Use object pooling for particles
-- Cull animations off-screen
-- Use simplified animations for low-tier devices
-- Pre-calculate complex animations
-- Disable animations on background apps
-
-## Testing & Tuning
-
-### Playtest Questions
-- Does it feel too slow? (reduce by 20%)
-- Does it feel too fast? (increase by 20%)
-- Can player skip/speed up? (should be yes)
-- Is it satisfying? (iterate on easing)
-- Does it maintain frame rate? (optimize)
-
-### A/B Testing
-- Test timing variations with players
-- Measure engagement and retention
-- Consider player preferences options
-- Balance excitement vs. pacing
-
-### Variables to Expose
+**DOTween/LeanTween Settings**:
 ```csharp
-// Example configuration
-[SerializeField] float spinDuration = 2.0f;
-[SerializeField] float reelStopDelay = 0.2f;
-[SerializeField] float symbolBounce = 1.2f;
-[SerializeField] float winDurationMultiplier = 1.0f;
-// Allow designers to tune without code changes
-```
-
-## Animation Checklist
-
-Before finalizing animations:
-- [ ] Consistent timing with similar actions
-- [ ] Appropriate easing for context
-- [ ] Player can skip/speed up if > 2 seconds
-- [ ] Maintains target frame rate
-- [ ] Feels responsive and satisfying
-- [ ] Clear communication of game state
-- [ ] Tested on minimum spec device
-- [ ] Audio synced with visual timing
-- [ ] Tunable via configuration
-- [ ] Documented in this guide
-
-## Tools & Implementation
-
-### Unity Animation Tools
-- **DOTween**: Excellent for tweening (recommended)
-- **Animator**: For complex skeletal animations
-- **Coroutines**: Simple sequential timing
-- **Timeline**: For cinematic sequences
-
-### Code Example (DOTween)
-```csharp
-// Reel stop with bounce
-symbol.transform.DOMoveY(targetY, 0.2f)
+// Scale animation example
+transform.DOScale(1.2f, 0.5f)
     .SetEase(Ease.OutBack)
-    .OnComplete(() => OnSymbolLanded());
+    .SetLoops(-1, LoopType.Yoyo);
 
-// Win count-up
-DOTween.To(
-    () => displayedAmount,
-    x => displayedAmount = x,
-    finalAmount,
-    2.0f
-).SetEase(Ease.OutCubic);
+// Recommended easing curves:
+// - OutQuad: General smooth movement
+// - OutBack: Bouncy, playful
+// - InOutCubic: Balanced acceleration/deceleration
+// - Linear: Constant speed (rare use)
 ```
 
-## References
-- **Game Feel by Steve Swink**: Foundational timing concepts
-- **The Illusion of Life**: Disney's animation principles
-- **Juice It or Lose It**: GDC talk on game feel
-- **Easing Functions Cheat Sheet**: easings.net
+**Performance**:
+- Pool animation objects (don't instantiate during gameplay)
+- Limit simultaneous tweens (<50 active)
+- Use Update loops for critical animations
+- Cache transform references
+
+## Timing Guidelines by Context
+
+### Big Win Sequence
+
+```
+0.0s: Reel stops, winning symbol highlights
+0.2s: Symbol scale + glow start
+0.5s: Audio hit, particle burst
+0.8s: Win UI panel slides in
+1.0s: Counter starts incrementing
+2.5s: Counter reaches total
+3.0s: Celebration effects peak
+4.0s: Effects fade out
+4.5s: Ready for next spin
+```
+
+**Total**: 4.5 seconds for big win
+
+### Normal Win Sequence
+
+```
+0.0s: Reel stops, winning symbol highlights
+0.2s: Symbol pop animation
+0.5s: Particle effects
+1.0s: Win amount display
+1.5s: Effects fade, ready for next spin
+```
+
+**Total**: 1.5 seconds for normal win
+
+### No Win Sequence
+
+```
+0.0s: Reel stops
+0.3s: Brief pause
+0.5s: Ready for next spin (no animations)
+```
+
+**Total**: 0.5 seconds for no win
+
+## Mobile Optimization
+
+### Performance Budget
+
+- **CPU Time**: <5ms per frame for all animations
+- **GPU Time**: <3ms per frame for animation shaders
+- **Memory**: <10MB for animation data
+
+### Optimization Techniques
+
+1. **Keyframe Reduction**
+   - Remove redundant keyframes
+   - Use animation compression
+   - Maintain visual quality
+
+2. **LOD for Animations**
+   - Disable distant background animations
+   - Reduce particle count at low settings
+   - Skip non-critical animations under load
+
+3. **Culling**
+   - Disable animations for off-screen objects
+   - Use occlusion culling
+   - Pause when not visible
+
+4. **Batching**
+   - Animate multiple objects with same timeline
+   - Use GPU instancing for particles
+   - Share animation data where possible
+
+### Mobile-Specific Timing
+
+- Reduce particle counts by 30-50%
+- Simplify complex easing curves to linear/quad
+- Limit simultaneous animations to 3-5 key elements
+- Disable ambient background animations on low-end devices
+
+## Animation Validation
+
+### Testing Checklist
+
+- [ ] Maintains 60fps on target devices
+- [ ] No stuttering or frame drops
+- [ ] Timing feels responsive (button press <100ms feedback)
+- [ ] Animations complete before next interaction possible
+- [ ] Smooth transitions between states
+- [ ] No animation "popping" or sudden changes
+- [ ] Audio sync matches animation peaks
+- [ ] Loops seamlessly without visible seams
+- [ ] Works correctly at different time scales (if implemented)
+
+### Profiling
+
+**Unity Profiler**:
+- Monitor Animator.Update time
+- Check Animation.Update time
+- Validate particle system overhead
+- Ensure no garbage collection spikes
+
+**Target Values**:
+- Animator: <2ms per frame
+- Animation: <1ms per frame
+- Particles: <3ms per frame
+
+## Easing Reference
+
+### Common Easing Curves
+
+| Curve | Use Case | Feel |
+|-------|----------|------|
+| Linear | Constant motion (reels spinning) | Mechanical |
+| Ease-In | Acceleration (reel starting) | Gradual start |
+| Ease-Out | Deceleration (reel stopping) | Smooth stop |
+| Ease-In-Out | Both acceleration and deceleration | Natural |
+| Bounce | Playful, energetic (wins) | Fun, bouncy |
+| Elastic | Exaggerated bounce (big wins) | Exciting |
+| Back | Anticipation then overshoot | Dynamic |
+
+### Timing Function Examples
+
+```
+Linear: Constant speed throughout
+Ease-In-Quad: Slow start, accelerate
+Ease-Out-Quad: Fast start, decelerate
+Ease-In-Out-Quad: Slow start, fast middle, slow end
+Bounce: Simulates bouncing physics
+Elastic: Spring-like overshoot and settle
+Back: Pull back before moving forward
+```
+
+## Audio Sync
+
+### Synchronization Guidelines
+
+- **Animation Peak** = **Audio Hit**
+- Animation should reach peak moment at same time as audio impact
+- Typical sync points:
+  - Symbol lands: 0.0s (audio + visual)
+  - Win pop: 0.3s (animation peak + audio hit)
+  - Coin impact: Match visual bounce with audio clink
+
+### Audio Cues
+
+- Button press: Immediate (<10ms delay)
+- Symbol land: Sync with visual stop
+- Win trigger: 0.1-0.2s after reel stop
+- Particle spawn: Sync with visual burst
+- Counter increment: Audio tick matches visual update
+
+## Best Practices
+
+1. **Predictable Timing**
+   - Players should learn timing patterns
+   - Consistency across similar interactions
+   - Clear anticipation for upcoming events
+
+2. **Responsive Feedback**
+   - Immediate response to input (<100ms)
+   - Clear state changes
+   - Satisfying animations for actions
+
+3. **Performance First**
+   - Never sacrifice frame rate for animation
+   - Degrade gracefully on low-end devices
+   - Test on minimum spec hardware
+
+4. **Clarity Over Complexity**
+   - Simple, readable animations
+   - Avoid visual clutter
+   - Focus attention on important elements
+
+5. **Cultural Consistency**
+   - Egyptian theme: Regal, ancient, mysterious
+   - Animation style matches art style
+   - Appropriate pacing for theme
+
+## Documentation
+
+After implementing animations, document:
+- Actual durations used
+- Any deviations from standards (with reason)
+- Performance measurements
+- Player feedback on timing
+
+Update `/constitution/MEMORY.md` with findings for future projects.
