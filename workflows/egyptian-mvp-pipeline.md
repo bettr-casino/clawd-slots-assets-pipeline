@@ -154,7 +154,7 @@ End-to-end workflow for developing the Egyptian-themed slot game MVP using the C
 **Timeline**: 0.5 days
 
 ## Total Timeline Estimate
-**MVP Development**: 25-35 days (5-7 weeks)
+**MVP Development**: 25-35 working days (5-7 weeks)
 
 ## Communication Protocol
 

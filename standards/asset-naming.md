@@ -13,7 +13,7 @@ Consistent naming conventions ensure organization, searchability, and prevent co
 ### Rules
 - Use PascalCase or snake_case consistently (snake_case preferred)
 - No spaces (use underscores)
-- No special characters except underscore and hyphen
+- No special characters except underscore (hyphens only within words, not as separators)
 - Keep names under 50 characters when possible
 - Be descriptive but concise
 - Use consistent abbreviations
@@ -331,7 +331,7 @@ Use Blender's built-in batch rename:
 ## Common Mistakes to Avoid
 
 ❌ `pharaoh gold.fbx` - Has space
-❌ `Egyptian-Pharaoh-Gold.fbx` - Use underscores, not hyphens for separators
+❌ `Egyptian-Pharaoh-Gold.fbx` - Use underscores as separators, not hyphens
 ❌ `pharaohgold.fbx` - Not descriptive enough
 ❌ `EgyptianPharaohWithGoldenHeaddress.fbx` - Too verbose
 ✅ `SM_Egyptian_Pharaoh_Gold.fbx` - Perfect!
