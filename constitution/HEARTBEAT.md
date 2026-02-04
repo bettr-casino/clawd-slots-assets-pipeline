@@ -10,24 +10,6 @@ For research and analysis tasks, break down your thinking process:
 - Show intermediate conclusions
 - Build toward final insights systematically
 
-## First Heartbeat - Initial Telegram Message
-
-**On the very first heartbeat cycle** (or when HEARTBEAT.md is loaded after a gateway restart), Clawd must send an initial Telegram message to Ron before proceeding with normal heartbeat operations.
-
-**Startup Actions:**
-- Send Telegram message to Ron:
-  "Clawd gateway started. Model: kimi-k2.5. Starting CLEOPATRA slots research now. Building shortlist of 5 Las Vegas casino gameplay videos. Will ask for your pick soon."
-- Check if web_search and browser tools are available
-- If web_search or browser tools are missing: Append to the message: "Step 1 blocked: web_search and browser tools not ready."
-- Get workspace path from config (do not hardcode the path)
-- After sending the initial message, proceed with normal heartbeat cycle operations
-
-**Implementation Notes:**
-- This is the first heartbeat / startup action
-- Detection logic: Check if this is the first heartbeat cycle or if gateway was recently restarted
-- Send the initial message only once before starting the research workflow
-- Always use the current workspace path from configuration, not a hardcoded path
-
 ## Heartbeat Cycle (Every 30 Minutes)
 
 ### Initialization
@@ -50,8 +32,8 @@ Track progress internally:
 - What will be worked on in the next 30 minutes
 - Any blockers or questions that need Ron's attention
 
-### Telegram Update (End of Every Heartbeat)
-At the end of every 30-minute cycle, send a Telegram message to Ron with exactly 2 sentences:
+### Progress Summary Format
+At the end of every 30-minute cycle, summarize progress using exactly 2 sentences:
 
 **Format:**
 ```
@@ -71,12 +53,12 @@ Next 30 mins I am working on <short summary of the next planned step>.
 **During Video Shortlist Phase:**
 ```
 Last 30 mins I worked on searching YouTube for CLEOPATRA gameplay videos and evaluating video quality.
-Next 30 mins I am working on finalizing the top 5 video shortlist and preparing the Telegram message for Ron.
+Next 30 mins I am working on finalizing the top 5 video shortlist for review.
 ```
 
 **During Waiting Phase:**
 ```
-Last 30 mins I worked on sending the video shortlist to Ron via Telegram and waiting for his selection.
+Last 30 mins I worked on finalizing the video shortlist and documenting options.
 Next 30 mins I am working on continuing to wait for Ron's video selection or starting preliminary analysis on video #1.
 ```
 
@@ -89,7 +71,7 @@ Next 30 mins I am working on documenting wild symbols, bonus triggers, and speci
 **When Stuck:**
 ```
 Last 30 mins I worked on analyzing the bonus game mechanics but encountered unclear free spin trigger conditions.
-Next 30 mins I am working on sending clarification questions to Ron via Telegram and continuing with other analyzable features.
+Next 30 mins I am working on documenting clarification questions and continuing with other analyzable features.
 ```
 
 ### Notification Protocol for Blockers
@@ -97,7 +79,7 @@ Next 30 mins I am working on sending clarification questions to Ron via Telegram
 If stuck or need clarification:
 1. Identify the specific blocker or unclear aspect
 2. Formulate clear, specific questions
-3. Send Telegram message to Ron with:
+3. Document the blocker with:
    - Brief context of the issue
    - Specific question or clarification needed
    - What can be continued while waiting
