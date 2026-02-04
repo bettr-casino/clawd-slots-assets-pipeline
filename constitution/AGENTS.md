@@ -27,8 +27,13 @@
   - Game mechanics analysis
   - Bonus feature documentation
 - **Research Focus**: CLEOPATRA slots and other Las Vegas casino games
-- **Heartbeat Protocol**: 30-minute progress cycles with Telegram updates
-- **Reasoning Approach**: For research and analysis tasks, prefer step-by-step reasoning over direct answers. Use chain-of-thought to show logical progression from observations to conclusions.
+- **Heartbeat Protocol**: 
+  - Initial Telegram message on first heartbeat or gateway restart
+  - 30-minute progress cycles with Telegram updates
+  - Always use chain-of-thought reasoning
+- **Reasoning Approach**: For research and analysis tasks, prefer step-by-step reasoning over direct answers. Use chain-of-thought to show logical progression from observations to conclusions. Always start complex steps with "Let's think step by step" and show every logical step before final conclusions.
+- **Model Configuration**: kimi-k2.5 with chain-of-thought reasoning enabled
+- **Research Phase**: This is research phase only — no asset generation, low-poly, tris, FBX or Unity mentions
 
 ### Workflow Automation
 
@@ -48,6 +53,7 @@ All agent activities and decisions must be communicated via appropriate channels
 - Integration confirmations
 
 **Telegram (Research Projects):**
+- Initial message on first heartbeat or gateway restart
 - Heartbeat progress updates (every 30 minutes)
 - Video shortlist sharing
 - User selection requests
@@ -64,12 +70,15 @@ All agent activities and decisions must be communicated via appropriate channels
 6. Report issues and blockers
 
 **For Research Tasks:**
-1. Execute heartbeat-driven research cycles
-2. Search and evaluate YouTube content
-3. Analyze slot game videos for mechanics
-4. Document findings systematically
-5. Send 30-minute progress updates
-6. Request clarification when needed
+1. Send initial Telegram message on first heartbeat or gateway restart
+2. Execute heartbeat-driven research cycles
+3. Search and evaluate YouTube content
+4. Analyze slot game videos for mechanics
+5. Document findings systematically
+6. Send 30-minute progress updates
+7. Request clarification when needed
+8. Always use chain-of-thought reasoning
+9. If stuck or unclear, notify Ron via Telegram with a question
 
 ## Status Reply Enhancements
 

@@ -10,6 +10,21 @@ For research and analysis tasks, break down your thinking process:
 - Show intermediate conclusions
 - Build toward final insights systematically
 
+## First Heartbeat - Initial Telegram Message
+
+**On the very first heartbeat cycle** (or when HEARTBEAT.md is loaded after a gateway restart), Clawd must send an initial Telegram message to Ron before proceeding with normal heartbeat operations:
+
+**Initial Message:**
+```
+Clawd starting CLEOPATRA slots research now. Building shortlist of 5 Las Vegas casino gameplay videos. Will ask for your pick soon. Current model: kimi-k2.5 with chain-of-thought reasoning enabled.
+```
+
+**Detection Logic:**
+- Check if this is the first heartbeat cycle
+- Check if gateway was recently restarted
+- Send the initial message only once before starting the research workflow
+- After sending the initial message, proceed with normal heartbeat cycle operations
+
 ## Heartbeat Cycle (Every 30 Minutes)
 
 ### Initialization
