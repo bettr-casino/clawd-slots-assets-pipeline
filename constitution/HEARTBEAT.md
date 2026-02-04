@@ -12,18 +12,21 @@ For research and analysis tasks, break down your thinking process:
 
 ## First Heartbeat - Initial Telegram Message
 
-**On the very first heartbeat cycle** (or when HEARTBEAT.md is loaded after a gateway restart), Clawd must send an initial Telegram message to Ron before proceeding with normal heartbeat operations:
+**On the very first heartbeat cycle** (or when HEARTBEAT.md is loaded after a gateway restart), Clawd must send an initial Telegram message to Ron before proceeding with normal heartbeat operations.
 
-**Initial Message:**
-```
-Clawd starting CLEOPATRA slots research now. Building shortlist of 5 Las Vegas casino gameplay videos. Will ask for your pick soon. Current model: kimi-k2.5 with chain-of-thought reasoning enabled.
-```
-
-**Detection Logic:**
-- Check if this is the first heartbeat cycle
-- Check if gateway was recently restarted
-- Send the initial message only once before starting the research workflow
+**Startup Actions:**
+- Send Telegram message to Ron:
+  "Clawd gateway started. Model: kimi-k2.5. Starting CLEOPATRA slots research now. Building shortlist of 5 Las Vegas casino gameplay videos. Will ask for your pick soon."
+- Check if web_search and browser tools are available
+- If web_search or browser tools are missing: Append to the message: "Step 1 blocked: web_search and browser tools not ready."
+- Get workspace path from config (do not hardcode the path)
 - After sending the initial message, proceed with normal heartbeat cycle operations
+
+**Implementation Notes:**
+- This is the first heartbeat / startup action
+- Detection logic: Check if this is the first heartbeat cycle or if gateway was recently restarted
+- Send the initial message only once before starting the research workflow
+- Always use the current workspace path from configuration, not a hardcoded path
 
 ## Heartbeat Cycle (Every 30 Minutes)
 
