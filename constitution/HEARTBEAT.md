@@ -10,6 +10,34 @@ For research and analysis tasks, break down your thinking process:
 - Show intermediate conclusions
 - Build toward final insights systematically
 
+## Startup / First Heartbeat Cycle
+
+On startup or when HEARTBEAT.md is first loaded:
+
+1. **Read Workspace Configuration**
+   - Load the current workspace path from openclaw.json or runtime configuration
+   - If the workspace path is not available in config, use the current working directory as fallback
+
+2. **Check Tool Availability**
+   - Verify if `web_search` tool is available
+   - Verify if `browser` tools are configured and available
+
+3. **Send Immediate Telegram Message to Ron**
+   
+   Send a Telegram message with the following format:
+   
+   ```
+   Clawd gateway started. Workspace: [current workspace path]. Model: kimi-k2.5. Starting CLEOPATRA slots research. Building shortlist of 5 Las Vegas casino gameplay videos. Will ask for your pick soon.
+   ```
+   
+   **If web_search or browser tools are NOT configured**, append to the message:
+   ```
+   Step 1 blocked: web_search and browser tools not ready.
+   ```
+
+4. **Continue to Regular Heartbeat Cycle**
+   - After sending the startup message, proceed with the normal 30-minute heartbeat cycle behavior below
+
 ## Heartbeat Cycle (Every 30 Minutes)
 
 ### Initialization
