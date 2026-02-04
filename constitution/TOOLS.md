@@ -32,6 +32,26 @@
 - Status updates and notifications
 - File sharing and previews
 
+**Telegram**
+- Research project updates
+- Heartbeat progress summaries
+- User selection and clarification requests
+- Quick blocker notifications
+
+### Research & Analysis
+
+**YouTube**
+- Video research and evaluation
+- Gameplay footage analysis
+- Quality assessment of casino videos
+- Reference material gathering
+
+**Video Analysis Tools**
+- Frame-by-frame review capabilities
+- Screenshot capture
+- Timestamp notation
+- Visual element identification
+
 ### AI/LLM
 
 **Kimi K-2.5**

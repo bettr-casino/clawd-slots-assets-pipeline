@@ -17,6 +17,18 @@
   - Basic animation sequences
 - **Output Format**: FBX, GLB compatible with Unity
 
+### Slots Research Capabilities
+
+- **Function**: Reverse engineering slot games from video
+- **Capabilities**:
+  - YouTube video analysis and evaluation
+  - Reel configuration identification
+  - Symbol inventory cataloging
+  - Game mechanics analysis
+  - Bonus feature documentation
+- **Research Focus**: CLEOPATRA slots and other Las Vegas casino games
+- **Heartbeat Protocol**: 30-minute progress cycles with Telegram updates
+
 ### Workflow Automation
 
 - Asset naming validation
@@ -26,11 +38,20 @@
 
 ## Agent Communication Protocol
 
-All agent activities and decisions must be communicated via Slack channels:
+All agent activities and decisions must be communicated via appropriate channels:
+
+**Slack Channels:**
 - Asset generation requests
 - Pipeline status updates
 - Quality check results
 - Integration confirmations
+
+**Telegram (Research Projects):**
+- Heartbeat progress updates (every 30 minutes)
+- Video shortlist sharing
+- User selection requests
+- Clarification questions
+- Blocker notifications
 
 ## Agent Responsibilities
 
@@ -40,6 +61,14 @@ All agent activities and decisions must be communicated via Slack channels:
 4. Prepare assets for Unity import
 5. Document all processes
 6. Report issues and blockers
+
+**For Research Tasks:**
+1. Execute heartbeat-driven research cycles
+2. Search and evaluate YouTube content
+3. Analyze slot game videos for mechanics
+4. Document findings systematically
+5. Send 30-minute progress updates
+6. Request clarification when needed
 
 ## Status Reply Enhancements
 

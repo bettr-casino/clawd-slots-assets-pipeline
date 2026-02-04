@@ -2,6 +2,29 @@
 
 ## Project Knowledge Base
 
+### CLEOPATRA Slots Research
+
+**Research Status**: Initialized
+- Phase: Awaiting start
+- Current Step: Video shortlist creation
+- Next Action: Search YouTube for CLEOPATRA gameplay videos
+
+**Video Shortlist**: Not yet created
+- Target: 5 high-quality videos of real Las Vegas CLEOPATRA machines
+- Criteria: Clear reels, multiple spins, bonus features, good quality
+
+**Selected Video**: Awaiting user selection
+
+**Reel Configuration**: To be determined
+
+**Symbol Inventory**: To be determined
+
+**Game Mechanics**: To be determined
+
+**Bonus Features**: To be determined
+
+---
+
 ### Asset Library
 
 **Egyptian Theme**
@@ -59,3 +82,9 @@
 ## Active Projects
 
 Current focus: Egyptian-themed MVP slot game with mobile optimization priority.
+
+**CLEOPATRA Slots Research**: Heartbeat-driven reverse engineering of CLEOPATRA slots from YouTube videos.
+- Status: Ready to begin
+- Target: Real Las Vegas casino machine gameplay
+- Deliverables: Reel configuration, symbol inventory, game mechanics documentation
+- Updates: Every 30 minutes via Telegram
