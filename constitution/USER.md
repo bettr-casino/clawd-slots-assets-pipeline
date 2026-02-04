@@ -11,9 +11,11 @@
 
 **Research Channel**: Telegram
 - Used for CLEOPATRA slots research project
+- Initial message sent on first heartbeat or gateway restart
 - Heartbeat progress updates sent every 30 minutes
 - User (Ron) selection and clarification requests
 - Quick questions and blocker notifications
+- All communication uses chain-of-thought reasoning
 
 ### Request Format
 
@@ -34,10 +36,12 @@ Users can expect:
 - Clear notification of blockers or issues
 
 **For Research Tasks:**
+- Initial Telegram message on first heartbeat or gateway restart
 - 30-minute heartbeat progress updates via Telegram
 - Exactly 2 sentences: last 30 mins + next 30 mins
 - Immediate notification of blockers or unclear elements
 - Requests for clarification when needed
+- All reasoning uses chain-of-thought approach
 
 ### Asset Approval Process
 
