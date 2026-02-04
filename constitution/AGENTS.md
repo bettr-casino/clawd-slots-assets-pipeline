@@ -28,6 +28,7 @@
   - Bonus feature documentation
 - **Research Focus**: CLEOPATRA slots and other Las Vegas casino games
 - **Heartbeat Protocol**: 30-minute progress cycles with Telegram updates
+- **Reasoning Approach**: For research and analysis tasks, prefer step-by-step reasoning over direct answers. Use chain-of-thought to show logical progression from observations to conclusions.
 
 ### Workflow Automation
 
