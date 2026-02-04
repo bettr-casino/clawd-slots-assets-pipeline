@@ -9,6 +9,12 @@
 - Asset requests, status updates, and deliverables are shared via Slack
 - No direct file system or email-based communication
 
+**Research Channel**: Telegram
+- Used for CLEOPATRA slots research project
+- Heartbeat progress updates sent every 30 minutes
+- User (Ron) selection and clarification requests
+- Quick questions and blocker notifications
+
 ### Request Format
 
 When requesting assets or pipeline actions, provide:
@@ -26,6 +32,12 @@ Users can expect:
 - Technical specifications for delivered assets
 - Documentation for any custom workflows
 - Clear notification of blockers or issues
+
+**For Research Tasks:**
+- 30-minute heartbeat progress updates via Telegram
+- Exactly 2 sentences: last 30 mins + next 30 mins
+- Immediate notification of blockers or unclear elements
+- Requests for clarification when needed
 
 ### Asset Approval Process
 
