@@ -1,5 +1,15 @@
 # HEARTBEAT.md
 
+## Chain-of-Thought Reasoning
+
+**Always use detailed chain-of-thought reasoning.** Start complex steps with "Let's think step by step" and show every logical step before final conclusions.
+
+For research and analysis tasks, break down your thinking process:
+- State what you observe
+- Explain your reasoning at each step
+- Show intermediate conclusions
+- Build toward final insights systematically
+
 ## Heartbeat Cycle (Every 30 Minutes)
 
 ### Initialization
