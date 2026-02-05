@@ -97,6 +97,13 @@ check_prerequisites() {
         all_ok=false
     fi
     
+    if [[ -n "${TELEGRAM_API_KEY:-}" ]]; then
+        print_success "TELEGRAM_API_KEY is configured"
+    else
+        print_error "TELEGRAM_API_KEY environment variable not set!"
+        all_ok=false
+    fi
+    
     # Check workspace directory
     if [[ -d "$CONSTITUTION_DIR" ]]; then
         print_success "Constitution directory found: $CONSTITUTION_DIR"
@@ -241,21 +248,17 @@ configure_telegram() {
     
     print_info "Setting up Telegram bot: @clawd_slots_bot"
     echo
-    print_info "To configure Telegram, you need the bot token."
-    print_info "The bot @clawd_slots_bot should already be created."
+    print_info "Using TELEGRAM_API_KEY environment variable for bot token."
     echo
     
-    read -s -p "Enter the Telegram bot token (input hidden): " -r bot_token
-    echo
-    
-    if [[ -z "$bot_token" ]]; then
-        print_error "Bot token cannot be empty"
+    if [[ -z "${TELEGRAM_API_KEY:-}" ]]; then
+        print_error "TELEGRAM_API_KEY environment variable is not set"
         exit 1
     fi
     
     print_info "Configuring Telegram settings..."
     openclaw config set channels.telegram.enabled true
-    openclaw config set channels.telegram.botToken "$bot_token"
+    openclaw config set channels.telegram.botToken "$TELEGRAM_API_KEY"
     openclaw config set channels.telegram.dmPolicy pairing
     openclaw config set channels.telegram.groupPolicy allowlist
     openclaw config set channels.telegram.streamMode partial
@@ -494,7 +497,7 @@ main() {
     print_warning "Make sure you have:"
     echo "  • BRAVE_API_KEY environment variable set"
     echo "  • MOONSHOT_API_KEY environment variable set"
-    echo "  • Telegram bot token for @clawd_slots_bot"
+    echo "  • TELEGRAM_API_KEY environment variable set"
     echo
     prompt_continue "Press Enter to begin setup..."
     
