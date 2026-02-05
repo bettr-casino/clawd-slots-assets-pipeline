@@ -14,7 +14,7 @@ This guide provides step-by-step instructions to install and configure OpenClaw 
 For GitHub Codespaces users, we provide an automated interactive setup script that handles all configuration steps:
 
 ```bash
-./scripts/clawdbot-setup.sh
+./scripts/openclaw-setup.sh
 ```
 
 This script will:

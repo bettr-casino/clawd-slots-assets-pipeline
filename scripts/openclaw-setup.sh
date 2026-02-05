@@ -18,6 +18,7 @@ OPENCLAW_CONFIG_DIR="$HOME/.openclaw"
 OPENCLAW_CONFIG_FILE="$OPENCLAW_CONFIG_DIR/openclaw.json"
 GATEWAY_PORT=18789
 CDP_PORT=18801
+TELEGRAM_PAIRING_APPROVED=false
 
 # Helper functions
 print_header() {
@@ -80,6 +81,29 @@ check_prerequisites() {
     else
         print_error "npm not found!"
         all_ok=false
+    fi
+
+    # Check just
+    if check_command just; then
+        local just_version=$(just --version)
+        print_success "just installed: $just_version"
+    else
+        print_warning "just not found, attempting to install via apt..."
+        if command -v apt-get &> /dev/null; then
+            # Use only the core Ubuntu sources list to avoid third-party repo GPG issues.
+            if sudo apt-get update -o Dir::Etc::sourcelist="sources.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" \
+                && sudo apt-get install -y just; then
+                local just_version=$(just --version)
+                print_success "just installed: $just_version"
+            else
+                print_error "Failed to install just"
+                print_info "If this keeps failing, disable the yarn apt repo or install just manually."
+                all_ok=false
+            fi
+        else
+            print_error "apt-get not available to install just"
+            all_ok=false
+        fi
     fi
     
     # Check required environment variables
@@ -177,7 +201,7 @@ run_initial_configuration() {
 configure_moonshot_ai() {
     print_header "Step 4: Configuring Moonshot AI Provider"
     
-    print_info "Setting up Moonshot AI provider with Kimi models..."
+    print_info "Setting up Moonshot AI provider with Kimi K2.5..."
     
     # The API key should already be set during openclaw configure
     # But we can verify it's there
@@ -186,9 +210,14 @@ configure_moonshot_ai() {
         exit 1
     fi
     
+    print_info "Setting default model to moonshot/kimi-k2.5..."
+    if ! openclaw config set agents.defaults.model.primary "moonshot/kimi-k2.5"; then
+        print_warning "Failed to set default model to moonshot/kimi-k2.5, continuing..."
+    fi
+
     print_success "Moonshot AI configuration verified"
     print_info "Base URL: https://api.moonshot.ai/v1"
-    print_info "Models: kimi-k2-0905-preview (256K), kimi-k2.5 (primary)"
+    print_info "Model: kimi-k2.5 (primary)"
     
     prompt_continue
 }
@@ -204,11 +233,14 @@ configure_brave_search() {
     fi
     
     # Configure web search with Brave API key
-    if ! openclaw config set web.search.enabled true; then
+    if ! openclaw config set tools.web.search.enabled true; then
         print_warning "Failed to enable web search, continuing..."
     fi
-    if ! openclaw config set web.search.provider brave; then
+    if ! openclaw config set tools.web.search.provider brave; then
         print_warning "Failed to set Brave as search provider, continuing..."
+    fi
+    if ! openclaw config set tools.web.search.apiKey "$BRAVE_API_KEY"; then
+        print_warning "Failed to set Brave API key, continuing..."
     fi
     
     print_success "Brave Search configured"
@@ -267,6 +299,27 @@ configure_telegram() {
     print_info "DM Policy: pairing (requires approval)"
     print_info "Group Policy: allowlist"
     print_info "Stream Mode: partial"
+
+    echo
+    read -p "Have you received a pairing code from the bot? (y/N): " -r has_code
+    if [[ "$has_code" =~ ^[Yy]$ ]]; then
+        read -p "Enter pairing code: " -r pairing_code
+        if [[ -n "$pairing_code" ]]; then
+            print_info "Approving pairing with code: $pairing_code"
+            if openclaw pairing approve telegram "$pairing_code"; then
+                TELEGRAM_PAIRING_APPROVED=true
+                print_success "Pairing approved!"
+            else
+                print_error "Failed to approve pairing. You can try again later with:"
+                print_info "  openclaw pairing approve telegram YOUR_CODE"
+            fi
+        else
+            print_info "No pairing code entered. You can pair later by running:"
+            print_info "  openclaw pairing approve telegram YOUR_CODE"
+        fi
+    else
+        print_info "No pairing code yet. You can pair after you receive one."
+    fi
     
     prompt_continue
 }
@@ -341,6 +394,12 @@ start_openclaw() {
 
 handle_telegram_pairing() {
     print_header "Step 11: Telegram Pairing"
+
+    if [[ "$TELEGRAM_PAIRING_APPROVED" == true ]]; then
+        print_info "Pairing already approved during Telegram setup."
+        prompt_continue
+        return
+    fi
     
     echo
     print_info "To pair your Telegram account with OpenClaw:"
