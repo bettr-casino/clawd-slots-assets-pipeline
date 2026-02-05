@@ -197,8 +197,12 @@ configure_brave_search() {
     fi
     
     # Configure web search with Brave API key
-    openclaw config set web.search.enabled true || true
-    openclaw config set web.search.provider brave || true
+    if ! openclaw config set web.search.enabled true; then
+        print_warning "Failed to enable web search, continuing..."
+    fi
+    if ! openclaw config set web.search.provider brave; then
+        print_warning "Failed to set Brave as search provider, continuing..."
+    fi
     
     print_success "Brave Search configured"
     print_info "Web search and fetch capabilities are enabled"
@@ -221,8 +225,12 @@ configure_agents() {
     print_success "Agents workspace set to: $workspace_path"
     
     print_info "Configuring concurrent execution limits..."
-    openclaw config set agents.defaults.maxConcurrentAgents 4 || true
-    openclaw config set agents.defaults.maxConcurrentSubagents 8 || true
+    if ! openclaw config set agents.defaults.maxConcurrentAgents 4; then
+        print_warning "Failed to set maxConcurrentAgents, continuing..."
+    fi
+    if ! openclaw config set agents.defaults.maxConcurrentSubagents 8; then
+        print_warning "Failed to set maxConcurrentSubagents, continuing..."
+    fi
     print_success "Concurrent execution limits configured"
     
     prompt_continue
@@ -237,7 +245,8 @@ configure_telegram() {
     print_info "The bot @clawd_slots_bot should already be created."
     echo
     
-    read -p "Enter the Telegram bot token: " -r bot_token
+    read -s -p "Enter the Telegram bot token (input hidden): " -r bot_token
+    echo
     
     if [[ -z "$bot_token" ]]; then
         print_error "Bot token cannot be empty"
@@ -264,7 +273,7 @@ configure_gateway() {
     
     print_info "Generating secure authentication token..."
     local auth_token
-    auth_token=$(openssl rand -base64 48 | tr -d '/+=' | head -c 64)
+    auth_token=$(openssl rand -hex 32)
     
     print_info "Configuring gateway settings..."
     openclaw config set gateway.port "$GATEWAY_PORT"
@@ -278,10 +287,11 @@ configure_gateway() {
     print_info "Port: $GATEWAY_PORT"
     print_info "Mode: local"
     print_info "Bind: loopback"
-    print_info "Auth Token: $auth_token"
+    print_info "Auth Token: ${auth_token:0:8}...${auth_token: -8} (truncated for security)"
     
     echo
     print_warning "IMPORTANT: Save this auth token securely!"
+    print_info "Full token stored in ~/.openclaw/openclaw.json"
     print_info "You'll need it to connect remote clients to this gateway."
     
     prompt_continue
@@ -291,10 +301,14 @@ configure_plugins() {
     print_header "Step 9: Configuring Plugins"
     
     print_info "Disabling Slack plugin (using Telegram instead)..."
-    openclaw config set plugins.entries.slack.enabled false || true
+    if ! openclaw config set plugins.entries.slack.enabled false; then
+        print_warning "Failed to disable Slack plugin (may not exist), continuing..."
+    fi
     
     print_info "Enabling Telegram plugin..."
-    openclaw config set plugins.entries.telegram.enabled true
+    if ! openclaw config set plugins.entries.telegram.enabled true; then
+        print_warning "Failed to enable Telegram plugin, continuing..."
+    fi
     
     print_success "Plugin configuration completed"
     print_info "Slack: disabled"
