@@ -264,11 +264,11 @@ configure_agents() {
     print_success "Agents workspace set to: $workspace_path"
     
     print_info "Configuring concurrent execution limits..."
-    if ! openclaw config set agents.defaults.maxConcurrentAgents 4; then
-        print_warning "Failed to set maxConcurrentAgents, continuing..."
+    if ! openclaw config set agents.defaults.maxConcurrent 4; then
+        print_warning "Failed to set maxConcurrent, continuing..."
     fi
-    if ! openclaw config set agents.defaults.maxConcurrentSubagents 8; then
-        print_warning "Failed to set maxConcurrentSubagents, continuing..."
+    if ! openclaw config set agents.defaults.subagents.maxConcurrent 8; then
+        print_warning "Failed to set subagents.maxConcurrent, continuing..."
     fi
     print_success "Concurrent execution limits configured"
     
@@ -376,18 +376,14 @@ configure_plugins() {
 start_openclaw() {
     print_header "Step 10: Starting OpenClaw Services"
     
-    print_info "Starting OpenClaw..."
-    openclaw start || {
-        print_warning "OpenClaw may already be running or failed to start"
-        print_info "Checking status..."
-    }
-    
-    sleep 2
-    
     print_info "Checking OpenClaw status..."
-    openclaw status || true
+    if ! openclaw status; then
+        print_warning "OpenClaw gateway may not be running"
+        print_info "You can start it in the next step or run:"
+        print_info "  ./scripts/openclaw-gateway-start.sh --background"
+    fi
     
-    print_success "OpenClaw services started"
+    print_success "OpenClaw status checked"
     
     prompt_continue
 }
