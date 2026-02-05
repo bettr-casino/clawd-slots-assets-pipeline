@@ -1,4 +1,4 @@
-start-gateway:
+start:
     ./scripts/openclaw-gateway-start.sh
 
 config:
