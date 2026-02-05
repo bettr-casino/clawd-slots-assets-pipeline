@@ -184,12 +184,18 @@ run_initial_configuration() {
         fi
     fi
     
-    print_info "Running OpenClaw configuration wizard..."
+    print_info "Running OpenClaw configuration wizard (model selection skipped)..."
     print_info "This will prompt you for initial configuration settings."
     echo
     
     # Run the configuration wizard
-    openclaw configure || {
+    openclaw configure \
+        --section workspace \
+        --section web \
+        --section gateway \
+        --section channels \
+        --section skills \
+        --section health || {
         print_error "Configuration wizard failed"
         exit 1
     }
@@ -211,13 +217,18 @@ configure_moonshot_ai() {
     fi
     
     print_info "Setting default model to moonshot/kimi-k2.5..."
-    if ! openclaw config set agents.defaults.model.primary "moonshot/kimi-k2.5"; then
-        print_warning "Failed to set default model to moonshot/kimi-k2.5, continuing..."
+    if ! openclaw models set "moonshot/kimi-k2.5"; then
+        print_warning "Failed to set default model via models command, trying config..."
+        if ! openclaw config set agents.defaults.model.primary "moonshot/kimi-k2.5"; then
+            print_warning "Failed to set default model to moonshot/kimi-k2.5, continuing..."
+        fi
     fi
 
     print_success "Moonshot AI configuration verified"
+    print_info "Default model is set automatically (no manual selection needed)."
     print_info "Base URL: https://api.moonshot.ai/v1"
     print_info "Model: kimi-k2.5 (primary)"
+    print_info "Note: The models registry is built-in; it may not appear under models.providers in config."
     
     prompt_continue
 }
