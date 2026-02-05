@@ -9,6 +9,29 @@ This guide provides step-by-step instructions to install and configure OpenClaw 
 - Linux/macOS environment (or WSL on Windows)
 - GitHub Codespaces (optional, but recommended)
 
+## Quick Start (GitHub Codespaces)
+
+For GitHub Codespaces users, we provide an automated interactive setup script that handles all configuration steps:
+
+```bash
+./scripts/clawdbot-setup.sh
+```
+
+This script will:
+- Install OpenClaw globally
+- Configure all required components (Moonshot AI, Brave Search, Telegram)
+- Set up the agents workspace
+- Configure and start the gateway
+- Handle Telegram bot pairing
+- Run health checks
+
+**Prerequisites for automated setup:**
+- `BRAVE_API_KEY` environment variable must be set
+- `MOONSHOT_API_KEY` environment variable must be set
+- Telegram bot token for @clawd_slots_bot
+
+If you prefer manual setup or need to troubleshoot, continue with the detailed instructions below.
+
 ## Installation
 
 ### 1. Install OpenClaw
