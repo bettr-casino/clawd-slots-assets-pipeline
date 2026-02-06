@@ -133,11 +133,11 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 - Examples: `iteration-001/`, `iteration-002/`, `iteration-003/`
 - Use workspace-relative paths (no hardcoded paths outside of `assets/generated/`)
 - Organize within iteration folder:
-  - `assets/generated/iteration-NNN/symbols/`
-  - `assets/generated/iteration-NNN/textures/`
-  - `assets/generated/iteration-NNN/particles/`
-  - `assets/generated/iteration-NNN/animations/`
-  - `assets/generated/iteration-NNN/scenes/`
+  - `assets/generated/iteration-[N]/symbols/`
+  - `assets/generated/iteration-[N]/textures/`
+  - `assets/generated/iteration-[N]/particles/`
+  - `assets/generated/iteration-[N]/animations/`
+  - `assets/generated/iteration-[N]/scenes/`
 
 **Storage Rules**:
 - Store binary assets directly in repo (no Git LFS)

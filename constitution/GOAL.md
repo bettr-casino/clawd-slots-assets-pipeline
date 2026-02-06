@@ -115,7 +115,7 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
 - **Asset Storage Rules**:
   - Store all generated binary assets in `assets/generated/iteration-[current iteration number]/` (e.g., `iteration-001/`, `iteration-002/`, `iteration-003/`)
   - Use workspace-relative paths (no hardcoded paths outside of `assets/generated/`)
-  - Organize within iteration folder: `assets/generated/iteration-NNN/symbols/`, `assets/generated/iteration-NNN/textures/`, etc.
+  - Organize within iteration folder: `assets/generated/iteration-[N]/symbols/`, `assets/generated/iteration-[N]/textures/`, etc.
   - Store binary assets directly in repo (no Git LFS)
 - **Asset Cleanup on Human "Yes"**:
   - When human approves with "yes", delete all older iteration folders (e.g., `iteration-001/` to `iteration-[N-1]/`)

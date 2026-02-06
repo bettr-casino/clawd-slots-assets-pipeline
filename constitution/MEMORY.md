@@ -371,9 +371,9 @@ When Clawd restarts after a Codespace shutdown:
 }
 ```
 
-### Starting Next Iteration (After "No")
+### Starting Next Iteration (After "No") - Restarts at Step 2
 
-**Note**: Step 2 is correct. When human says "no", the loop restarts at Step 2 (not Step 1), as Step 1 (web search) is only performed once at the beginning.
+**Note**: Step 2 is correct because Step 1 (web search) is only performed once at the beginning. When the human says "no", the loop restarts at Step 2.
 
 ```json
 {
