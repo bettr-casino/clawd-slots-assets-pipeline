@@ -19,6 +19,7 @@ OPENCLAW_CONFIG_FILE="$OPENCLAW_CONFIG_DIR/openclaw.json"
 GATEWAY_PORT=18789
 CDP_PORT=18801
 TELEGRAM_PAIRING_APPROVED=false
+BROWSER_SETUP_STATUS="Not installed"
 
 # Helper functions
 print_header() {
@@ -57,6 +58,17 @@ check_command() {
     else
         return 1
     fi
+}
+
+find_chrome_command() {
+    local cmd
+    for cmd in google-chrome google-chrome-stable chromium chromium-browser; do
+        if command -v "$cmd" &> /dev/null; then
+            echo "$cmd"
+            return 0
+        fi
+    done
+    return 1
 }
 
 # Main setup functions
@@ -364,8 +376,89 @@ configure_gateway() {
     prompt_continue
 }
 
+setup_chrome_browser() {
+    print_header "Step 9: Setting Up Chrome Browser"
+
+    local chrome_cmd
+    if chrome_cmd=$(find_chrome_command); then
+        local chrome_version=$($chrome_cmd --version 2>/dev/null || echo "unknown")
+        print_success "Browser installed: $chrome_version ($chrome_cmd)"
+        BROWSER_SETUP_STATUS="$chrome_version ($chrome_cmd)"
+        prompt_continue
+        return
+    fi
+
+    print_warning "Chrome/Chromium not found in the Codespace."
+    read -p "Install Google Chrome Stable (recommended)? (y/N): " -r install_chrome
+
+    if [[ "$install_chrome" =~ ^[Yy]$ ]]; then
+        read -p "This will add Google's signing key and apt repository. Continue? (y/N): " -r allow_repo
+        if [[ "$allow_repo" =~ ^[Yy]$ ]]; then
+            if ! check_command gpg; then
+                print_error "gpg is required to install Google Chrome"
+                print_info "Install gpg and rerun this step."
+                prompt_continue
+                return
+            fi
+
+            if ! check_command curl && ! check_command wget; then
+                print_error "curl or wget is required to download the Google signing key"
+                print_info "Install curl or wget and rerun this step."
+                prompt_continue
+                return
+            fi
+
+            print_info "Adding Google Chrome apt key and repository..."
+            sudo install -m 0755 -d /etc/apt/keyrings
+
+            if check_command curl; then
+                curl -fsSL "https://dl.google.com/linux/linux_signing_key.pub" | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+            else
+                wget -qO- "https://dl.google.com/linux/linux_signing_key.pub" | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+            fi
+
+            echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
+
+            if sudo apt-get update && sudo apt-get install -y google-chrome-stable; then
+                if chrome_cmd=$(find_chrome_command); then
+                    local chrome_version=$($chrome_cmd --version 2>/dev/null || echo "unknown")
+                    print_success "Chrome installed: $chrome_version ($chrome_cmd)"
+                    BROWSER_SETUP_STATUS="$chrome_version ($chrome_cmd)"
+                    prompt_continue
+                    return
+                fi
+            else
+                print_warning "Google Chrome installation failed."
+            fi
+        else
+            print_info "Skipping Google Chrome installation."
+        fi
+    fi
+
+    read -p "Install Chromium from Ubuntu repositories instead? (y/N): " -r install_chromium
+    if [[ "$install_chromium" =~ ^[Yy]$ ]]; then
+        print_info "Installing Chromium..."
+        if sudo apt-get update -o Dir::Etc::sourcelist="sources.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" \
+            && (sudo apt-get install -y chromium || sudo apt-get install -y chromium-browser); then
+            if chrome_cmd=$(find_chrome_command); then
+                local chrome_version=$($chrome_cmd --version 2>/dev/null || echo "unknown")
+                print_success "Chromium installed: $chrome_version ($chrome_cmd)"
+                BROWSER_SETUP_STATUS="$chrome_version ($chrome_cmd)"
+                prompt_continue
+                return
+            fi
+        else
+            print_warning "Chromium installation failed."
+        fi
+    fi
+
+    print_warning "No Chrome/Chromium installation completed. Browser automation may fail."
+    BROWSER_SETUP_STATUS="Not installed"
+    prompt_continue
+}
+
 configure_plugins() {
-    print_header "Step 9: Configuring Plugins"
+    print_header "Step 10: Configuring Plugins"
     
     print_info "Disabling Slack plugin (using Telegram instead)..."
     if ! openclaw config set plugins.entries.slack.enabled false; then
@@ -385,7 +478,7 @@ configure_plugins() {
 }
 
 start_openclaw() {
-    print_header "Step 10: Starting OpenClaw Services"
+    print_header "Step 11: Starting OpenClaw Services"
     
     print_info "Checking OpenClaw status..."
     if ! openclaw status; then
@@ -400,7 +493,7 @@ start_openclaw() {
 }
 
 handle_telegram_pairing() {
-    print_header "Step 11: Telegram Pairing"
+    print_header "Step 12: Telegram Pairing"
 
     if [[ "$TELEGRAM_PAIRING_APPROVED" == true ]]; then
         print_info "Pairing already approved during Telegram setup."
@@ -444,7 +537,7 @@ handle_telegram_pairing() {
 }
 
 test_telegram() {
-    print_header "Step 12: Testing Telegram Integration"
+    print_header "Step 13: Testing Telegram Integration"
     
     print_info "Testing Telegram integration..."
     
@@ -464,7 +557,7 @@ test_telegram() {
 }
 
 start_gateway() {
-    print_header "Step 13: Starting Gateway (Optional)"
+    print_header "Step 14: Starting Gateway (Optional)"
     
     echo
     read -p "Do you want to start the OpenClaw gateway now? (y/N): " -r start_gw
@@ -511,6 +604,7 @@ show_summary() {
     echo "  • Moonshot AI: Configured with Kimi models"
     echo "  • Brave Search: Enabled for web search"
     echo "  • Agents Workspace: $CONSTITUTION_DIR"
+    echo "  • Browser: $BROWSER_SETUP_STATUS"
     echo "  • Telegram Bot: @clawd_slots_bot"
     echo "  • Gateway Port: $GATEWAY_PORT"
     echo "  • Config File: $OPENCLAW_CONFIG_FILE"
@@ -575,6 +669,7 @@ main() {
     configure_agents
     configure_telegram
     configure_gateway
+    setup_chrome_browser
     configure_plugins
     start_openclaw
     handle_telegram_pairing
