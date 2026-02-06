@@ -19,16 +19,24 @@ Find and select a single high-quality YouTube video of a Las Vegas slot machine 
 ### Step 1.1: Web Search
 
 **Actions:**
-- Receive target slot machine name from human (e.g., "CLEOPATRA SLOTS")
+- If the human does not provide a slot name, default to **popular Cleopatra-themed Las Vegas slots** and discover **4K** videos uploaded within the **last 24 months** on YouTube.
 - Attempt web_search with Brave using `BRAVE_API_KEY`
 - If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
 - If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
-- Search terms: "[SLOT NAME] Las Vegas", "real casino slot machine gameplay [SLOT NAME]", etc.
+- Enforce the **last 24 months** rule by filtering results using published date metadata when available. Discard any video older than 24 months.
+- Search terms include:
+  - "Cleopatra slot machine gameplay 4K site:youtube.com after:2024-02-06"
+  - "IGT Cleopatra slot Las Vegas gameplay"
+  - "Cleopatra Grand slot machine gameplay 4K after:2024-02-06"
+  - "Cleopatra II slot gameplay 4K after:2024-02-06"
+  - If a slot name is provided, use it in the same pattern.
+- Date filters apply **only** to YouTube video searches, not to other web research sources.
 - Evaluate video quality criteria:
   - Clear reel visibility
   - Multiple spin sequences
   - Bonus feature demonstrations
-  - Good audio/visual quality
+  - High resolution (4K required)
+  - Upload date within the last 24 months
   - Complete game rounds
   - Real casino footage (not mobile apps)
 

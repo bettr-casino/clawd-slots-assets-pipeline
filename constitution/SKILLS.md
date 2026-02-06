@@ -4,7 +4,7 @@
 
 ### web_search (Brave primary, Tavily fallback)
 
-- **Purpose**: Find YouTube videos of Las Vegas slot machines
+- **Purpose**: Find **popular, 4K, recent (last 24 months)** YouTube videos of Las Vegas slot machines
 - **Primary**: Brave Search API with `BRAVE_API_KEY`
 - **Fallback**: Tavily Search API with `TAVILY_API_KEY`
 - **Configuration**: `BRAVE_API_KEY` for primary search, `TAVILY_API_KEY` for fallback
@@ -19,7 +19,9 @@
 ### video_evaluation
 
 - **Purpose**: Assess YouTube video quality for slot machine analysis
-- **Criteria**: Clear reel visibility, multiple spins, bonus features, real casino footage
+- **Criteria**: Clear reel visibility, multiple spins, bonus features, real casino footage, 4K resolution, upload date within last 24 months
+- **Enforcement**: Filter out any video older than 24 months using published date metadata
+- **Scope**: Date filters apply only to YouTube video searches
 - **Output**: Quality score and notes for top 5 candidates
 
 ### telegram_messaging

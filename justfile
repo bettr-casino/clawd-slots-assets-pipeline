@@ -1,5 +1,8 @@
-start-foreground:
-    ./scripts/openclaw-gateway-start.sh
+start:
+    openclaw gateway start
+
+stop:
+    openclaw gateway stop
 
 config:
     code ~/.openclaw/openclaw.json

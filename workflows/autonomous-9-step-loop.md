@@ -10,7 +10,11 @@ This document replaces the old 9-step loop with the **2-phase workflow**.
 
 1. **Search**
 	- Use Brave Search with fallback to Tavily.
-	- Target: clear reel visibility, multiple spins, real casino footage.
+	- Default target when no slot name is provided: **popular, 4K Cleopatra-themed Las Vegas slots uploaded within the last 24 months**.
+	- Use YouTube-focused queries (4K) to prioritize high-res videos.
+	- Target: clear reel visibility, multiple spins, real casino footage, 4K resolution, last 24 months.
+	- Enforce recency by discarding any result older than 24 months based on published date metadata.
+	- Date filters apply **only** to YouTube video searches.
 
 2. **Evaluate**
 	- Score each candidate for clarity, duration, and variety of gameplay.

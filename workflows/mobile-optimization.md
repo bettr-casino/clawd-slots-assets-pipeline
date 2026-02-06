@@ -4,7 +4,10 @@ This file replaces the old mobile optimization workflow. It now defines **qualit
 
 ## Phase 1: Selection QA
 
-- Video resolution is 720p+ (1080p preferred)
+- Video resolution is 4K
+- Upload date is within the last 24 months
+- Any video older than 24 months is rejected
+- Date filters apply only to YouTube video searches
 - Reels are clearly visible for most spins
 - At least one bonus round appears (if available)
 - Camera is stable with minimal glare

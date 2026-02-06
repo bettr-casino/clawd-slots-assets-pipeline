@@ -54,7 +54,7 @@
 
 | State | Action |
 |-------|--------|
-| `idle` / no search done | Run search query, evaluate results |
+| `idle` / no search done | Run search query (default to popular 4K Cleopatra search from last 24 months if none provided), evaluate results |
 | Search done, top 5 not sent | Send top 5 to Ron via Telegram |
 | Top 5 sent, no response | Wait (do nothing) |
 | User said "redo" | Run new search with refined query |

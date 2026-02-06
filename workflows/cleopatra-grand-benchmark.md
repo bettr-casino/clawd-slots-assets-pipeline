@@ -8,9 +8,9 @@ This workflow applies the standard **2-phase** process to the Cleopatra Grand sl
 
 ### Search Queries
 
-- "Cleopatra Grand slot machine gameplay"
-- "IGT Cleopatra Grand bonus"
-- "Cleopatra Grand free spins"
+- "Cleopatra Grand slot machine gameplay 4K after:2024-02-06"
+- "IGT Cleopatra Grand Las Vegas gameplay 4K after:2024-02-06"
+- "Cleopatra Grand bonus round 4K after:2024-02-06"
 
 ### Selection Criteria
 
@@ -18,6 +18,8 @@ This workflow applies the standard **2-phase** process to the Cleopatra Grand sl
 - Multiple spins and at least one bonus round
 - Paytable or rules visible if possible
 - Minimal camera shake and glare
+- Upload date within the last 24 months (discard older videos)
+- Date filters apply **only** to YouTube video searches.
 
 ### Output
 

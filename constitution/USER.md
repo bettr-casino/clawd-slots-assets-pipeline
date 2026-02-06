@@ -95,7 +95,7 @@ Ron can send these commands via Telegram at any time:
 
 | Command | Action |
 |---------|--------|
-| `start [query]` | Begin Phase 1 with optional search query |
+| `start [query]` | Begin Phase 1 with optional search query (defaults to popular 4K Cleopatra slots from last 24 months if omitted) |
 | `status` | Reply with current phase, step, and progress |
 | `stop` | Pause all work, checkpoint state |
 | `resume` | Resume from last checkpoint |

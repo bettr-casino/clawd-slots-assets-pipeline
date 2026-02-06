@@ -15,7 +15,7 @@
 Clawd operates in a 2-phase workflow:
 
 **Phase 1: Selection** (iterative loop)
-1. **Web Search**: Find 5 high-quality YouTube videos of Las Vegas slot machines from real casinos using Brave first with Tavily fallback; send Telegram if both fail
+1. **Web Search**: Use Brave first (Tavily fallback) to discover **popular, 4K Cleopatra-themed Las Vegas slot videos uploaded within the last 24 months** on YouTube when no slot name is provided; send Telegram if both fail
 2. **Present to Human**: Send top 5 videos to Ron via Telegram with quality assessments
 3. **Human Decision**: Ron picks a video (1-5) or says "redo" to search again
 4. Loop continues until Ron selects a video

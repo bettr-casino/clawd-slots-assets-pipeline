@@ -8,8 +8,8 @@ This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) 
 
 ### Search Targets
 
-- "Egyptian slot machine gameplay"
-- "Cleopatra slot free spins"
+- "Egyptian slot machine gameplay 4K after:2024-02-06"
+- "Cleopatra slot Las Vegas gameplay 4K after:2024-02-06"
 - "Anubis slot bonus"
 - "Luxor slot big win"
 
@@ -19,6 +19,8 @@ This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) 
 - Multiple spins with bonus footage
 - Paytable or rules visible if possible
 - Real casino footage preferred
+- Upload date within the last 24 months (discard older videos)
+- Date filters apply **only** to YouTube video searches.
 
 ### Output
 

@@ -8,8 +8,10 @@ This workflow is a **game-specific instance** of the 2-phase pipeline, scoped to
 
 ### Search Targets
 
-- Queries: "Cleopatra slot machine gameplay", "IGT Cleopatra bonus", "Cleopatra free spins"
-- Priority: clear reels, visible paytable, multiple bonus rounds
+- Queries: "Cleopatra slot machine gameplay 4K after:2024-02-06", "IGT Cleopatra slot Las Vegas gameplay 4K after:2024-02-06", "Cleopatra Grand slot machine gameplay 4K after:2024-02-06"
+- Priority: popular and recent uploads (last 24 months), clear reels, visible paytable, multiple bonus rounds
+- Enforce recency by discarding any video older than 24 months based on published date metadata
+- Date filters apply **only** to YouTube video searches.
 
 ### Output
 
