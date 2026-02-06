@@ -4,36 +4,44 @@ Central pipeline and configuration hub for the Clawd virtual worker in social ca
 
 ## Overview
 
-This repository serves as the operational control center for Clawd, an OpenClaw-based virtual developer and 3D artist specializing in social casino slots games. Clawd manages the complete asset creation pipeline from concept through Unity integration, leveraging AI-powered tools to deliver mobile-optimized game assets.
+This repository serves as the operational control center for Clawd, an OpenClaw-based architect and social casino slots expert. Clawd autonomously reverse-engineers Las Vegas slot machines from YouTube videos, generates original assets, creates Godot 4.6 implementations, and iterates based on human feedback.
 
 ### Clawd's Role
 
-Clawd functions as a specialized virtual team member responsible for:
+Clawd functions as an autonomous reverse-engineering specialist responsible for:
 
-- **3D Asset Generation**: Creating low-poly game-ready models using Meshy.ai
-- **Pipeline Management**: Orchestrating workflows from concept to integration
-- **Quality Assurance**: Ensuring all assets meet technical and performance standards
-- **Unity Integration**: Preparing and optimizing assets for mobile game deployment
-- **Documentation**: Maintaining comprehensive records of processes and decisions
+- **Video Analysis**: Analyzing YouTube videos of Las Vegas slot machines frame-by-frame
+- **Asset Generation**: Creating original 3D models, textures, and animations using meshy-ai
+- **Game Implementation**: Writing Godot 4.6 GDScript code for complete slot machines
+- **Deployment**: Publishing test versions with public URLs for review
+- **Iteration**: Comparing generated vs original videos and refining based on feedback
+- **Communication**: Providing 30-minute progress updates via Telegram
 
 ### Technology Stack
 
-- **AI/LLM**: Kimi K-2.5 for code generation and automation
-- **3D Generation**: Meshy.ai for mesh, texture, and animation creation
-- **3D Refinement**: Blender for optimization and manual adjustments
-- **Game Engine**: Unity with mobile-first optimization
-- **Communication**: Slack for all project coordination
+- **AI/LLM**: Kimi K-2.5 for reasoning, code generation, and vision analysis
+- **3D Generation**: Meshy-ai for original models, textures, particle effects, animations
+- **Game Engine**: Godot 4.6 with GDScript for slot machine implementation
+- **Deployment**: GitHub Pages or Vercel for public test URLs
+- **Video Analysis**: Browser automation + screenshot + Kimi vision
+- **Communication**: Telegram for progress updates and human feedback
+- **Documentation**: Google Sheets for asset tracking, MEMORY.md for checkpoints
 
-## Communication Protocol
+## The 9-Step Autonomous Workflow
 
-**All Clawd communication occurs exclusively through Slack.**
+Clawd operates in a continuous autonomous loop executing these 9 steps:
 
-- Asset requests must be submitted via designated Slack channels
-- Status updates and deliverables are shared through Slack
-- Questions, issues, and approvals are handled in Slack threads
-- No direct file system access or alternative communication methods
+1. **Web Search**: Find high-quality YouTube videos of Las Vegas slot machines
+2. **Video Analysis**: Frame-by-frame analysis using Kimi vision
+3. **Asset List**: Create comprehensive inventory in Google Sheets
+4. **Asset Generation**: Generate original assets with meshy-ai (never copy)
+5. **Code Generation**: Implement complete game in Godot 4.6 GDScript
+6. **Deploy**: Publish test version with public URL
+7. **Record Video**: Capture gameplay video of generated slot
+8. **Compare**: Use Kimi vision to compare generated vs original
+9. **Human Feedback**: Request Ron's yes/no decision to continue or stop
 
-This ensures transparency, traceability, and team-wide visibility of all asset pipeline activities.
+The loop continues iterating until Ron approves by replying 'yes' to the iteration summary.
 
 ## Repository Structure
 
@@ -41,10 +49,13 @@ This ensures transparency, traceability, and team-wide visibility of all asset p
 clawd-slots-assets-pipeline/
 ├── constitution/          # Core operational guidelines for Clawd
 │   ├── SOUL.md           # Identity, mission, and values
-│   ├── AGENTS.md         # AI agent capabilities and protocols
-│   ├── USER.md           # User interaction guidelines
+│   ├── AGENTS.md         # AI agent capabilities and 9-step loop
+│   ├── USER.md           # User interaction guidelines (Telegram)
 │   ├── TOOLS.md          # Development tools and specifications
-│   └── MEMORY.md         # Project knowledge base and history
+│   ├── SKILLS.md         # Required skills for each workflow step
+│   ├── HEARTBEAT.md      # 30-minute cycle execution protocol
+│   ├── GOAL.md           # 9-step autonomous workflow definition
+│   └── MEMORY.md         # Checkpoint state and iteration tracking
 │
 ├── prompts/              # AI generation prompt templates
 │   └── meshy-ai/         # Meshy.ai specific prompts
@@ -64,114 +75,117 @@ clawd-slots-assets-pipeline/
 
 ### Constitution Directory
 
-The `constitution/` directory contains Clawd's operational framework and can be symlinked to the broader OpenClaw workspace for shared agent configurations:
+The `constitution/` directory contains Clawd's operational framework defining the autonomous 9-step reverse-engineering workflow:
+
+- **SOUL.md**: Core identity as reverse-engineering architect
+- **AGENTS.md**: 9-step autonomous loop capabilities
+- **USER.md**: Telegram communication protocol
+- **TOOLS.md**: Video analysis, asset generation, and deployment tools
+- **SKILLS.md**: Required capabilities for each workflow step
+- **HEARTBEAT.md**: 30-minute execution cycle protocol
+- **GOAL.md**: Complete 9-step workflow definition
+- **MEMORY.md**: Checkpoint state for restart resilience
+
+This framework can be symlinked to the broader OpenClaw workspace:
 
 ```bash
 # Create symlink from OpenClaw workspace to this repository
 ln -s /path/to/clawd-slots-assets-pipeline/constitution /path/to/openclaw-workspace/clawd-constitution
 ```
 
-This enables Clawd to maintain consistent behavior across different project contexts while keeping slot game-specific configurations centralized.
+This enables Clawd to maintain consistent autonomous behavior across different project contexts.
 
-## Mobile Optimization Goals
+## Checkpoint Resilience
 
-All assets must meet strict mobile performance requirements:
+All workflow state is saved in `constitution/MEMORY.md` with checkpoint data:
 
-### Technical Targets
+- Current iteration number
+- Current step (1-9) in the workflow
+- Completed checkpoint data for each step
+- Human feedback decision status
+- URLs, file paths, and reference data
 
-- **Triangle Budget**: <2,000 triangles per reel symbol, <1,200 per background element
-- **Texture Compression**: ETC2 for Android, PVRTC/ASTC for iOS
-- **Texture Resolution**: 1024×1024 maximum for primary assets, 512×512 for secondary
-- **Frame Rate**: Consistent 60 FPS on target devices (iPhone 8+, Samsung Galaxy S9+)
-- **Memory**: <100MB total texture memory footprint
-
-### Unity FBX Requirements
-
-Assets exported from Meshy.ai or Blender must conform to Unity's coordinate system:
-
-- **Forward Axis**: -Z (negative Z)
-- **Up Axis**: Y (positive Y)
-- **Scale**: 1 unit = 1 meter
-- **Format**: FBX 2020
-- **Triangulation**: Applied on export
-- **Smoothing**: Normal-based
-
-### Asset Optimization Checklist
-
-- [ ] Geometry optimized for mobile rendering
-- [ ] Clean topology without unnecessary vertices
-- [ ] Proper UV unwrapping without stretching
-- [ ] PBR textures with appropriate compression
-- [ ] LOD (Level of Detail) for complex assets
-- [ ] Efficient material usage and batching
-- [ ] Animation clips compressed and optimized
-- [ ] Testing validated on actual mobile devices
+If the process restarts, Clawd resumes from the last completed checkpoint automatically.
 
 ## Getting Started
 
-### For Users Requesting Assets
+### For Ron (Human in the Loop)
 
-1. Review asset requirements and reference the appropriate `/prompts/` templates
-2. Submit detailed request via Slack including theme, specifications, and references
-3. Await acknowledgment and timeline estimate from Clawd
-4. Review previews and provide feedback through Slack
-5. Receive final optimized assets with integration documentation
+1. Clawd sends Telegram updates every 30 minutes during active work
+2. After each complete iteration (9 steps), review:
+   - Summary message with test URL
+   - Deployed slot machine prototype
+   - Comparison analysis vs original video
+3. Reply 'yes' to approve and stop iterations, or 'no' to continue refining
+4. Provide clarification if Clawd encounters blockers
 
 ### For Clawd Operations
 
-1. Monitor Slack channels for incoming asset requests
-2. Reference `/constitution/` for operational guidelines
-3. Use `/prompts/meshy-ai/` templates for generation
-4. Follow `/workflows/` for end-to-end processes
-5. Adhere to `/standards/` for all technical decisions
-6. Document learnings in `/constitution/MEMORY.md`
-7. Deliver via Slack with complete documentation
+1. Check MEMORY.md for current iteration and step state
+2. Load GOAL.md for 9-step workflow definition
+3. Execute next step based on current position
+4. Save checkpoint after each step completion
+5. Send Telegram progress update every 30 minutes
+6. Request human feedback after completing all 9 steps
+7. Continue iterating until Ron approves with 'yes'
 
 ## Development Workflow
 
-### Asset Creation Pipeline
+### Autonomous 9-Step Execution
 
-1. **Planning**: Define requirements, gather references
-2. **Generation**: Use Meshy.ai with standardized prompts
-3. **Optimization**: Refine in Blender, ensure budget compliance
-4. **Export**: Apply Unity FBX settings, validate output
-5. **Integration**: Import to Unity, configure materials
-6. **Testing**: Validate performance on target devices
-7. **Delivery**: Package and share via Slack
+1. **Web Search**: Find YouTube videos of target slot machines
+2. **Video Analysis**: Extract game mechanics and visual design with Kimi vision
+3. **Asset List**: Document comprehensive inventory in Google Sheets
+4. **Asset Generation**: Create original assets with meshy-ai matching look/feel
+5. **Code Generation**: Implement complete game in Godot 4.6 GDScript
+6. **Deploy**: Publish to GitHub Pages or Vercel with public URL
+7. **Record**: Capture gameplay video of generated slot machine
+8. **Compare**: Analyze quality match with Kimi vision
+9. **Feedback**: Send iteration summary to Ron and wait for yes/no decision
+
+### Chain-of-Thought Reasoning
+
+All steps use transparent reasoning:
+- Start complex analyses with "Let's think step by step"
+- Show observations before conclusions
+- Document decision-making process
+- Save reasoning in MEMORY.md
 
 ### Quality Gates
 
-Each phase includes validation checkpoints:
-
-- **Post-Generation**: Triangle count, texture resolution
-- **Post-Optimization**: Mobile performance metrics
-- **Post-Integration**: Unity import validation, visual quality
-- **Pre-Delivery**: Final performance testing, documentation review
+Each iteration includes validation checkpoints:
+- **Post-Analysis**: Complete symbol and mechanics inventory
+- **Post-Generation**: Original assets matching aesthetic (never copied)
+- **Post-Implementation**: Functional Godot game with all features
+- **Post-Deployment**: Accessible public URL with working gameplay
+- **Post-Comparison**: Detailed quality assessment with improvement notes
 
 ## Contributing
 
-Changes to standards, workflows, or prompts should:
+Changes to constitution, workflows, or standards should:
 
-1. Be discussed and approved via Slack
+1. Be discussed with Ron via Telegram if significant
 2. Include rationale for modifications
 3. Update affected documentation consistently
-4. Preserve backward compatibility where possible
-5. Document breaking changes clearly
+4. Preserve checkpoint resilience
+5. Document changes clearly
 
 ## Project Status
 
-**Current Focus**: Egyptian-themed MVP slot game development
+**Current Focus**: Autonomous reverse-engineering of Las Vegas slot machines from YouTube videos
 
-Active development areas:
-- Egyptian symbol set (8 unique reel symbols)
-- Multi-layer background parallax system  
-- Win celebration effect library
-- Mobile optimization and performance validation
+Active capabilities:
+- 9-step autonomous workflow loop
+- Checkpoint resilience with MEMORY.md state tracking
+- Original asset generation (never copying)
+- Godot 4.6 implementation and deployment
+- AI-powered video comparison with Kimi vision
+- Human feedback loop for iteration control
 
-See `/constitution/MEMORY.md` for detailed project history and active tasks.
+See `/constitution/MEMORY.md` for current iteration state and progress checkpoints.
 
 ## License
 
 Proprietary - Bettr Casino
 
-All assets, workflows, and configurations are proprietary to the Bettr Casino slots development pipeline.
+All workflows, configurations, and generated assets are proprietary to the Bettr Casino slots development pipeline.
