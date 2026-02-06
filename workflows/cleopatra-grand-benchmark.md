@@ -216,11 +216,11 @@ photorealistic with stylized proportions"
 - [ ] Iterate until acceptable alignment achieved
 - [ ] Document successful prompt patterns
 
-## Phase 5: Slack Reporting Format
+## Phase 5: Telegram Reporting Format
 
 ### 5.1 Benchmark Analysis Report Structure
 
-Post findings to Slack using this format:
+Post findings to Telegram using this format:
 
 ```
 [BENCHMARK ANALYSIS] IGT Cleopatra Grand - [Asset Type]
@@ -409,7 +409,7 @@ Before finalizing benchmark report:
 
 ### 7.2 Peer Review (if applicable)
 
-- [ ] Share findings with team via Slack for feedback
+- [ ] Share findings with team via Telegram for feedback
 - [ ] Confirm extracted specifications make technical sense
 - [ ] Verify PBR values are within reasonable ranges
 - [ ] Ensure prompts are actionable for Meshy.ai
@@ -441,7 +441,7 @@ After completing benchmark analysis:
 - [ ] Add new prompt templates that proved effective
 - [ ] Expand video selection criteria if needed
 - [ ] Enhance analysis categories for future benchmarks
-- [ ] Improve Slack reporting format based on feedback
+- [ ] Improve Telegram reporting format based on feedback
 
 ## Adapting to Other Slot Themes
 
@@ -464,8 +464,8 @@ This workflow is designed to be reusable for any slot machine benchmark analysis
 - **YouTube**: Primary video reference source
 - **Screenshot Tools**: Browser extensions or video players for frame capture
 - **Color Picker**: Browser extensions or design tools for hex code extraction
-- **Slack**: Communication and reporting platform
-- **Meshy.ai**: Asset generation with refined prompts
+- **Telegram**: Communication and reporting platform
+- **Meshy.ai or other generation tools**: Asset generation with refined prompts (generate originals, never copy)
 - **Blender**: Post-processing and corrections
 - **Unity**: Final validation and comparison
 
@@ -477,8 +477,9 @@ A successful benchmark analysis delivers:
 - ✅ Extracted specifications with measurable values
 - ✅ Clear comparison between generated and reference assets
 - ✅ Actionable refined prompts for improved generation
-- ✅ Professional Slack report with structured findings
+- ✅ Professional Telegram report with structured findings
 - ✅ Reusable methodology for future benchmarks
+- ✅ Original assets generated matching look/feel (never copied)
 
 ## Conclusion
 

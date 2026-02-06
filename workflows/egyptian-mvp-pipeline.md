@@ -20,33 +20,36 @@ Complete end-to-end workflow for creating Egyptian-themed slot game assets from 
 - [ ] Collect Egyptian art references
 - [ ] Identify style direction (realistic vs. stylized)
 - [ ] Review existing similar games for benchmarks
-- [ ] Document approved aesthetic direction in Slack
+- [ ] Document approved aesthetic direction in Telegram
 
 ## Phase 2: Asset Generation
 
-### 2.1 Symbol Creation (Meshy.ai)
+### 2.1 Symbol Creation (Meshy.ai or other generation tools)
 - [ ] Use prompts from `/prompts/meshy-ai/egyptian-symbols.md`
 - [ ] Generate base meshes and textures:
   - Scarab, Eye of Ra, Ankh, Pyramid, Sphinx
   - Wild/Scatter special symbols
+- [ ] **Important**: Generate originals matching look/feel, never copy existing assets
 - [ ] Review generated assets for quality
-- [ ] Share previews in Slack for approval
+- [ ] Share previews in Telegram for approval
 - [ ] Iterate based on feedback
 
-### 2.2 Background Elements (Meshy.ai)
+### 2.2 Background Elements (Meshy.ai or other generation tools)
 - [ ] Use prompts from `/prompts/meshy-ai/backgrounds.md`
 - [ ] Generate background layers:
   - Distant layer: Pyramids, dunes
   - Mid layer: Temple columns, walls
   - Near layer: Decorative elements
+- [ ] **Important**: Generate originals matching look/feel, never copy existing assets
 - [ ] Ensure parallax depth compatibility
 - [ ] Review and iterate
 
-### 2.3 Win Effects (Meshy.ai)
+### 2.3 Win Effects (Meshy.ai or other generation tools)
 - [ ] Use prompts from `/prompts/meshy-ai/win-effects.md`
 - [ ] Generate effect objects:
   - Coins, particles, glow elements
   - Special celebration objects
+- [ ] **Important**: Generate originals matching look/feel, never copy existing assets
 - [ ] Optimize for particle system use
 - [ ] Validate performance implications
 
@@ -138,8 +141,8 @@ Complete end-to-end workflow for creating Egyptian-themed slot game assets from 
 ### 5.4 Documentation
 - [ ] Document final asset specifications
 - [ ] Record any custom workflows or settings
-- [ ] Update memory bank with lessons learned
-- [ ] Share final deliverables via Slack
+- [ ] Update MEMORY.md with lessons learned
+- [ ] Share final deliverables via Telegram
 
 ## Phase 6: Delivery
 
@@ -150,10 +153,11 @@ Complete end-to-end workflow for creating Egyptian-themed slot game assets from 
 - [ ] Prepare asset list with specifications
 
 ### 6.2 Handoff
-- [ ] Share Unity package via Slack
+- [ ] Share Unity package via Telegram
 - [ ] Provide integration guide
 - [ ] Offer support for questions
 - [ ] Archive project files and prompts
+- [ ] Store binary assets directly in repo (no Git LFS)
 
 ## Success Metrics
 
@@ -167,3 +171,10 @@ Complete end-to-end workflow for creating Egyptian-themed slot game assets from 
 ## Iteration Notes
 
 Document any deviations, issues, or optimizations discovered during the pipeline execution for future reference in `/constitution/MEMORY.md`.
+
+## Asset Storage Rules
+
+- **Store binary assets directly in repository** without Git LFS
+- **Important**: Always generate original assets matching look/feel, never copy existing assets
+- Organize by iteration in `/iterations/iteration_{N}/assets/` structure
+- On approval, keep only latest approved iteration and delete old iteration folders

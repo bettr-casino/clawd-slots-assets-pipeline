@@ -20,25 +20,25 @@ Clawd functions as an autonomous reverse-engineering specialist responsible for:
 ### Technology Stack
 
 - **AI/LLM**: Kimi K-2.5 for reasoning, code generation, and vision analysis
-- **3D Generation**: Meshy-ai for original models, textures, particle effects, animations
+- **3D Generation**: Meshy-ai or other generation tools for original models, textures, particle effects, animations
 - **Game Engine**: Godot 4.6 with GDScript for slot machine implementation
 - **Deployment**: GitHub Pages or Vercel for public test URLs
-- **Video Analysis**: Browser automation + screenshot + Kimi vision
+- **Video Analysis**: Browser automation + screenshot + Kimi K-2.5 vision
 - **Communication**: Telegram for progress updates and human feedback
-- **Documentation**: Google Sheets for asset tracking, MEMORY.md for checkpoints
+- **Documentation**: Excel (pandas + openpyxl) with CSV fallback for asset tracking, MEMORY.md for checkpoints
 
 ## The 9-Step Autonomous Workflow
 
 Clawd operates in a continuous autonomous loop executing these 9 steps:
 
 1. **Web Search**: Find high-quality YouTube videos of Las Vegas slot machines
-2. **Video Analysis**: Frame-by-frame analysis using Kimi vision
-3. **Asset List**: Create comprehensive inventory in Google Sheets
-4. **Asset Generation**: Generate original assets with meshy-ai (never copy)
+2. **Video Analysis**: Frame-by-frame analysis using Kimi K-2.5 vision
+3. **Spreadsheet Creation**: Create Excel file (pandas + openpyxl) or CSV fallback with iteration log, math model, symbol analysis, checkpoints
+4. **Asset Generation**: Generate original assets with meshy-ai or other generation tools (never copy)
 5. **Code Generation**: Implement complete game in Godot 4.6 GDScript
 6. **Deploy**: Publish test version with public URL
 7. **Record Video**: Capture gameplay video of generated slot
-8. **Compare**: Use Kimi vision to compare generated vs original
+8. **Compare**: Use Kimi K-2.5 vision to compare generated vs original
 9. **Human Feedback**: Request Ron's yes/no decision to continue or stop
 
 The loop continues iterating until Ron approves by replying 'yes' to the iteration summary.
@@ -64,8 +64,11 @@ clawd-slots-assets-pipeline/
 │       └── win-effects.md         # Effect object prompts
 │
 ├── workflows/            # End-to-end process documentation
-│   ├── egyptian-mvp-pipeline.md   # Complete Egyptian theme workflow
-│   └── mobile-optimization.md     # Mobile performance optimization
+│   ├── autonomous-9-step-loop.md   # Primary autonomous workflow (9 steps)
+│   ├── cleopatra-grand-benchmark.md # Benchmark analysis workflow
+│   ├── cleopatra-research.md        # Video research workflow
+│   ├── egyptian-mvp-pipeline.md     # Complete Egyptian theme workflow
+│   └── mobile-optimization.md       # Mobile performance optimization
 │
 └── standards/            # Technical standards and conventions
     ├── asset-naming.md           # File and asset naming conventions
@@ -134,14 +137,14 @@ If the process restarts, Clawd resumes from the last completed checkpoint automa
 ### Autonomous 9-Step Execution
 
 1. **Web Search**: Find YouTube videos of target slot machines
-2. **Video Analysis**: Extract game mechanics and visual design with Kimi vision
-3. **Asset List**: Document comprehensive inventory in Google Sheets
-4. **Asset Generation**: Create original assets with meshy-ai matching look/feel
+2. **Video Analysis**: Extract game mechanics and visual design with Kimi K-2.5 vision
+3. **Spreadsheet Creation**: Document comprehensive inventory in Excel (pandas + openpyxl) or CSV fallback
+4. **Asset Generation**: Create original assets with meshy-ai or other generation tools matching look/feel
 5. **Code Generation**: Implement complete game in Godot 4.6 GDScript
 6. **Deploy**: Publish to GitHub Pages or Vercel with public URL
 7. **Record**: Capture gameplay video of generated slot machine
-8. **Compare**: Analyze quality match with Kimi vision
-9. **Feedback**: Send iteration summary to Ron and wait for yes/no decision
+8. **Compare**: Analyze quality match with Kimi K-2.5 vision
+9. **Feedback**: Send iteration summary to Ron via Telegram and wait for yes/no decision
 
 ### Chain-of-Thought Reasoning
 
