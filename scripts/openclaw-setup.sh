@@ -62,6 +62,45 @@ check_command() {
     fi
 }
 
+ensure_fallbacks_in_config() {
+    if [[ ! -f "$OPENCLAW_CONFIG_FILE" ]]; then
+        print_warning "OpenClaw config file not found; skipping fallback file update"
+        return 1
+    fi
+
+    python3 - "$OPENCLAW_CONFIG_FILE" "$GROK_FALLBACK_MODEL" "$OPENAI_FALLBACK_MODEL" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+models = list(sys.argv[2:])
+auth_profiles = {
+    "openai:default": {"provider": "openai", "mode": "api_key"},
+    "grok:default": {"provider": "grok", "mode": "api_key"},
+}
+
+with open(path, "r", encoding="utf-8") as handle:
+    data = json.load(handle)
+
+agents = data.setdefault("agents", {})
+defaults = agents.setdefault("defaults", {})
+model = defaults.setdefault("model", {})
+model["fallbacks"] = models
+defaults_models = defaults.setdefault("models", {})
+for entry in models:
+    defaults_models.setdefault(entry, {})
+
+auth = data.setdefault("auth", {})
+profiles = auth.setdefault("profiles", {})
+for key, value in auth_profiles.items():
+    profiles.setdefault(key, value)
+
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(data, handle, indent=2)
+    handle.write("\n")
+PY
+}
+
 find_chrome_command() {
     local cmd
     for cmd in google-chrome google-chrome-stable chromium chromium-browser; do
@@ -274,6 +313,11 @@ configure_moonshot_ai() {
     fallback_models="[\"$GROK_FALLBACK_MODEL\",\"$OPENAI_FALLBACK_MODEL\"]"
     if ! openclaw config set agents.defaults.model.fallbacks "$fallback_models"; then
         print_warning "Failed to set fallback models, continuing..."
+    fi
+    if ensure_fallbacks_in_config; then
+        print_success "Fallback models written to config file"
+    else
+        print_warning "Could not write fallback models to config file"
     fi
 
     print_success "Moonshot AI configuration verified"
