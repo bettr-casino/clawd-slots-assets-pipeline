@@ -21,11 +21,17 @@ When top 5 videos are ready, send a Telegram message in this format:
    🔗 [YouTube URL]
    ⏱ Duration: [X:XX]
    📝 [Brief quality note]
+   🧭 Timeline: [timestamps of key segments]
+   🎰 Spins observed: [count]
+   🎁 Bonus seen: [Yes/No, type if known]
 
 2. [Game Name] — [Channel Name]
    🔗 [YouTube URL]
    ⏱ Duration: [X:XX]
    📝 [Brief quality note]
+   🧭 Timeline: [timestamps of key segments]
+   🎰 Spins observed: [count]
+   🎁 Bonus seen: [Yes/No, type if known]
 
 [... up to 5]
 

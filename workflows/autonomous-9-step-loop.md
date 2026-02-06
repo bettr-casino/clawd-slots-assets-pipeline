@@ -18,6 +18,7 @@ This document replaces the old 9-step loop with the **2-phase workflow**.
 
 2. **Evaluate**
 	- Score each candidate for clarity, duration, and variety of gameplay.
+	- Capture timeline timestamps, spins observed, and whether a bonus appears.
 	- Keep the top 5.
 
 3. **Present Top 5**
@@ -47,6 +48,7 @@ This document replaces the old 9-step loop with the **2-phase workflow**.
 2. **Frame Capture**
 	- Capture key timestamps for reels, wins, bonuses, paytables.
 	- Use browser screenshots or ffmpeg for frame extraction.
+	- **Batch analysis**: Send frames to the model in small sets (max 6-8) and summarize each batch.
 
 3. **Vision Analysis**
 	- Analyze frames with Kimi K-2.5 (fallbacks: Grok, GPT-4o).

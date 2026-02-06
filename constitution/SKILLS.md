@@ -22,7 +22,7 @@
 - **Criteria**: Clear reel visibility, multiple spins, bonus features, real casino footage, 4K resolution, upload date within last 24 months
 - **Enforcement**: Filter out any video older than 24 months using published date metadata
 - **Scope**: Date filters apply only to YouTube video searches
-- **Output**: Quality score and notes for top 5 candidates
+- **Output**: Quality score, timeline timestamps, spins observed, and bonus occurrence for top 5 candidates
 
 ### telegram_messaging
 
@@ -65,7 +65,7 @@
   - Reverse engineer: reel size, symbol types (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines
 - **Model**: Kimi K-2.5 with vision capabilities
 - **Fallbacks**: xai/grok-vision-beta, openai/gpt-4o
-- **Usage**: Analyze each screenshot for game elements and mechanics
+- **Usage**: Analyze screenshots in batches (max 6-8 frames per request) and summarize each batch before continuing
 
 ### transcript_extraction
 
@@ -141,6 +141,7 @@
 - **Strategy**:
   - Log errors in MEMORY.md
   - Try fallback approaches (Brave→Tavily, Excel→CSV, Kimi→Grok→GPT-4o)
+  - If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store and retry
   - Send Telegram notification for unrecoverable issues
   - Never silently fail
 

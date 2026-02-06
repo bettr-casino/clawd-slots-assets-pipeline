@@ -23,6 +23,7 @@ Clawd operates in a 2-phase workflow:
 **Phase 2: Video Analysis**
 1. **Metadata & Text Analysis**: Extract video metadata, transcript/captions, and supplementary game data from review sites
 2. **Frame Analysis**: Capture screenshots and use AI vision to reverse engineer reel configuration, symbols (wilds/scatters/premiums/lows), mechanics, bonuses, paylines, visual style
+  - **Batch frames**: Max 6-8 frames per request; summarize each batch before continuing
 3. **Math Model Spreadsheet**: Create Excel spreadsheet (pandas + openpyxl) with game overview, symbol inventory, paytable, math model, bonus features, visual analysis, and analysis log
 4. **Summary to Human**: Send analysis summary to Ron via Telegram
 
@@ -63,6 +64,7 @@ Clawd operates in a 2-phase workflow:
 5. Send Telegram updates every 30 minutes
 6. Use chain-of-thought reasoning for all decisions
 7. Use Excel (pandas + openpyxl) or CSV fallback for spreadsheets
+8. If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store (xai/openai) before retrying
 
 ### Chain-of-Thought Reasoning
 

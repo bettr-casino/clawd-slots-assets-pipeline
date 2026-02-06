@@ -139,6 +139,52 @@ if os.path.isfile(agent_models):
 PY
 }
 
+ensure_agent_auth_profiles() {
+    local auth_store="$HOME/.openclaw/agents/main/agent/auth-profiles.json"
+
+    print_info "Ensuring agent auth store has API keys..."
+
+    python3 - "$auth_store" <<'PY'
+import json
+import os
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+path.parent.mkdir(parents=True, exist_ok=True)
+
+data = {"version": 1, "profiles": {}, "lastGood": {}}
+if path.exists():
+    with path.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+
+profiles = data.setdefault("profiles", {})
+last_good = data.setdefault("lastGood", {})
+
+def set_profile(provider, env_key):
+    value = os.environ.get(env_key)
+    if not value:
+        return
+    profile_id = f"{provider}:default"
+    profiles[profile_id] = {
+        "type": "api_key",
+        "provider": provider,
+        "key": value,
+    }
+    last_good[provider] = profile_id
+
+set_profile("moonshot", "MOONSHOT_API_KEY")
+set_profile("xai", "XAI_API_KEY")
+set_profile("openai", "OPENAI_API_KEY")
+
+with path.open("w", encoding="utf-8") as handle:
+    json.dump(data, handle, indent=2, sort_keys=True)
+    handle.write("\n")
+
+print(f"Auth store updated: {path}")
+PY
+}
+
 find_chrome_command() {
     local cmd
     for cmd in google-chrome google-chrome-stable chromium chromium-browser; do
@@ -153,9 +199,9 @@ find_chrome_command() {
 # Main setup functions
 check_prerequisites() {
     print_header "Step 1: Checking Prerequisites"
-    
+
     local all_ok=true
-    
+
     # Check Node.js
     if check_command node; then
         local node_version=$(node --version)
@@ -164,7 +210,7 @@ check_prerequisites() {
         print_error "Node.js not found!"
         all_ok=false
     fi
-    
+
     # Check npm
     if check_command npm; then
         local npm_version=$(npm --version)
@@ -196,7 +242,7 @@ check_prerequisites() {
             all_ok=false
         fi
     fi
-    
+
     # Check required environment variables
     if [[ -n "${BRAVE_API_KEY:-}" ]]; then
         print_success "BRAVE_API_KEY is configured"
@@ -204,7 +250,7 @@ check_prerequisites() {
         print_error "BRAVE_API_KEY environment variable not set!"
         all_ok=false
     fi
-    
+
     if [[ -n "${MOONSHOT_API_KEY:-}" ]]; then
         print_success "MOONSHOT_API_KEY is configured"
     else
@@ -225,7 +271,7 @@ check_prerequisites() {
         print_error "XAI_API_KEY environment variable not set!"
         all_ok=false
     fi
-    
+
     if [[ -n "${TELEGRAM_API_KEY:-}" ]]; then
         print_success "TELEGRAM_API_KEY is configured"
     else
@@ -239,7 +285,7 @@ check_prerequisites() {
         print_error "TAVILY_API_KEY environment variable not set!"
         all_ok=false
     fi
-    
+
     # Check workspace directory
     if [[ -d "$CONSTITUTION_DIR" ]]; then
         print_success "Constitution directory found: $CONSTITUTION_DIR"
@@ -247,12 +293,12 @@ check_prerequisites() {
         print_warning "Constitution directory not found at expected location"
         print_info "Will use current directory: $(pwd)"
     fi
-    
+
     if [[ "$all_ok" == false ]]; then
         print_error "Prerequisites check failed. Please resolve the issues above."
         exit 1
     fi
-    
+
     print_success "All prerequisites met!"
     prompt_continue
 }
@@ -360,13 +406,26 @@ configure_moonshot_ai() {
         print_warning "CLI fallback add failed for $OPENAI_FALLBACK_MODEL, will write config directly"
     fi
 
-    # --- Register xAI API key in auth store ---
-    print_info "Registering xAI API key in OpenClaw auth store..."
+    # --- Register API keys in auth store ---
+    print_info "Registering API keys in OpenClaw auth store..."
+    echo "$MOONSHOT_API_KEY" | openclaw models auth paste-token \
+        --provider moonshot \
+        --profile-id "moonshot:default" 2>/dev/null || {
+        print_warning "paste-token for moonshot failed, continuing..."
+    }
     echo "$XAI_API_KEY" | openclaw models auth paste-token \
         --provider xai \
         --profile-id "xai:default" 2>/dev/null || {
         print_warning "paste-token for xai failed, continuing..."
     }
+    echo "$OPENAI_API_KEY" | openclaw models auth paste-token \
+        --provider openai \
+        --profile-id "openai:default" 2>/dev/null || {
+        print_warning "paste-token for openai failed, continuing..."
+    }
+
+    # --- Ensure agent auth store has keys (fallback if paste-token fails) ---
+    ensure_agent_auth_profiles || true
 
     # --- Belt-and-suspenders: write config JSON directly ---
     if ensure_fallbacks_in_config; then

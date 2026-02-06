@@ -55,18 +55,33 @@ Here are the top 5 YouTube videos I found:
 
 1. [Title] - [URL]
    Quality: [brief assessment]
+  Timeline: [timestamps of key segments]
+  Spins observed: [count]
+  Bonus seen: [Yes/No, type if known]
 
 2. [Title] - [URL]
    Quality: [brief assessment]
+  Timeline: [timestamps of key segments]
+  Spins observed: [count]
+  Bonus seen: [Yes/No, type if known]
 
 3. [Title] - [URL]
    Quality: [brief assessment]
+  Timeline: [timestamps of key segments]
+  Spins observed: [count]
+  Bonus seen: [Yes/No, type if known]
 
 4. [Title] - [URL]
    Quality: [brief assessment]
+  Timeline: [timestamps of key segments]
+  Spins observed: [count]
+  Bonus seen: [Yes/No, type if known]
 
 5. [Title] - [URL]
    Quality: [brief assessment]
+  Timeline: [timestamps of key segments]
+  Spins observed: [count]
+  Bonus seen: [Yes/No, type if known]
 
 Reply with a number (1-5) to select, or 'redo' to search again.
 ```
@@ -102,6 +117,7 @@ Analyze the selected YouTube video comprehensively — extracting game mechanics
 ### Step 2.1: Video Metadata & Text Analysis
 
 **Actions:**
+- Preflight model auth: verify the OpenClaw auth store has profiles for moonshot, xai, and openai. If any are missing and the matching env var exists, register it before analysis (e.g., `openclaw models auth paste-token --provider xai --profile-id xai:default`).
 - Use browser automation to navigate to the selected YouTube video
 - Extract video metadata:
   - Title, description, channel, upload date, view count
@@ -132,7 +148,8 @@ Analyze the selected YouTube video comprehensively — extracting game mechanics
   - Free spins feature (if shown)
   - Special feature activations
   - UI elements (bet controls, balance, win display)
-- Use Kimi vision (with xai/grok-vision-beta and openai/gpt-4o as fallbacks) to analyze each frame and reverse engineer:
+- **Batch frames** into small sets (max 6-8 frames per request) to avoid context overflow. Summarize each batch before sending the next.
+- Use Kimi vision (with xai/grok-vision-beta and openai/gpt-4o as fallbacks) to analyze each batch and reverse engineer:
   - **Reel Configuration**: Number of columns × rows
   - **Symbol Inventory**:
     - High-value (premium) symbols: names, descriptions, visual attributes
