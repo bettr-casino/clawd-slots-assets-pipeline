@@ -109,8 +109,8 @@
 **APIs & Integration**
 - GitHub API (for Pages deployment)
 - Vercel API (for hosting)
-- Google Sheets API (for documentation)
 - Brave Search API (for video discovery)
+- pandas + openpyxl (for Excel spreadsheet generation)
 
 ## Technical Specifications
 
