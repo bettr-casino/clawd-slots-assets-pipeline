@@ -4,7 +4,10 @@
 
 ### AI Model Integration
 
-- **Primary LLM**: Kimi K-2.5
+- **Primary LLM**: Kimi K-2.5 (moonshot/kimi-k2.5)
+- **Fallback #1**: Grok Vision Beta (xai/grok-vision-beta) — activates if Kimi is unavailable
+- **Fallback #2**: GPT-4o (openai/gpt-4o) — activates if both Kimi and Grok are unavailable
+- **Fallback chain**: kimi-k2.5 → grok-vision-beta → gpt-4o
 - **Purpose**: Autonomous workflow execution, code generation, video analysis, asset comparison
 - **Use Cases**: 
   - Video frame analysis with vision capabilities
@@ -100,10 +103,14 @@ When user sends "status", provide comprehensive overview:
 - Last completed checkpoint
 - Progress summary
 - Next planned action
-- Kimi K-2.5 status
+- Kimi K-2.5 status + fallback model status (Grok Vision Beta, GPT-4o)
 - Any blockers or waiting states
 
-### Billing Section for Kimi K-2.5
-- Check if Moonshot API key is present
+### Billing & Model Status
+- Check if Moonshot API key is present (MOONSHOT_API_KEY)
+- Check if xAI API key is present (XAI_API_KEY) for Grok fallback
+- Check if OpenAI API key is present (OPENAI_API_KEY) for GPT-4o fallback
+- Report all three models and their auth status
+- Fallback chain: kimi-k2.5 → grok-vision-beta → gpt-4o
 - Verify balance if possible
 - Report status clearly and professionally

@@ -116,6 +116,26 @@ for provider, payload in provider_defaults.items():
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(data, handle, indent=2)
     handle.write("\n")
+
+# Also patch the agent-level models.json which OpenClaw uses at runtime
+import os
+agent_models = os.path.expanduser("~/.openclaw/agents/main/agent/models.json")
+if os.path.isfile(agent_models):
+    with open(agent_models, "r", encoding="utf-8") as handle:
+        adata = json.load(handle)
+    aprov = adata.setdefault("providers", {})
+    # Remove stale 'grok' provider — we use 'xai'
+    aprov.pop("grok", None)
+    # Ensure xai and openai providers exist with apiKey refs
+    for pname, pdef in provider_defaults.items():
+        entry = aprov.setdefault(pname, dict(pdef))
+        if pname == "xai":
+            entry["apiKey"] = "XAI_API_KEY"
+        elif pname == "openai":
+            entry["apiKey"] = "OPENAI_API_KEY"
+    with open(agent_models, "w", encoding="utf-8") as handle:
+        json.dump(adata, handle, indent=2)
+        handle.write("\n")
 PY
 }
 
