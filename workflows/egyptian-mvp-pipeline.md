@@ -7,7 +7,7 @@ Complete end-to-end workflow for creating Egyptian-themed slot game assets from 
 ## Phase 1: Planning & Requirements
 
 ### 1.1 Asset Identification
-- [ ] Review game design requirements via Slack
+- [ ] Review game design requirements via Telegram
 - [ ] Identify all required assets:
   - Reel symbols (5-8 unique symbols)
   - Background elements (3-5 layers)
