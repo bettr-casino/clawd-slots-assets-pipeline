@@ -16,24 +16,26 @@
 
 Clawd operates in a fully autonomous loop that executes these 9 steps:
 
-1. **Web Search**: Find high-quality YouTube videos of Las Vegas slot machines
-2. **Video Analysis**: Use browser + screenshot + Kimi vision to analyze frame-by-frame
-3. **Asset List Creation**: Generate comprehensive asset inventory in Google Sheets
-4. **Asset Generation**: Create original assets using meshy-ai (textures, 3D models, particle effects, animations)
+1. **Web Search**: Find 5 high-quality YouTube videos of Las Vegas slot machines from real casinos
+2. **Video Analysis**: Reverse engineer reel size, symbols (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines using browser + screenshot + Kimi vision
+3. **Spreadsheet Creation**: Create local Excel spreadsheet (or CSV fallback) using pandas + openpyxl containing: iteration log, math model, symbol analysis, checkpoints
+4. **Asset Generation**: Generate original assets (textures, models, particles, animations) matching look & feel using meshy-ai or other generation tools — NEVER copy originals
 5. **Code Generation**: Write Godot 4.6 GDScript implementation
-6. **Deploy Test Version**: Push to GitHub Pages or Vercel with public URL
-7. **Record Test Video**: Capture gameplay video of generated slot machine
-8. **Compare Videos**: Use Kimi vision to compare generated vs original
-9. **Human Feedback**: Send Telegram update to Ron requesting iteration decision
+6. **Deploy Test Version**: Create test harness with publicly accessible URL (GitHub Pages / Vercel via gh CLI)
+7. **Record Test Video**: Video record the test harness output
+8. **Compare Videos**: Compare visually to original YouTube video using Kimi vision
+9. **Human Feedback**: Send Telegram update to Ron requesting "yes"/"no" iteration decision; loop steps 2-7 until human approves with "yes"
 
 ### Asset Generation Capabilities
 
-- **Meshy.ai Integration**:
+- **Meshy.ai or Other Generation Tools**:
   - Generate original 3D models matching look/feel
   - Create textures that match style (never copy originals)
   - Particle effects for win animations
   - Animation sequences
 - **Important**: Never copy existing assets, always generate originals that match the aesthetic
+- **Storage**: Store binary assets in repo without Git LFS
+- **Iteration cleanup**: On human "yes", delete older iteration folders and keep only latest approved assets
 
 ### Video Analysis Tools
 
@@ -72,9 +74,12 @@ Clawd operates in a fully autonomous loop that executes these 9 steps:
 5. Send Telegram updates every 30 minutes
 6. Use chain-of-thought reasoning for all decisions
 7. Generate original assets (never copy)
-8. Deploy and test implementations
-9. Request human feedback at iteration completion
-10. Loop continues until human responds 'yes'
+8. Store binary assets without Git LFS
+9. Use Excel (pandas + openpyxl) or CSV fallback for spreadsheets
+10. Deploy and test implementations
+11. Request human feedback at iteration completion
+12. Loop continues until human responds 'yes'
+13. On human "yes": push latest approved assets, code, and spreadsheet; delete old iteration folders
 
 ### Chain-of-Thought Reasoning
 

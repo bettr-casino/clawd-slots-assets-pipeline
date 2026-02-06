@@ -31,34 +31,40 @@ Execute the appropriate step based on MEMORY.md state:
 **Step 1: Web Search**
 - Use Brave API or web_search to find YouTube videos
 - Focus on Las Vegas slot machines (e.g., CLEOPATRA)
-- Build shortlist of high-quality videos
+- Find 5 high-quality videos from real casinos
 - Save video URLs and metadata to MEMORY.md
 
 **Step 2: Video Analysis**
 - Use browser automation to navigate to selected video
 - Capture screenshots at key timestamps
 - Use Kimi vision to analyze frames
-- Identify reels, symbols, colors, animations, UI elements
+- Reverse engineer: reels, symbols (wilds/scatters/premiums/lows), colors, animations, UI elements, base mechanics, bonuses, paylines
 - Document findings in MEMORY.md
 
-**Step 3: Asset List Creation**
-- Create comprehensive inventory from video analysis
-- Use Google Sheets API or CSV to document:
+**Step 3: Spreadsheet Creation**
+- Create Excel file using pandas + openpyxl (`.xlsx`)
+- Create sheets: iteration_log, math_model, symbol_analysis, checkpoints
+- If openpyxl fails, fall back to CSV files
+- Document:
   - Reel configuration (columns, rows, symbols)
-  - Symbol list with descriptions
+  - Symbol list with types and descriptions
+  - Math model (paytable, RTP, weights)
   - Color palette
   - Animation types
   - UI elements
-- Link Google Sheet in MEMORY.md
+- Save spreadsheet path in MEMORY.md
+- File location: `/iterations/iteration_{N}/iteration_{N}_analysis.xlsx`
 
 **Step 4: Asset Generation**
-- Use meshy-ai to generate original assets:
+- Use meshy-ai or other generation tools to generate original assets:
   - 3D models matching aesthetic
   - Textures matching style
   - Particle effects for wins
   - Animations for reels and symbols
 - **Critical**: Generate originals, never copy
+- Store binary assets directly in repo (no Git LFS)
 - Save asset references in MEMORY.md
+- Asset location: `/iterations/iteration_{N}/assets/`
 
 **Step 5: Code Generation**
 - Write Godot 4.6 GDScript implementation
@@ -73,14 +79,14 @@ Execute the appropriate step based on MEMORY.md state:
 **Step 6: Deploy Test Version**
 - Export Godot project to HTML5
 - Deploy to GitHub Pages or Vercel using gh CLI
-- Generate public HTTPS URL
+- Generate public HTTPS URL for test harness
 - Save deployment URL in MEMORY.md
 
 **Step 7: Record Test Video**
 - Use browser automation to access deployed URL
 - Record 30-60 seconds of gameplay
 - Use ffmpeg or browser recording
-- Save video file or upload link
+- Save video file: `/iterations/iteration_{N}/videos/`
 - Update MEMORY.md with video location
 
 **Step 8: Compare Videos**
@@ -100,6 +106,8 @@ Execute the appropriate step based on MEMORY.md state:
   - Request: "Is it good enough? Reply 'yes' or 'no'"
 - Wait for Ron's response
 - Update MEMORY.md with human_decision
+- If 'yes': Push latest approved assets, code, spreadsheet; delete old iteration folders; save commit SHA; stop loop
+- If 'no': Increment iteration, restart at Step 2 (loop steps 2-7)
 
 ### Progress Tracking
 
@@ -161,8 +169,14 @@ Save this to MEMORY.md for restart resilience.
 1. Complete all 9 steps
 2. Send iteration summary to Ron
 3. Wait for human decision
-4. If Ron replies 'yes': STOP loop, mark as final
-5. If Ron replies 'no': Increment iteration, restart at Step 1
+4. If Ron replies 'yes': 
+   - Push latest approved assets, Godot code, and spreadsheet
+   - Delete old iteration folders (keep only approved)
+   - Save commit SHA
+   - STOP loop, mark as final
+5. If Ron replies 'no': 
+   - Increment iteration
+   - Restart at Step 2 (loop steps 2-7, not step 1)
 6. Update MEMORY.md with decision and new iteration state
 
 **Resilience:**

@@ -28,7 +28,7 @@
 
 ### Asset Generation
 
-**Meshy.ai**
+**Meshy.ai or Other Generation Tools**
 - Generate original 3D models matching slot machine aesthetics
 - Create textures that match style (never copy)
 - Particle effects for win animations
@@ -40,6 +40,7 @@
 - Original creations that capture aesthetic essence
 - Optimized for web deployment
 - Compatible with Godot 4.6
+- **Storage**: Store binary assets directly in repo without Git LFS
 
 ### Game Engine & Deployment
 
@@ -58,12 +59,26 @@
 
 ### Documentation & Tracking
 
-**Google Sheets**
-- Asset inventory tracking
-- Symbol and reel configuration documentation
-- Progress checkpoints
-- Iteration history
-- Can be created via Google Sheets API or CSV export
+**Excel Spreadsheets (pandas + openpyxl)**
+- Primary format for iteration tracking and analysis
+- Create `.xlsx` files with multiple sheets:
+  - iteration_log: Track all steps, timestamps, decisions
+  - math_model: Paytable, RTP calculations, symbol weights
+  - symbol_analysis: Symbol descriptions, frequencies, visual attributes
+  - checkpoints: Snapshot of progress for each step
+- File naming: `iteration_{N}_analysis.xlsx`
+- Storage: In `/iterations/iteration_{N}/` directory
+- Use pandas with openpyxl engine for Excel file creation
+
+**CSV Fallback**
+- If openpyxl installation/import fails, use CSV format
+- Generate separate CSV files:
+  - `iteration_log.csv`
+  - `math_model.csv`
+  - `symbol_analysis.csv`
+  - `checkpoints.csv`
+- Can be imported into Excel manually by user
+- Log CSV fallback usage in MEMORY.md
 
 **MEMORY.md**
 - Checkpoint state storage
@@ -71,6 +86,8 @@
 - Step tracking (current step in 9-step loop)
 - Human feedback decisions
 - Restart resilience data
+- Binary asset storage paths and management
+- Rules for keeping only latest approved iteration on "yes"
 
 ### Communication
 
@@ -92,8 +109,8 @@
 **APIs & Integration**
 - GitHub API (for Pages deployment)
 - Vercel API (for hosting)
-- Google Sheets API (for documentation)
 - Brave Search API (for video discovery)
+- pandas + openpyxl (for Excel spreadsheet generation)
 
 ## Technical Specifications
 

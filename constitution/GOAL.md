@@ -4,11 +4,19 @@
 
 Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube videos through a fully autonomous 9-step iterative loop. Generate original assets matching the look and feel, create Godot 4.6 implementations, deploy test versions, and iterate based on human feedback until approved.
 
+**Key Rules:**
+- Store binary assets in repo without Git LFS
+- Keep only the latest approved iteration's assets (delete older iteration folders on "yes")
+- Use Excel (pandas + openpyxl) with CSV fallback if needed
+- Use chain-of-thought reasoning for all decisions
+- Send Telegram progress updates and wait for human "yes"/"no" after each iteration
+- Save checkpoint data in MEMORY.md (iteration number, status, commit SHA, decision)
+
 ## The 9-Step Autonomous Loop
 
 ### Step 1: Web Search for YouTube Videos
 
-**Objective**: Find high-quality videos of target Las Vegas slot machines
+**Objective**: Find 5 high-quality videos of target Las Vegas slot machines from real casinos
 
 **Actions**:
 - Use Brave API or web_search to query YouTube
@@ -20,10 +28,10 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
   - Good audio/visual quality
   - Complete game rounds
   - Real casino footage (not mobile apps)
-- Build shortlist of 3-5 top videos
+- Build shortlist of 5 top videos from real Las Vegas casinos
 
 **Output**: 
-- Video URLs saved in MEMORY.md
+- 5 video URLs saved in MEMORY.md
 - Quality assessment notes
 - Selected primary video for analysis
 
@@ -33,7 +41,7 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
 
 ### Step 2: Video Analysis (Frame-by-Frame)
 
-**Objective**: Extract complete game mechanics and visual design from video
+**Objective**: Reverse engineer complete game mechanics: reel size, symbols (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines, etc.
 
 **Actions**:
 - Use browser automation to navigate to selected YouTube video
@@ -43,53 +51,56 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
   - Bonus trigger sequences
   - Special feature activations
   - UI elements and paytable screens
-- Use Kimi vision to analyze each frame:
+- Use Kimi vision to analyze each frame and reverse engineer:
   - Reel configuration (columns x rows)
-  - Symbol inventory (count and descriptions)
+  - Symbol inventory with types: wilds, scatters, premiums, lows
+  - Payline patterns and count
+  - Base game mechanics
+  - Bonus feature mechanics
   - Color palette and visual style
   - Animation patterns and timing
   - Win celebration effects
   - UI/UX layout
-  - Bonus mechanics
 
 **Output**: 
 - Comprehensive analysis document in MEMORY.md
 - Screenshot references with timestamps
-- Detailed notes on game mechanics
+- Detailed notes on game mechanics, symbols, and features
 
 **Checkpoint**: Update MEMORY.md with `step: 2, status: complete`
 
 ---
 
-### Step 3: Asset List Creation (Google Sheets)
+### Step 3: Spreadsheet Creation (Excel with pandas + openpyxl)
 
-**Objective**: Create structured inventory of all required assets
+**Objective**: Create local Excel spreadsheet (or CSV fallback) with iteration log, math model, symbol analysis, checkpoints
 
 **Actions**:
-- Use Google Sheets API or generate CSV for documentation
-- Create sheets/tabs for:
-  - **Symbols**: Name, description, visual attributes, frequency
-  - **Reels**: Configuration, symbol positions, spin behavior
-  - **Animations**: Type, timing, triggers, visual effects
-  - **UI Elements**: Buttons, displays, paytable, info screens
-  - **Audio**: Sound effects needed (note: may be implemented later)
-  - **Colors**: Palette with hex codes
+- Use pandas with openpyxl engine to create Excel `.xlsx` file
+- Create sheets/tabs:
+  - **iteration_log**: Track all steps, timestamps, decisions, status updates
+  - **math_model**: Paytable, RTP calculations, symbol weights, payout structure
+  - **symbol_analysis**: Name, description, type (wild/scatter/premium/low), visual attributes, frequency
+  - **checkpoints**: Snapshot of progress for each step with status and data
 - Link to video timestamps for reference
+- File naming: `iteration_{N}_analysis.xlsx`
+- Storage: `/iterations/iteration_{N}/iteration_{N}_analysis.xlsx`
+- **CSV Fallback**: If openpyxl fails, generate separate CSV files for each sheet and log fallback in MEMORY.md
 
 **Output**: 
-- Google Sheet URL saved in MEMORY.md (or CSV file)
+- Excel spreadsheet path saved in MEMORY.md (or CSV file paths)
 - Complete asset inventory ready for generation
 
 **Checkpoint**: Update MEMORY.md with `step: 3, status: complete`
 
 ---
 
-### Step 4: Asset Generation (Meshy-ai)
+### Step 4: Asset Generation (Original Assets Matching Look & Feel)
 
-**Objective**: Generate original 3D assets matching look and feel
+**Objective**: Generate original assets (textures, models, particles, animations) that match look & feel — NEVER copy originals
 
 **Actions**:
-- Use meshy-ai to create original assets:
+- Use meshy-ai or other generation tools to create original assets:
   - **3D Models**: Reel symbols, UI elements, background objects
   - **Textures**: Match color scheme and visual style
   - **Particle Effects**: Win celebrations, sparkles, coin bursts
@@ -98,13 +109,14 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
   - Never copy existing assets
   - Match look and feel, not exact replication
   - Create variations that honor the style
-- Save all generated assets to organized directory
+- Save all generated assets to organized directory: `/iterations/iteration_{N}/assets/`
 - Document asset metadata (file paths, descriptions)
+- **Storage**: Store binary assets directly in repo without Git LFS
 
 **Output**: 
 - Generated asset files (GLB, PNG, FBX, etc.)
 - Asset manifest in MEMORY.md with file paths
-- Preview images or thumbnails
+- Assets stored in `/iterations/iteration_{N}/assets/` subdirectories
 
 **Checkpoint**: Update MEMORY.md with `step: 4, status: complete`
 
@@ -136,21 +148,21 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
 
 ---
 
-### Step 6: Deploy Test Version (Public URL)
+### Step 6: Deploy Test Version (Public URL via GitHub Pages / Vercel)
 
-**Objective**: Create publicly accessible test deployment
+**Objective**: Create test harness with publicly accessible URL (GitHub Pages / Vercel via gh CLI)
 
 **Actions**:
 - Export Godot project to HTML5/WebAssembly
 - Choose deployment platform:
   - **GitHub Pages**: Use gh CLI to push to gh-pages branch
   - **Vercel**: Use Vercel CLI or API to deploy
-- Generate public HTTPS URL
+- Generate public HTTPS URL for the test harness
 - Verify deployment loads and runs correctly
 - Test basic functionality (spin button, reels, wins)
 
 **Output**: 
-- Public URL saved in MEMORY.md
+- Public test harness URL saved in MEMORY.md
 - Deployment status and platform notes
 
 **Checkpoint**: Update MEMORY.md with `step: 6, status: complete`
@@ -159,7 +171,7 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
 
 ### Step 7: Record Test Video
 
-**Objective**: Capture gameplay video of generated slot machine
+**Objective**: Video record the test harness output for comparison
 
 **Actions**:
 - Use browser automation to navigate to deployed URL
@@ -172,19 +184,19 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
   - Browser automation with screen recording
   - FFmpeg screen capture
   - Playwright screenshot sequence -> video
-- Save video file or upload to accessible location
+- Save video file to `/iterations/iteration_{N}/videos/`
 
 **Output**: 
-- Video file path or URL in MEMORY.md
+- Video file path saved in MEMORY.md
 - Gameplay recording ready for comparison
 
 **Checkpoint**: Update MEMORY.md with `step: 7, status: complete`
 
 ---
 
-### Step 8: Compare Videos (Kimi Vision)
+### Step 8: Compare Videos (Visual Comparison to Original)
 
-**Objective**: Assess quality match between generated and original
+**Objective**: Compare visually to original YouTube video using Kimi vision
 
 **Actions**:
 - Use Kimi vision to analyze both videos:
@@ -209,7 +221,7 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
 
 ### Step 9: Human Feedback Loop
 
-**Objective**: Get Ron's decision on iteration quality
+**Objective**: Get Ron's "yes"/"no" decision; loop steps 2-7 until human approves with "yes"
 
 **Actions**:
 - Send Telegram message to Ron with comprehensive summary:
@@ -240,11 +252,16 @@ Is it good enough? Reply 'yes' or 'no' to stop or continue iterations.
 - Wait for Ron's response
 - Update MEMORY.md with human decision:
   - If 'yes': Set `human_decision: approved`, mark iteration as final
-  - If 'no': Set `human_decision: iterate`, increment iteration counter, reset to Step 1
+    - Push only the latest approved assets, Godot code, and spreadsheet to GitHub repo
+    - Delete older iteration folders (keep only the approved iteration)
+    - Save commit SHA in MEMORY.md
+    - Stop autonomous loop
+  - If 'no': Set `human_decision: iterate`, increment iteration counter, restart loop at Step 2
 
 **Output**: 
 - Ron's decision saved in MEMORY.md
 - Loop control state updated
+- On "yes": Old iteration folders deleted, latest assets committed
 
 **Checkpoint**: Update MEMORY.md with `step: 9, status: complete, human_decision: <yes/no>`
 
@@ -259,12 +276,15 @@ Is it good enough? Reply 'yes' or 'no' to stop or continue iterations.
 3. After Step 9, wait for human feedback
 4. **If Ron says 'yes'**:
    - Mark as `final: true` in MEMORY.md
+   - Push only the latest approved assets, Godot code, and spreadsheet to GitHub repo
+   - Delete older iteration folders (keep only approved iteration)
+   - Save commit SHA in MEMORY.md
    - Stop autonomous loop
    - Send final confirmation to Ron
 5. **If Ron says 'no'**:
-   - Increment to `iteration: 2`
-   - Reset to `step: 1`
-   - Continue loop with improvements
+   - Increment to next iteration number
+   - Reset to `step: 2` (loop steps 2-7, not step 1)
+   - Continue loop with improvements based on feedback
 6. Repeat until approved
 
 ### Checkpoint Resilience
