@@ -11,6 +11,9 @@ Systematic workflow for reverse engineering CLEOPATRA slots from YouTube videos 
 **Objective:** Build a curated shortlist of high-quality CLEOPATRA gameplay videos.
 
 **Actions:**
+- [ ] Attempt web_search with Brave using `BRAVE_API_KEY`
+- [ ] If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
+- [ ] If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
 - [ ] Search YouTube for "CLEOPATRA slots Las Vegas" and related terms
 - [ ] Search for "CLEOPATRA slots real casino" gameplay
 - [ ] Search for "CLEOPATRA slots high limit" for detailed views

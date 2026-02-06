@@ -8,15 +8,20 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 
 ## Step 1: Web Search & Video Discovery
 
-### web_search (Brave API)
+### web_search (Brave primary, Tavily fallback)
 - **Purpose**: Search YouTube for Las Vegas slot machine videos
 - **Capabilities**:
   - Query YouTube with specific search terms
   - Filter by video quality, duration, view count
   - Retrieve video metadata (title, URL, description, thumbnail)
-- **Configuration**: Requires Brave Search API key
+- **Configuration**: `BRAVE_API_KEY` for primary search, `TAVILY_API_KEY` for fallback
 - **Usage**: `web_search("CLEOPATRA slots Las Vegas gameplay")`
 - **Target**: Find 5 high-quality videos from real Las Vegas casinos
+
+### Web Search with Fallback
+- **Priority**: Always attempt Brave first using `BRAVE_API_KEY`
+- **Fallback**: On any Brave error (429, 401, timeout, invalid key, or other failures), retry immediately with Tavily using `TAVILY_API_KEY`
+- **Escalation**: If both fail, send Telegram to Ron: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
 
 ### YouTube API (optional)
 - **Purpose**: Get detailed video information
@@ -502,7 +507,8 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 ## API Keys & Configuration Required
 
 ### Required
-- **Brave Search API**: For web search
+- **Brave Search API**: Primary web search
+- **Tavily Search API**: Fallback web search
 - **Kimi K-2.5 (Moonshot)**: For AI reasoning and vision
 - **Meshy.ai API or other generation tools**: For 3D asset generation
 - **Telegram Bot API**: For communication with Ron
@@ -520,7 +526,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 
 Before starting each step, verify required tools are available:
 
-1. **Step 1**: web_search, browser
+1. **Step 1**: web_search (Brave with Tavily fallback), browser
 2. **Step 2**: browser, screenshot, kimi_vision
 3. **Step 3**: pandas, openpyxl (or csv fallback)
 4. **Step 4**: meshy_ai or other generation tools

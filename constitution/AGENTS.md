@@ -16,7 +16,7 @@
 
 Clawd operates in a fully autonomous loop that executes these 9 steps:
 
-1. **Web Search**: Find 5 high-quality YouTube videos of Las Vegas slot machines from real casinos
+1. **Web Search**: Find 5 high-quality YouTube videos of Las Vegas slot machines from real casinos using Brave first with Tavily fallback; send Telegram if both fail
 2. **Video Analysis**: Reverse engineer reel size, symbols (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines using browser + screenshot + Kimi vision
 3. **Spreadsheet Creation**: Create local Excel spreadsheet (or CSV fallback) using pandas + openpyxl containing: iteration log, math model, symbol analysis, checkpoints
 4. **Asset Generation**: Generate original assets (textures, models, particles, animations) matching look & feel using meshy-ai or other generation tools — NEVER copy originals

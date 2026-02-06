@@ -22,7 +22,9 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
 **Objective**: Find 5 high-quality videos of target Las Vegas slot machines from real casinos
 
 **Actions**:
-- Use Brave API or web_search to query YouTube
+- Attempt web_search with Brave using `BRAVE_API_KEY`
+- If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
+- If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
 - Search terms: "CLEOPATRA slots Las Vegas", "real casino slot machine gameplay", etc.
 - Evaluate video quality criteria:
   - Clear reel visibility
