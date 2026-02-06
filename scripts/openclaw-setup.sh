@@ -20,6 +20,8 @@ GATEWAY_PORT=18789
 CDP_PORT=18801
 TELEGRAM_PAIRING_APPROVED=false
 BROWSER_SETUP_STATUS="Not installed"
+OPENAI_FALLBACK_MODEL="openai/gpt-4o"
+GROK_FALLBACK_MODEL="grok/grok-vision-beta"
 
 # Helper functions
 print_header() {
@@ -132,6 +134,20 @@ check_prerequisites() {
         print_error "MOONSHOT_API_KEY environment variable not set!"
         all_ok=false
     fi
+
+    if [[ -n "${OPENAI_API_KEY:-}" ]]; then
+        print_success "OPENAI_API_KEY is configured"
+    else
+        print_error "OPENAI_API_KEY environment variable not set!"
+        all_ok=false
+    fi
+
+    if [[ -n "${GROK_API_KEY:-}" ]]; then
+        print_success "GROK_API_KEY is configured"
+    else
+        print_error "GROK_API_KEY environment variable not set!"
+        all_ok=false
+    fi
     
     if [[ -n "${TELEGRAM_API_KEY:-}" ]]; then
         print_success "TELEGRAM_API_KEY is configured"
@@ -234,6 +250,16 @@ configure_moonshot_ai() {
         print_error "MOONSHOT_API_KEY environment variable is not set"
         exit 1
     fi
+
+    if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+        print_error "OPENAI_API_KEY environment variable is not set"
+        exit 1
+    fi
+
+    if [[ -z "${GROK_API_KEY:-}" ]]; then
+        print_error "GROK_API_KEY environment variable is not set"
+        exit 1
+    fi
     
     print_info "Setting default model to moonshot/kimi-k2.5..."
     if ! openclaw models set "moonshot/kimi-k2.5"; then
@@ -243,10 +269,18 @@ configure_moonshot_ai() {
         fi
     fi
 
+    print_info "Configuring fallback models..."
+    local fallback_models
+    fallback_models="[\"$GROK_FALLBACK_MODEL\",\"$OPENAI_FALLBACK_MODEL\"]"
+    if ! openclaw config set agents.defaults.model.fallbacks "$fallback_models"; then
+        print_warning "Failed to set fallback models, continuing..."
+    fi
+
     print_success "Moonshot AI configuration verified"
     print_info "Default model is set automatically (no manual selection needed)."
     print_info "Base URL: https://api.moonshot.ai/v1"
     print_info "Model: kimi-k2.5 (primary)"
+    print_info "Fallbacks: $GROK_FALLBACK_MODEL, $OPENAI_FALLBACK_MODEL"
     print_info "Note: The models registry is built-in; it may not appear under models.providers in config."
     
     prompt_continue
@@ -628,6 +662,7 @@ show_summary() {
     print_info "Configuration Summary:"
     echo "  • OpenClaw: Installed and running"
     echo "  • Moonshot AI: Configured with Kimi models"
+    echo "  • OpenAI + Grok: Configured as fallback models"
     echo "  • Brave Search: Enabled for web search"
     echo "  • Tavily Search: Enabled for web search"
     echo "  • Agents Workspace: $CONSTITUTION_DIR"
@@ -684,6 +719,8 @@ main() {
     print_warning "Make sure you have:"
     echo "  • BRAVE_API_KEY environment variable set"
     echo "  • MOONSHOT_API_KEY environment variable set"
+    echo "  • OPENAI_API_KEY environment variable set"
+    echo "  • GROK_API_KEY environment variable set"
     echo "  • TELEGRAM_API_KEY environment variable set"
     echo "  • TAVILY_API_KEY environment variable set"
     echo
