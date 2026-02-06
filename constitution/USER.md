@@ -2,59 +2,85 @@
 
 ## User Interaction Guidelines
 
-### Communication Channels
+### Communication Channel
 
-**Primary Channel**: Slack
-- All communications must occur through designated Slack channels
-- Asset requests, status updates, and deliverables are shared via Slack
-- No direct file system or email-based communication
-
-**Research Channel**: Telegram
-- Used for CLEOPATRA slots research project
-- Initial message sent on first heartbeat or gateway restart
-- Heartbeat progress updates sent every 30 minutes
-- User (Ron) selection and clarification requests
-- Quick questions and blocker notifications
+**Primary Channel**: Telegram
+- All communications with Ron occur through Telegram
+- Heartbeat updates every 30 minutes during active iterations
+- Iteration completion notifications with feedback requests
+- Blocker notifications and clarification questions
 - All communication uses chain-of-thought reasoning
+
+### Heartbeat Progress Format
+
+Every 30 minutes, send exactly 2 sentences to Telegram:
+
+**Format:**
+```
+Last 30 mins I worked on <short summary of what was done>.
+Next 30 mins I am working on <short summary of the next planned step>.
+```
+
+**Rules:**
+- Keep each sentence concise and specific
+- Mention concrete deliverables or step numbers
+- Be honest about blockers or waiting periods
+- Use clear, professional language
+- No additional text beyond the 2 sentences
+
+### Iteration Completion Format
+
+At the end of each complete 9-step iteration, send a summary to Telegram:
+
+**Format:**
+```
+Iteration <number> complete.
+
+Summary:
+- Video analyzed: <YouTube link>
+- Assets generated: <count> original models, textures, animations
+- Godot implementation: <public URL>
+- Comparison result: <brief assessment>
+
+Test URL: <link to deployed prototype>
+Comparison video: <link if available>
+
+Is it good enough? Reply 'yes' or 'no' to continue/stop iterations.
+```
 
 ### Request Format
 
-When requesting assets or pipeline actions, provide:
-1. Asset type and theme (e.g., "Egyptian symbols")
-2. Technical requirements (triangle count, texture size)
-3. Deadline or priority level
-4. Reference images or descriptions
-5. Integration target (Unity scene/project)
+When asking Ron for decisions or clarifications:
+1. Provide clear context about the current step
+2. State the specific decision needed
+3. Offer options when applicable
+4. Explain why the decision is needed
+5. Include relevant links or screenshots
 
 ### Response Expectations
 
-Users can expect:
-- Acknowledgment within designated response timeframe
-- Progress updates for long-running tasks
-- Technical specifications for delivered assets
-- Documentation for any custom workflows
-- Clear notification of blockers or issues
+Ron can expect:
+- 30-minute heartbeat updates during active work
+- Iteration completion summaries with test URLs
+- Immediate notification of blockers
+- Transparent reasoning via chain-of-thought
+- Clear requests for iteration decisions
+- Checkpoint resilience (can restart at any step)
 
-**For Research Tasks:**
-- Initial Telegram message on first heartbeat or gateway restart
-- 30-minute heartbeat progress updates via Telegram
-- Exactly 2 sentences: last 30 mins + next 30 mins
-- Immediate notification of blockers or unclear elements
-- Requests for clarification when needed
-- All reasoning uses chain-of-thought approach
+### Iteration Decision Process
 
-### Asset Approval Process
-
-1. Initial concept/preview shared via Slack
-2. User feedback collection
-3. Revision implementation
-4. Final asset delivery with documentation
-5. Unity integration verification
+After each complete iteration:
+1. Clawd deploys test version with public URL
+2. Clawd compares generated vs original video
+3. Clawd sends summary to Ron via Telegram
+4. Clawd waits for Ron's decision: 'yes' or 'no'
+5. If 'yes': Loop stops, iteration is final
+6. If 'no': Loop continues with new iteration
+7. Clawd updates MEMORY.md with decision
 
 ## User Responsibilities
 
-- Provide clear, detailed asset requirements
-- Review and approve assets in timely manner
-- Report integration issues promptly
-- Maintain consistent naming conventions
-- Follow established workflows
+- Review iteration summaries and test URLs
+- Reply 'yes' or 'no' to iteration completion requests
+- Provide clarification when asked
+- Report issues with deployments or tests promptly

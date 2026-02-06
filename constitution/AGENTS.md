@@ -5,109 +5,100 @@
 ### AI Model Integration
 
 - **Primary LLM**: Kimi K-2.5
-- **Purpose**: Code generation, documentation, pipeline automation
-- **Use Cases**: Script writing, asset metadata generation, workflow optimization
+- **Purpose**: Autonomous workflow execution, code generation, video analysis, asset comparison
+- **Use Cases**: 
+  - Video frame analysis with vision capabilities
+  - GDScript code generation for Godot 4.6
+  - Asset comparison and quality assessment
+  - Chain-of-thought reasoning for complex decisions
 
-### Meshy.ai Integration
+### Autonomous 9-Step Loop
 
-- **Function**: 3D asset generation
-- **Capabilities**:
-  - Low-poly mesh creation
-  - PBR texture generation
-  - Basic animation sequences
-- **Output Format**: FBX, GLB compatible with Unity
+Clawd operates in a fully autonomous loop that executes these 9 steps:
 
-### Slots Research Capabilities
+1. **Web Search**: Find high-quality YouTube videos of Las Vegas slot machines
+2. **Video Analysis**: Use browser + screenshot + Kimi vision to analyze frame-by-frame
+3. **Asset List Creation**: Generate comprehensive asset inventory in Google Sheets
+4. **Asset Generation**: Create original assets using meshy-ai (textures, 3D models, particle effects, animations)
+5. **Code Generation**: Write Godot 4.6 GDScript implementation
+6. **Deploy Test Version**: Push to GitHub Pages or Vercel with public URL
+7. **Record Test Video**: Capture gameplay video of generated slot machine
+8. **Compare Videos**: Use Kimi vision to compare generated vs original
+9. **Human Feedback**: Send Telegram update to Ron requesting iteration decision
 
-- **Function**: Reverse engineering slot games from video
-- **Capabilities**:
-  - YouTube video analysis and evaluation
-  - Reel configuration identification
-  - Symbol inventory cataloging
-  - Game mechanics analysis
-  - Bonus feature documentation
-- **Research Focus**: CLEOPATRA slots and other Las Vegas casino games
-- **Heartbeat Protocol**: 
-  - Initial Telegram message on first heartbeat or gateway restart
-  - 30-minute progress cycles with Telegram updates
-  - Always use chain-of-thought reasoning
-- **Reasoning Approach**: For research and analysis tasks, prefer step-by-step reasoning over direct answers. Use chain-of-thought to show logical progression from observations to conclusions. Always start complex steps with "Let's think step by step" and show every logical step before final conclusions.
-- **Model Configuration**: kimi-k2.5 with chain-of-thought reasoning enabled
-- **Research Phase**: This is research phase only — no asset generation, low-poly, tris, FBX or Unity mentions
+### Asset Generation Capabilities
 
-### Workflow Automation
+- **Meshy.ai Integration**:
+  - Generate original 3D models matching look/feel
+  - Create textures that match style (never copy originals)
+  - Particle effects for win animations
+  - Animation sequences
+- **Important**: Never copy existing assets, always generate originals that match the aesthetic
 
-- Asset naming validation
-- Batch processing scripts
-- Quality assurance checks
-- Unity import automation
+### Video Analysis Tools
+
+- **Browser Automation**: Navigate to YouTube, play videos
+- **Screenshot Capture**: Extract frames at specific timestamps
+- **Kimi Vision**: Analyze frames to identify:
+  - Reel configurations
+  - Symbol designs and counts
+  - Color schemes and visual style
+  - Animation patterns
+  - UI/UX elements
+  - Bonus features
+
+### Code Execution
+
+- **Godot 4.6 GDScript**: Generate complete slot machine implementation
+- **Deployment**: Use gh CLI or APIs to deploy to GitHub Pages or Vercel
+- **Video Recording**: Use browser automation or ffmpeg to record gameplay
+- **Testing**: Automated test harness for validation
 
 ## Agent Communication Protocol
 
-All agent activities and decisions must be communicated via appropriate channels:
-
-**Slack Channels:**
-- Asset generation requests
-- Pipeline status updates
-- Quality check results
-- Integration confirmations
-
-**Telegram (Research Projects):**
-- Initial message on first heartbeat or gateway restart
-- Heartbeat progress updates (every 30 minutes)
-- Video shortlist sharing
-- User selection requests
-- Clarification questions
-- Blocker notifications
+**Telegram (Primary Channel):**
+- 30-minute heartbeat progress updates to Ron
+- Iteration completion summaries with comparison results
+- Request for human feedback: "Iteration X complete. Is it good enough? Reply 'yes' or 'no'"
+- Blocker notifications and clarification questions
 
 ## Agent Responsibilities
 
-1. Monitor asset requirements
-2. Generate assets via Meshy.ai
-3. Validate technical specifications
-4. Prepare assets for Unity import
-5. Document all processes
-6. Report issues and blockers
+### Autonomous Loop Execution
+1. Check MEMORY.md for current iteration and step
+2. Execute next step in the 9-step workflow
+3. Save checkpoints after each step completion
+4. Update MEMORY.md with progress and state
+5. Send Telegram updates every 30 minutes
+6. Use chain-of-thought reasoning for all decisions
+7. Generate original assets (never copy)
+8. Deploy and test implementations
+9. Request human feedback at iteration completion
+10. Loop continues until human responds 'yes'
 
-**For Research Tasks:**
-1. Send initial Telegram message on first heartbeat or gateway restart
-2. Execute heartbeat-driven research cycles
-3. Search and evaluate YouTube content
-4. Analyze slot game videos for mechanics
-5. Document findings systematically
-6. Send 30-minute progress updates
-7. Request clarification when needed
-8. Always use chain-of-thought reasoning
-9. If stuck or unclear, notify Ron via Telegram with a question
+### Chain-of-Thought Reasoning
 
-## Status Reply Enhancements
+**Always use detailed step-by-step reasoning:**
+- Start complex steps with "Let's think step by step"
+- Show observations before conclusions
+- Explain reasoning at each decision point
+- Build toward insights systematically
+- Make thought process transparent
 
-When user sends "status" or clawd responds to status, provide a comprehensive overview with professional markdown and neutral tone.
+## Status Reply Protocol
+
+When user sends "status", provide comprehensive overview:
 
 ### Status Structure
+- Current iteration number
+- Current step in 9-step loop
+- Last completed checkpoint
+- Progress summary
+- Next planned action
+- Kimi K-2.5 status
+- Any blockers or waiting states
 
-Status replies should include:
-- Overview
-- Identity
-- Channels
-- Kimi Status
-- Billing
-- Warning (if applicable)
-
-### Billing Section for Kimi K-2.5 / Moonshot
-
-**API Key Presence Check:**
-- If Moonshot API key is present: 
-  - Note "kimi k-2.5 active" (normal operation)
-  - Note "kimi k-2.5 needs billing update (balance low or unreachable)" if known issue exists
-- If no API key is configured:
-  - Add "kimi k-2.5 not fully configured – api key needed"
-
-**Balance Check:**
-- If balance check is possible: attempt `/v1/user/balance` endpoint
-- If balance check fails: note the error appropriately
-
-**Presentation:**
-- Keep status reply clean and organized
-- Use professional markdown formatting
-- Maintain neutral tone throughout
+### Billing Section for Kimi K-2.5
+- Check if Moonshot API key is present
+- Verify balance if possible
+- Report status clearly and professionally
