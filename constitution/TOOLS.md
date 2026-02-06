@@ -1,147 +1,116 @@
 # TOOLS.md
 
-## Development Tools
+## Search Tools
 
-### Video Research & Analysis
+### Brave Search API
+- **Purpose**: Primary web search for YouTube videos and slot machine research
+- **Env**: `BRAVE_API_KEY`
+- **Usage**: Find videos, paytable data, RTP info, manufacturer specs
+- **Fallback**: Tavily
 
-**Web Search (Brave primary, Tavily fallback)**
-- Search YouTube for Las Vegas slot machine videos using `BRAVE_API_KEY`
-- If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
-- If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
-- Evaluate video quality and content
-- Build shortlists of target machines
+### Tavily Search API
+- **Purpose**: Fallback web search when Brave fails or is rate-limited
+- **Env**: `TAVILY_API_KEY`
+- **Usage**: Same as Brave — automatic fallback on any Brave error
 
-**Browser Automation**
-- Navigate to YouTube videos
-- Play and control video playback
-- Capture screenshots at specific timestamps
-- Extract frames for analysis
+---
 
-**Kimi Vision (AI-powered)**
-- Analyze video frames for visual elements
-- Identify reel configurations and symbols
-- Compare generated vs original videos
-- Assess aesthetic match quality
+## AI Models
 
-**Video Recording Tools**
-- Browser-based screen recording
-- FFmpeg for video capture and processing
-- Generate comparison videos
+### Kimi K-2.5 (Primary)
+- **Provider**: moonshot
+- **Model ID**: `moonshot/kimi-k2.5`
+- **Capabilities**: Vision analysis, reasoning, code generation
+- **Env**: `MOONSHOT_API_KEY`
 
-### Asset Generation
+### Grok Vision Beta (Fallback #1)
+- **Provider**: xai
+- **Model ID**: `xai/grok-vision-beta`
+- **Capabilities**: Vision analysis, reasoning
+- **Env**: `XAI_API_KEY`
 
-**Meshy.ai or Other Generation Tools**
-- Generate original 3D models matching slot machine aesthetics
-- Create textures that match style (never copy)
-- Particle effects for win animations
-- Animation sequences for reels and symbols
-- **Important**: Always generate originals, never copy existing assets
+### GPT-4o (Fallback #2)
+- **Provider**: openai
+- **Model ID**: `openai/gpt-4o`
+- **Capabilities**: Vision analysis, reasoning, code generation
+- **Env**: `OPENAI_API_KEY`
 
-**Asset Requirements**
-- Match look and feel of original Las Vegas machines
-- Original creations that capture aesthetic essence
-- Optimized for web deployment
-- Compatible with Godot 4.6
-- **Storage**: Store binary assets directly in repo without Git LFS
+### Fallback Chain
+`kimi-k2.5` → `grok-vision-beta` → `gpt-4o`
 
-### Game Engine & Deployment
+---
 
-**Godot 4.6**
-- GDScript code generation
-- Slot machine game logic implementation
-- Reel mechanics and spin animations
-- Win calculation and payout systems
-- UI/UX elements
+## Browser & Video Tools
 
-**Deployment Platforms**
-- GitHub Pages (via gh CLI)
-- Vercel (via API or CLI)
-- Public URLs for testing and feedback
-- Automated deployment pipeline
+### Browser Automation (OpenClaw built-in)
+- **Purpose**: Navigate to YouTube, interact with pages
+- **Capabilities**: Navigate URLs, click elements, scroll, extract content
+- **Usage**: Video playback control, metadata extraction
 
-### Documentation & Tracking
+### Screenshot Capture (OpenClaw built-in)
+- **Purpose**: Capture video frames for vision analysis
+- **Capabilities**: Full-page and element screenshots
+- **Usage**: Capture reel states, paytables, bonus screens
 
-**Excel Spreadsheets (pandas + openpyxl)**
-- Primary format for iteration tracking and analysis
-- Create `.xlsx` files with multiple sheets:
-  - iteration_log: Track all steps, timestamps, decisions
-  - math_model: Paytable, RTP calculations, symbol weights
-  - symbol_analysis: Symbol descriptions, frequencies, visual attributes
-  - checkpoints: Snapshot of progress for each step
-- File naming: `iteration_{N}_analysis.xlsx`
-- Storage: In `/iterations/iteration_{N}/` directory
-- Use pandas with openpyxl engine for Excel file creation
+### ffmpeg
+- **Purpose**: Video frame extraction and processing
+- **Install**: `apt install ffmpeg`
+- **Usage**: Extract frames at intervals from downloaded videos
 
-**CSV Fallback**
-- If openpyxl installation/import fails, use CSV format
-- Generate separate CSV files:
-  - `iteration_log.csv`
-  - `math_model.csv`
-  - `symbol_analysis.csv`
-  - `checkpoints.csv`
-- Can be imported into Excel manually by user
-- Log CSV fallback usage in MEMORY.md
+### yt-dlp
+- **Purpose**: Download YouTube videos for local processing
+- **Install**: `pip install yt-dlp`
+- **Usage**: Download video files for ffmpeg frame extraction
 
-**MEMORY.md**
-- Checkpoint state storage
-- Iteration tracking (current iteration number)
-- Step tracking (current step in 9-step loop)
-- Human feedback decisions
-- Restart resilience data
-- Binary asset storage paths and management
-- Rules for keeping only latest approved iteration on "yes"
+---
 
-### Communication
+## Data & Spreadsheet Tools
 
-**Telegram**
-- Heartbeat progress updates (every 30 minutes)
-- Iteration completion notifications
-- Human feedback requests
-- Blocker and clarification messages
-- All messages use chain-of-thought reasoning
+### pandas
+- **Purpose**: Data manipulation and analysis
+- **Install**: `pip install pandas`
+- **Usage**: Structure game data, calculate math model values
 
-### Code Execution
+### openpyxl
+- **Purpose**: Create Excel .xlsx files with formatting
+- **Install**: `pip install openpyxl`
+- **Usage**: Generate multi-sheet math model spreadsheets
+- **Fallback**: CSV export if openpyxl unavailable
 
-**Bash/Shell**
-- Run deployment scripts
-- Execute ffmpeg commands
-- File system operations
-- Git operations for deployment
+---
 
-**APIs & Integration**
-- GitHub API (for Pages deployment)
-- Vercel API (for hosting)
-- Brave Search API (primary video discovery)
-- Tavily Search API (fallback video discovery)
-- pandas + openpyxl (for Excel spreadsheet generation)
+## Communication Tools
 
-## Technical Specifications
+### Telegram Bot API
+- **Purpose**: Communication with Ron
+- **Env**: `TELEGRAM_API_KEY`
+- **Usage**:
+  - Phase 1: Present top 5 video options, receive selection
+  - Phase 2: Send analysis summary and spreadsheet file
 
-### Video Analysis
+---
 
-- **Frame Rate**: Extract key frames at 1-5 second intervals
-- **Resolution**: Capture at original video quality
-- **Format**: PNG or JPEG for frame extraction
-- **Analysis**: Use Kimi vision for automated interpretation
+## File System
 
-### Asset Export
+### Workspace Directory
+- **Path**: `/workspaces/clawd-slots-assets-pipeline`
+- **Constitution**: `constitution/` — bot behavior and workflow definitions
+- **Scripts**: `scripts/` — setup and utility scripts
+- **Output**: Math model spreadsheets saved in workspace root or dedicated output folder
 
-- **Format**: GLB/GLTF for Godot compatibility
-- **Textures**: PNG or WebP, optimized for web
-- **Animations**: FBX or Godot-native formats
-- **Performance**: Target 60 FPS in browser
+---
 
-### Deployment
+## Tool Availability Summary
 
-- **Build Tool**: Godot 4.6 HTML5 export
-- **Hosting**: Static site hosting (GitHub Pages or Vercel)
-- **URL**: Public HTTPS URL for testing
-- **CI/CD**: Automated via gh CLI or Vercel CLI
-
-### Video Recording
-
-- **Tool**: Browser automation or ffmpeg
-- **Duration**: 30-60 seconds of gameplay
-- **Resolution**: 1280x720 or 1920x1080
-- **Format**: MP4 with H.264 codec
-- **Purpose**: Comparison with original video
+| Tool | Phase 1 | Phase 2 | Key Required |
+|------|---------|---------|--------------|
+| Brave Search | ✅ | ✅ | BRAVE_API_KEY |
+| Tavily Search | ✅ | ✅ | TAVILY_API_KEY |
+| Kimi K-2.5 | ✅ | ✅ | MOONSHOT_API_KEY |
+| Grok Vision | ✅ | ✅ | XAI_API_KEY |
+| GPT-4o | ✅ | ✅ | OPENAI_API_KEY |
+| Browser | ❌ | ✅ | — |
+| Screenshots | ❌ | ✅ | — |
+| pandas/openpyxl | ❌ | ✅ | — |
+| ffmpeg/yt-dlp | ❌ | ✅ | — |
+| Telegram | ✅ | ✅ | TELEGRAM_API_KEY |

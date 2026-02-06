@@ -8,81 +8,61 @@
 - **Fallback #1**: Grok Vision Beta (xai/grok-vision-beta) — activates if Kimi is unavailable
 - **Fallback #2**: GPT-4o (openai/gpt-4o) — activates if both Kimi and Grok are unavailable
 - **Fallback chain**: kimi-k2.5 → grok-vision-beta → gpt-4o
-- **Purpose**: Autonomous workflow execution, code generation, video analysis, asset comparison
-- **Use Cases**: 
-  - Video frame analysis with vision capabilities
-  - GDScript code generation for Godot 4.6
-  - Asset comparison and quality assessment
-  - Chain-of-thought reasoning for complex decisions
+- **Purpose**: Video search, selection, analysis, and math model extraction
 
-### Autonomous 9-Step Loop
+### 2-Phase Workflow
 
-Clawd operates in a fully autonomous loop that executes these 9 steps:
+Clawd operates in a 2-phase workflow:
 
+**Phase 1: Selection** (iterative loop)
 1. **Web Search**: Find 5 high-quality YouTube videos of Las Vegas slot machines from real casinos using Brave first with Tavily fallback; send Telegram if both fail
-2. **Video Analysis**: Reverse engineer reel size, symbols (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines using browser + screenshot + Kimi vision
-3. **Spreadsheet Creation**: Create local Excel spreadsheet (or CSV fallback) using pandas + openpyxl containing: iteration log, math model, symbol analysis, checkpoints
-4. **Asset Generation**: Generate original assets (textures, models, particles, animations) matching look & feel using meshy-ai or other generation tools — NEVER copy originals
-5. **Code Generation**: Write Godot 4.6 GDScript implementation
-6. **Deploy Test Version**: Create test harness with publicly accessible URL (GitHub Pages / Vercel via gh CLI)
-7. **Record Test Video**: Video record the test harness output
-8. **Compare Videos**: Compare visually to original YouTube video using Kimi vision
-9. **Human Feedback**: Send Telegram update to Ron requesting "yes"/"no" iteration decision; loop steps 2-7 until human approves with "yes"
+2. **Present to Human**: Send top 5 videos to Ron via Telegram with quality assessments
+3. **Human Decision**: Ron picks a video (1-5) or says "redo" to search again
+4. Loop continues until Ron selects a video
 
-### Asset Generation Capabilities
-
-- **Meshy.ai or Other Generation Tools**:
-  - Generate original 3D models matching look/feel
-  - Create textures that match style (never copy originals)
-  - Particle effects for win animations
-  - Animation sequences
-- **Important**: Never copy existing assets, always generate originals that match the aesthetic
-- **Storage**: Store binary assets in repo without Git LFS
-- **Iteration cleanup**: On human "yes", delete older iteration folders and keep only latest approved assets
+**Phase 2: Video Analysis**
+1. **Metadata & Text Analysis**: Extract video metadata, transcript/captions, and supplementary game data from review sites
+2. **Frame Analysis**: Capture screenshots and use AI vision to reverse engineer reel configuration, symbols (wilds/scatters/premiums/lows), mechanics, bonuses, paylines, visual style
+3. **Math Model Spreadsheet**: Create Excel spreadsheet (pandas + openpyxl) with game overview, symbol inventory, paytable, math model, bonus features, visual analysis, and analysis log
+4. **Summary to Human**: Send analysis summary to Ron via Telegram
 
 ### Video Analysis Tools
 
-- **Browser Automation**: Navigate to YouTube, play videos
+- **Browser Automation**: Navigate to YouTube, play videos, capture frames
 - **Screenshot Capture**: Extract frames at specific timestamps
-- **Kimi Vision**: Analyze frames to identify:
-  - Reel configurations
-  - Symbol designs and counts
+- **AI Vision** (Kimi K-2.5 with Grok/GPT-4o fallbacks): Analyze frames to identify:
+  - Reel configurations (columns × rows)
+  - Symbol designs, types, and counts
   - Color schemes and visual style
-  - Animation patterns
+  - Animation patterns and timing
   - UI/UX elements
-  - Bonus features
+  - Bonus features and mechanics
+  - Payline patterns
 
-### Code Execution
+### Spreadsheet Creation
 
-- **Godot 4.6 GDScript**: Generate complete slot machine implementation
-- **Deployment**: Use gh CLI or APIs to deploy to GitHub Pages or Vercel
-- **Video Recording**: Use browser automation or ffmpeg to record gameplay
-- **Testing**: Automated test harness for validation
+- **pandas + openpyxl**: Create Excel .xlsx with multiple sheets
+- **CSV Fallback**: If openpyxl fails, generate separate CSV files
+- **Sheets**: game_overview, symbol_inventory, paytable, math_model, bonus_features, visual_analysis, analysis_log
 
 ## Agent Communication Protocol
 
 **Telegram (Primary Channel):**
 - 30-minute heartbeat progress updates to Ron
-- Iteration completion summaries with comparison results
-- Request for human feedback: "Iteration X complete. Is it good enough? Reply 'yes' or 'no'"
+- Phase 1: Present top 5 video candidates and wait for selection
+- Phase 2: Send analysis summary when complete
 - Blocker notifications and clarification questions
 
 ## Agent Responsibilities
 
-### Autonomous Loop Execution
-1. Check MEMORY.md for current iteration and step
-2. Execute next step in the 9-step workflow
+### Workflow Execution
+1. Check MEMORY.md for current phase and step
+2. Execute next step in the 2-phase workflow
 3. Save checkpoints after each step completion
 4. Update MEMORY.md with progress and state
 5. Send Telegram updates every 30 minutes
 6. Use chain-of-thought reasoning for all decisions
-7. Generate original assets (never copy)
-8. Store binary assets without Git LFS
-9. Use Excel (pandas + openpyxl) or CSV fallback for spreadsheets
-10. Deploy and test implementations
-11. Request human feedback at iteration completion
-12. Loop continues until human responds 'yes'
-13. On human "yes": push latest approved assets, code, and spreadsheet; delete old iteration folders
+7. Use Excel (pandas + openpyxl) or CSV fallback for spreadsheets
 
 ### Chain-of-Thought Reasoning
 
@@ -98,12 +78,12 @@ Clawd operates in a fully autonomous loop that executes these 9 steps:
 When user sends "status", provide comprehensive overview:
 
 ### Status Structure
-- Current iteration number
-- Current step in 9-step loop
+- Current phase (1: Selection or 2: Video Analysis)
+- Current step within the phase
 - Last completed checkpoint
 - Progress summary
 - Next planned action
-- Kimi K-2.5 status + fallback model status (Grok Vision Beta, GPT-4o)
+- Model status: Kimi K-2.5 + fallbacks (Grok Vision Beta, GPT-4o)
 - Any blockers or waiting states
 
 ### Billing & Model Status

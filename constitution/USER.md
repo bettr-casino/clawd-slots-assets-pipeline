@@ -1,86 +1,103 @@
-# USER.md
+# USER.md — User Interaction Guidelines
 
-## User Interaction Guidelines
+## Primary User
 
-### Communication Channel
+**Ron** — project owner, communicates via Telegram.
 
-**Primary Channel**: Telegram
-- All communications with Ron occur through Telegram
-- Heartbeat updates every 30 minutes during active iterations
-- Iteration completion notifications with feedback requests
-- Blocker notifications and clarification questions
-- All communication uses chain-of-thought reasoning
+## Communication Channel
 
-### Heartbeat Progress Format
+**Telegram Bot** — all interaction happens through Telegram messages using `TELEGRAM_API_KEY`.
 
-Every 30 minutes, send exactly 2 sentences to Telegram:
+## Phase 1: Selection Interaction
 
-**Format:**
+### Presenting Options
+
+When top 5 videos are ready, send a Telegram message in this format:
+
 ```
-Last 30 mins I worked on <short summary of what was done>.
-Next 30 mins I am working on <short summary of the next planned step>.
-```
+🎰 Top 5 Slot Machine Videos Found:
 
-**Rules:**
-- Keep each sentence concise and specific
-- Mention concrete deliverables or step numbers
-- Be honest about blockers or waiting periods
-- Use clear, professional language
-- No additional text beyond the 2 sentences
+1. [Game Name] — [Channel Name]
+   🔗 [YouTube URL]
+   ⏱ Duration: [X:XX]
+   📝 [Brief quality note]
 
-### Iteration Completion Format
+2. [Game Name] — [Channel Name]
+   🔗 [YouTube URL]
+   ⏱ Duration: [X:XX]
+   📝 [Brief quality note]
 
-At the end of each complete 9-step iteration, send a summary to Telegram:
+[... up to 5]
 
-**Format:**
-```
-Iteration <number> complete.
-
-Summary:
-- Video analyzed: <YouTube link>
-- Assets generated: <count> original models, textures, animations
-- Godot implementation: <public URL>
-- Comparison result: <brief assessment>
-
-Test URL: <link to deployed prototype>
-Comparison video: <link if available>
-
-Is it good enough? Reply 'yes' or 'no' to continue/stop iterations.
+Reply with a number (1-5) to select, or "redo" for new search.
 ```
 
-### Request Format
+### Handling User Responses
 
-When asking Ron for decisions or clarifications:
-1. Provide clear context about the current step
-2. State the specific decision needed
-3. Offer options when applicable
-4. Explain why the decision is needed
-5. Include relevant links or screenshots
+| User Says | Action |
+|-----------|--------|
+| `1` through `5` | Select that video, move to Phase 2 |
+| `redo` | Refine search query, find new top 5 |
+| `redo [specific request]` | Use the specific request to guide new search |
+| Anything else | Ask for clarification: "Please reply 1-5 or redo" |
 
-### Response Expectations
+### Redo Behavior
 
-Ron can expect:
-- 30-minute heartbeat updates during active work
-- Iteration completion summaries with test URLs
-- Immediate notification of blockers
-- Transparent reasoning via chain-of-thought
-- Clear requests for iteration decisions
-- Checkpoint resilience (can restart at any step)
+- Each redo uses a refined or different search query
+- Track redo count in MEMORY.md
+- After 3 redos, ask Ron: "I've searched 3 times. Can you share a specific video URL?"
 
-### Iteration Decision Process
+---
 
-After each complete iteration:
-1. Clawd deploys test version with public URL
-2. Clawd compares generated vs original video
-3. Clawd sends summary to Ron via Telegram
-4. Clawd waits for Ron's decision: 'yes' or 'no'
-5. If 'yes': Loop stops, iteration is final
-6. If 'no': Loop continues with new iteration
-7. Clawd updates MEMORY.md with decision
+## Phase 2: Analysis Interaction
 
-## User Responsibilities
+### Progress Updates
 
-- Review iteration summaries and test URLs
-- Reply 'yes' or 'no' to iteration completion requests
-- Provide clarification when asked
-- Report issues with deployments or tests promptly
+Send brief Telegram updates at key milestones:
+- "📊 Starting analysis of [Game Name]..."
+- "🔍 Extracted metadata and transcript. Analyzing frames now..."
+- "📈 Analysis complete. Generating math model spreadsheet..."
+
+### Final Delivery
+
+When analysis is complete, send:
+
+```
+✅ Analysis Complete: [Game Name]
+
+📊 Math Model Summary:
+• Reels: [config, e.g., 5x3]
+• Paylines: [count]
+• RTP: [value or "estimated"]
+• Volatility: [level]
+• Symbols: [count] identified
+• Bonus Features: [count] found
+
+📎 Spreadsheet: [filename.xlsx]
+[Attach file or provide path]
+
+7 sheets included: game_overview, symbol_inventory, paytable, math_model, bonus_features, visual_analysis, analysis_log
+```
+
+---
+
+## General Rules
+
+1. **Don't spam**: Only message when there's actionable information
+2. **Be concise**: Ron wants results, not process details
+3. **Always include next steps**: Tell Ron what to expect next
+4. **Handle silence**: If no response after 24 hours, send a gentle reminder once
+5. **Error notifications**: If blocked, tell Ron what's wrong and what's needed
+
+## Trigger Commands
+
+Ron can send these commands via Telegram at any time:
+
+| Command | Action |
+|---------|--------|
+| `start [query]` | Begin Phase 1 with optional search query |
+| `status` | Reply with current phase, step, and progress |
+| `stop` | Pause all work, checkpoint state |
+| `resume` | Resume from last checkpoint |
+| `redo` | (During Phase 1) Search again with new query |
+| `[URL]` | Skip Phase 1, go directly to Phase 2 with this video |
