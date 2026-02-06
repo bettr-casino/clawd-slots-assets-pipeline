@@ -125,8 +125,54 @@ This document catalogs all skills and tools required for the autonomous 9-step r
     output_format="glb"
   )
   ```
-- **Storage**: Store binary assets directly in repo without Git LFS
-- **Location**: `/iterations/iteration_{N}/assets/`
+
+### Asset Generation and Version Control
+
+**Folder Structure**:
+- All generated binary assets (textures, models, particles, animations, Godot scenes, etc.) must be placed in `assets/generated/iteration-[current iteration number]/`
+- Examples: `iteration-001/`, `iteration-002/`, `iteration-003/`
+- Use workspace-relative paths (no hardcoded paths outside of `assets/generated/`)
+- Organize within iteration folder:
+  - `assets/generated/iteration-XXX/symbols/`
+  - `assets/generated/iteration-XXX/textures/`
+  - `assets/generated/iteration-XXX/particles/`
+  - `assets/generated/iteration-XXX/animations/`
+  - `assets/generated/iteration-XXX/scenes/`
+
+**Storage Rules**:
+- Store binary assets directly in repo (no Git LFS)
+- Each iteration gets its own numbered folder
+- Track current iteration number in MEMORY.md
+
+**Cleanup on Human "Yes" (Approved Iteration)**:
+- Delete all older iteration folders (e.g., `assets/generated/iteration-001/` to `assets/generated/iteration-[N-1]/`)
+- Keep only the latest approved iteration folder
+- Optionally copy or rename to `assets/generated/current/` if desired
+- This prevents repository bloat while maintaining the approved version
+
+**Git Commit and Push Logic**:
+- After human approves with "yes", commit and push:
+  - Latest approved assets from `assets/generated/iteration-[N]/`
+  - Godot code
+  - Spreadsheet (Excel or CSV)
+- Do not use Git LFS — store binaries directly in repo
+- Update MEMORY.md with:
+  - Last approved folder name (e.g., `iteration-003`)
+  - Commit SHA for Codespace restart resume
+  - Timestamp of approval
+
+**MEMORY.md Tracking**:
+- Current iteration number (e.g., `1`, `2`, `3`)
+- Last approved folder (e.g., `iteration-003`)
+- Last commit SHA (e.g., `abc123def456...`)
+- Human decision status (`pending`, `approved`, `iterate`)
+
+**Restart Resume Protocol**:
+- On Codespace restart, read MEMORY.md
+- Load current iteration number
+- Load last approved folder name
+- Load last commit SHA
+- Resume from last checkpoint
 
 ### particle_effects (Effect Generation)
 - **Purpose**: Create win celebration effects
@@ -154,8 +200,14 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 - **Match look and feel**, not exact replication
 - **Create variations** that honor the original style
 - Use chain-of-thought to explain design decisions
-- **Storage**: Store all binary assets directly in repo without Git LFS
-- **Cleanup**: On human "yes" decision, delete old iteration folders and keep only latest approved assets
+
+**Asset Storage and Version Control**:
+- Store all binary assets in `assets/generated/iteration-[N]/` (e.g., `iteration-001/`, `iteration-002/`)
+- Store directly in repo without Git LFS
+- On human "yes" decision:
+  - Delete old iteration folders (keep only latest approved)
+  - Commit and push latest approved assets + Godot code + spreadsheet
+  - Update MEMORY.md with last approved folder name and commit SHA
 
 ---
 
@@ -380,11 +432,12 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - Handle variations (Yes, yes!, YES, No, no, NO, etc.)
   - Request clarification if ambiguous
 - **Logic**: Simple string matching with normalization
-- **Actions on "yes"**:
+- **Actions on "yes"** (approved iteration):
   - Mark iteration as final in MEMORY.md
-  - Push only latest approved assets, Godot code, and spreadsheet
-  - Delete old iteration folders (keep only approved iteration)
-  - Save commit SHA
+  - **Asset Cleanup**: Delete all older iteration folders (e.g., `assets/generated/iteration-001/` to `assets/generated/iteration-[N-1]/`)
+  - **Keep Only Latest**: Keep only the latest approved iteration folder (optionally copy or rename to `assets/generated/current/`)
+  - **Git Commit**: Push only latest approved assets, Godot code, and spreadsheet (no Git LFS)
+  - **Save State**: Update MEMORY.md with last approved folder name and commit SHA for Codespace restart resume
   - Stop autonomous loop
 - **Actions on "no"**:
   - Increment iteration counter
@@ -424,26 +477,25 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 - **Purpose**: Keep generated files organized
 - **Structure**:
   ```
-  /iterations/
-    /iteration_1/
-      iteration_1_analysis.xlsx  # or CSV files if fallback
-      /videos/
-        original_video_info.json
-        generated_gameplay.mp4
-      /assets/
-        /symbols/
-        /textures/
-        /animations/
-        /effects/
-      /code/
-        godot_project/
-      /analysis/
-        frame_001.png
-        frame_002.png
-        comparison_report.md
+  assets/
+    generated/
+      iteration-001/
+        symbols/
+        textures/
+        particles/
+        animations/
+        scenes/
+      iteration-002/
+        symbols/
+        textures/
+        particles/
+        animations/
+        scenes/
+      current/  # Optional: Latest approved iteration (copy/rename)
   ```
 - **Binary storage**: Store all assets directly in repo without Git LFS
-- **Cleanup on "yes"**: Delete old iteration folders (iteration_1, iteration_2, etc.) and keep only the latest approved iteration
+- **Cleanup on "yes"**: Delete old iteration folders (iteration-001, iteration-002, etc. except latest) and keep only the latest approved iteration
+- **Version control**: Track current iteration number, last approved folder, and commit SHA in MEMORY.md
 
 ---
 
