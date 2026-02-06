@@ -78,6 +78,18 @@ auth_profiles = {
     "openai:default": {"provider": "openai", "mode": "api_key"},
     "grok:default": {"provider": "grok", "mode": "api_key"},
 }
+provider_defaults = {
+    "openai": {
+        "baseUrl": "https://api.openai.com/v1",
+        "api": "openai-completions",
+        "models": [{"id": "gpt-4o", "name": "GPT-4o", "input": ["text"]}],
+    },
+    "grok": {
+        "baseUrl": "https://api.x.ai/v1",
+        "api": "openai-completions",
+        "models": [{"id": "grok-vision-beta", "name": "Grok Vision Beta", "input": ["text", "image"]}],
+    },
+}
 
 with open(path, "r", encoding="utf-8") as handle:
     data = json.load(handle)
@@ -94,6 +106,12 @@ auth = data.setdefault("auth", {})
 profiles = auth.setdefault("profiles", {})
 for key, value in auth_profiles.items():
     profiles.setdefault(key, value)
+
+models_config = data.setdefault("models", {})
+models_config.setdefault("mode", "merge")
+providers = models_config.setdefault("providers", {})
+for provider, payload in provider_defaults.items():
+    providers.setdefault(provider, payload)
 
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(data, handle, indent=2)
