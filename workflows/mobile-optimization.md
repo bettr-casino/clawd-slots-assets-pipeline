@@ -35,7 +35,7 @@ Comprehensive workflow for ensuring all assets meet mobile performance requireme
 
 ### 1.2 Set Per-Asset Limits
 - [ ] Document maximum values per asset type
-- [ ] Share budget constraints with team via Slack
+- [ ] Share budget constraints with team via Telegram
 - [ ] Integrate checks into pipeline validation
 
 ## Phase 2: Geometry Optimization
@@ -204,7 +204,7 @@ Comprehensive workflow for ensuring all assets meet mobile performance requireme
 - [ ] Document optimization techniques used
 - [ ] Note any trade-offs or compromises
 - [ ] Update standards and guidelines
-- [ ] Share findings via Slack and in `/constitution/MEMORY.md`
+- [ ] Share findings via Telegram and in `/constitution/MEMORY.md`
 
 ## Optimization Checklist Summary
 
