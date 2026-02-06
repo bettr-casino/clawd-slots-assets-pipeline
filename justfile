@@ -1,4 +1,4 @@
-start:
+start-foreground:
     ./scripts/openclaw-gateway-start.sh
 
 config:
