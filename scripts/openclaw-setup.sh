@@ -21,7 +21,7 @@ CDP_PORT=18801
 TELEGRAM_PAIRING_APPROVED=false
 BROWSER_SETUP_STATUS="Not installed"
 OPENAI_FALLBACK_MODEL="openai/gpt-4o"
-GROK_FALLBACK_MODEL="grok/grok-vision-beta"
+XAI_FALLBACK_MODEL="xai/grok-vision-beta"
 
 # Helper functions
 print_header() {
@@ -68,7 +68,7 @@ ensure_fallbacks_in_config() {
         return 1
     fi
 
-    python3 - "$OPENCLAW_CONFIG_FILE" "$GROK_FALLBACK_MODEL" "$OPENAI_FALLBACK_MODEL" <<'PY'
+    python3 - "$OPENCLAW_CONFIG_FILE" "$XAI_FALLBACK_MODEL" "$OPENAI_FALLBACK_MODEL" <<'PY'
 import json
 import sys
 
@@ -76,15 +76,15 @@ path = sys.argv[1]
 models = list(sys.argv[2:])
 auth_profiles = {
     "openai:default": {"provider": "openai", "mode": "api_key"},
-    "grok:default": {"provider": "grok", "mode": "api_key"},
+    "xai:default": {"provider": "xai", "mode": "api_key"},
 }
 provider_defaults = {
     "openai": {
         "baseUrl": "https://api.openai.com/v1",
         "api": "openai-completions",
-        "models": [{"id": "gpt-4o", "name": "GPT-4o", "input": ["text"]}],
+        "models": [{"id": "gpt-4o", "name": "GPT-4o", "input": ["text", "image"]}],
     },
-    "grok": {
+    "xai": {
         "baseUrl": "https://api.x.ai/v1",
         "api": "openai-completions",
         "models": [{"id": "grok-vision-beta", "name": "Grok Vision Beta", "input": ["text", "image"]}],
@@ -199,10 +199,10 @@ check_prerequisites() {
         all_ok=false
     fi
 
-    if [[ -n "${GROK_API_KEY:-}" ]]; then
-        print_success "GROK_API_KEY is configured"
+    if [[ -n "${XAI_API_KEY:-}" ]]; then
+        print_success "XAI_API_KEY is configured"
     else
-        print_error "GROK_API_KEY environment variable not set!"
+        print_error "XAI_API_KEY environment variable not set!"
         all_ok=false
     fi
     
@@ -297,12 +297,11 @@ run_initial_configuration() {
 }
 
 configure_moonshot_ai() {
-    print_header "Step 4: Configuring Moonshot AI Provider"
+    print_header "Step 4: Configuring AI Models (Primary + Fallbacks)"
     
-    print_info "Setting up Moonshot AI provider with Kimi K2.5..."
+    print_info "Setting up LLM fallback chain: kimi-k2.5 → grok-vision-beta → gpt-4o"
     
-    # The API key should already be set during openclaw configure
-    # But we can verify it's there
+    # Validate required API keys
     if [[ -z "${MOONSHOT_API_KEY:-}" ]]; then
         print_error "MOONSHOT_API_KEY environment variable is not set"
         exit 1
@@ -313,12 +312,13 @@ configure_moonshot_ai() {
         exit 1
     fi
 
-    if [[ -z "${GROK_API_KEY:-}" ]]; then
-        print_error "GROK_API_KEY environment variable is not set"
+    if [[ -z "${XAI_API_KEY:-}" ]]; then
+        print_error "XAI_API_KEY environment variable is not set"
         exit 1
     fi
     
-    print_info "Setting default model to moonshot/kimi-k2.5..."
+    # --- Primary model ---
+    print_info "Setting primary model to moonshot/kimi-k2.5..."
     if ! openclaw models set "moonshot/kimi-k2.5"; then
         print_warning "Failed to set default model via models command, trying config..."
         if ! openclaw config set agents.defaults.model.primary "moonshot/kimi-k2.5"; then
@@ -326,24 +326,44 @@ configure_moonshot_ai() {
         fi
     fi
 
-    print_info "Configuring fallback models..."
-    local fallback_models
-    fallback_models="[\"$GROK_FALLBACK_MODEL\",\"$OPENAI_FALLBACK_MODEL\"]"
-    if ! openclaw config set agents.defaults.model.fallbacks "$fallback_models"; then
-        print_warning "Failed to set fallback models, continuing..."
+    # --- Fallback models via CLI (the canonical way) ---
+    print_info "Clearing existing fallback list..."
+    openclaw models fallbacks clear 2>/dev/null || true
+
+    print_info "Adding fallback #1: $XAI_FALLBACK_MODEL..."
+    if ! openclaw models fallbacks add "$XAI_FALLBACK_MODEL" 2>/dev/null; then
+        print_warning "CLI fallback add failed for $XAI_FALLBACK_MODEL, will write config directly"
     fi
+
+    print_info "Adding fallback #2: $OPENAI_FALLBACK_MODEL..."
+    if ! openclaw models fallbacks add "$OPENAI_FALLBACK_MODEL" 2>/dev/null; then
+        print_warning "CLI fallback add failed for $OPENAI_FALLBACK_MODEL, will write config directly"
+    fi
+
+    # --- Register xAI API key in auth store ---
+    print_info "Registering xAI API key in OpenClaw auth store..."
+    echo "$XAI_API_KEY" | openclaw models auth paste-token \
+        --provider xai \
+        --profile-id "xai:default" 2>/dev/null || {
+        print_warning "paste-token for xai failed, continuing..."
+    }
+
+    # --- Belt-and-suspenders: write config JSON directly ---
     if ensure_fallbacks_in_config; then
         print_success "Fallback models written to config file"
     else
         print_warning "Could not write fallback models to config file"
     fi
 
-    print_success "Moonshot AI configuration verified"
-    print_info "Default model is set automatically (no manual selection needed)."
-    print_info "Base URL: https://api.moonshot.ai/v1"
-    print_info "Model: kimi-k2.5 (primary)"
-    print_info "Fallbacks: $GROK_FALLBACK_MODEL, $OPENAI_FALLBACK_MODEL"
-    print_info "Note: The models registry is built-in; it may not appear under models.providers in config."
+    # Verify final state
+    print_info "Verifying model status..."
+    openclaw models status 2>/dev/null || true
+    echo
+
+    print_success "AI model configuration completed"
+    print_info "Primary: moonshot/kimi-k2.5"
+    print_info "Fallback #1: $XAI_FALLBACK_MODEL"
+    print_info "Fallback #2: $OPENAI_FALLBACK_MODEL"
     
     prompt_continue
 }
@@ -782,7 +802,7 @@ main() {
     echo "  • BRAVE_API_KEY environment variable set"
     echo "  • MOONSHOT_API_KEY environment variable set"
     echo "  • OPENAI_API_KEY environment variable set"
-    echo "  • GROK_API_KEY environment variable set"
+    echo "  • XAI_API_KEY environment variable set"
     echo "  • TELEGRAM_API_KEY environment variable set"
     echo "  • TAVILY_API_KEY environment variable set"
     echo
