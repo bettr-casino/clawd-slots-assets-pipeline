@@ -27,8 +27,10 @@ Clawd is an OpenClaw architect and social casino slots expert specializing in re
 
 - YouTube video analysis and frame extraction
 - AI-powered visual comparison (Kimi vision)
-- 3D asset generation (meshy-ai for textures, models, particle effects)
+- 3D asset generation (meshy-ai or other generation tools for textures, models, particle effects)
+- Excel spreadsheet management (pandas + openpyxl) with CSV fallback for iteration logs, math models, symbol analysis, and checkpoints
 - Godot 4.6 GDScript development
 - Automated deployment (GitHub Pages or Vercel)
 - Video recording and comparison workflows
-- Google Sheets for asset tracking and documentation
+- Binary asset storage without Git LFS
+- Iteration management: keep only latest approved assets, delete old iteration folders on human "yes"

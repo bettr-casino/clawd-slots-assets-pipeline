@@ -16,6 +16,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - Retrieve video metadata (title, URL, description, thumbnail)
 - **Configuration**: Requires Brave Search API key
 - **Usage**: `web_search("CLEOPATRA slots Las Vegas gameplay")`
+- **Target**: Find 5 high-quality videos from real Las Vegas casinos
 
 ### YouTube API (optional)
 - **Purpose**: Get detailed video information
@@ -56,8 +57,9 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - Recognize patterns and configurations
   - Describe animations and effects
   - OCR for text elements
+  - Reverse engineer: reel size, symbol types (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines
 - **Model**: Kimi K-2.5 with vision capabilities
-- **Usage**: Analyze each screenshot for game elements
+- **Usage**: Analyze each screenshot for game elements and mechanics
 
 ### exec (Command Execution)
 - **Purpose**: Run ffmpeg or other video tools
@@ -70,34 +72,43 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 
 ---
 
-## Step 3: Asset List Creation (Documentation)
+## Step 3: Spreadsheet Creation (Excel/CSV)
 
-### google_sheets (Google Sheets API)
-- **Purpose**: Create structured asset inventory
+### pandas + openpyxl (Excel Spreadsheet Creation)
+- **Purpose**: Create local Excel spreadsheets for iteration tracking and analysis
 - **Capabilities**:
-  - Create new spreadsheets
-  - Add sheets/tabs
-  - Write data to cells
-  - Format and organize data
-  - Share with public or specific users
-  - Generate shareable links
-- **Configuration**: Requires Google Cloud API credentials
-- **Alternative**: Generate CSV files and convert to Sheets
+  - Create `.xlsx` files with multiple sheets
+  - Write structured data to Excel
+  - Format cells and organize data
+  - Generate sheets: iteration_log, math_model, symbol_analysis, checkpoints
+- **Configuration**: Requires pandas and openpyxl Python packages
+- **Usage**: 
+  ```python
+  import pandas as pd
+  with pd.ExcelWriter('iteration_1_analysis.xlsx', engine='openpyxl') as writer:
+      df_log.to_excel(writer, sheet_name='iteration_log')
+      df_math.to_excel(writer, sheet_name='math_model')
+      df_symbols.to_excel(writer, sheet_name='symbol_analysis')
+      df_checkpoints.to_excel(writer, sheet_name='checkpoints')
+  ```
+- **File naming**: `iteration_{N}_analysis.xlsx`
+- **Storage**: `/iterations/iteration_{N}/iteration_{N}_analysis.xlsx`
 
-### csv_export (CSV Generation)
-- **Purpose**: Create CSV files for asset tracking
+### csv_export (CSV Fallback)
+- **Purpose**: Create CSV files if Excel generation fails
 - **Capabilities**:
   - Write structured data to CSV format
-  - Create multiple CSV files for different asset types
-  - Import into Google Sheets manually if API unavailable
-- **Tools**: Built-in Python csv module or similar
-- **Usage**: Generate asset_inventory.csv
+  - Create separate CSV files for each sheet type
+  - Import into Excel manually if needed
+- **Tools**: Built-in Python csv module or pandas to_csv
+- **Usage**: Generate `iteration_log.csv`, `math_model.csv`, `symbol_analysis.csv`, `checkpoints.csv`
+- **Fallback rule**: If openpyxl installation/import fails, use CSV and log in MEMORY.md
 
 ---
 
-## Step 4: Asset Generation (Meshy-ai)
+## Step 4: Asset Generation (Original Assets)
 
-### meshy_ai (3D Asset Generation)
+### meshy_ai or other generation tools (3D Asset Generation)
 - **Purpose**: Generate original 3D assets matching slot machine aesthetics
 - **Capabilities**:
   - **Text-to-3D**: Generate models from descriptions
@@ -105,7 +116,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - **Texture Generation**: Create PBR textures matching style
   - **Animation**: Generate basic animation sequences
 - **Output Formats**: GLB, FBX, OBJ with textures
-- **Configuration**: Requires Meshy.ai API key
+- **Configuration**: Requires Meshy.ai API key or other generation tool access
 - **Usage**: 
   ```
   meshy_ai.generate_model(
@@ -114,6 +125,8 @@ This document catalogs all skills and tools required for the autonomous 9-step r
     output_format="glb"
   )
   ```
+- **Storage**: Store binary assets directly in repo without Git LFS
+- **Location**: `/iterations/iteration_{N}/assets/`
 
 ### particle_effects (Effect Generation)
 - **Purpose**: Create win celebration effects
@@ -141,6 +154,8 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 - **Match look and feel**, not exact replication
 - **Create variations** that honor the original style
 - Use chain-of-thought to explain design decisions
+- **Storage**: Store all binary assets directly in repo without Git LFS
+- **Cleanup**: On human "yes" decision, delete old iteration folders and keep only latest approved assets
 
 ---
 
@@ -211,7 +226,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - Create gh-pages branch
   - Push HTML5 export to branch
   - Configure GitHub Pages settings
-  - Generate public HTTPS URL
+  - Generate public HTTPS URL for test harness
 - **Configuration**: Requires GitHub authentication
 - **Usage**: 
   ```bash
@@ -224,7 +239,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 - **Purpose**: Deploy to Vercel hosting
 - **Capabilities**:
   - Deploy static sites
-  - Generate public URLs
+  - Generate public URLs for test harness
   - Configure build settings
   - Manage deployments
 - **Configuration**: Requires Vercel account and token
@@ -256,7 +271,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 ## Step 7: Record Test Video
 
 ### screen_recording (Browser Recording)
-- **Purpose**: Record gameplay video of deployed slot machine
+- **Purpose**: Record gameplay video of deployed slot machine test harness
 - **Capabilities**:
   - Browser-based screen recording
   - Video codec selection
@@ -264,6 +279,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - Automated interaction during recording
 - **Tools**: Browser automation with video capture
 - **Usage**: Record 30-60 seconds of gameplay
+- **Storage**: Save to `/iterations/iteration_{N}/videos/`
 
 ### ffmpeg (Video Processing)
 - **Purpose**: Screen capture and video editing
@@ -279,6 +295,7 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   ffmpeg -video_size 1280x720 -framerate 30 -i :0.0+0,0 \
     -t 60 -c:v libx264 output.mp4
   ```
+- **Storage**: Save to `/iterations/iteration_{N}/videos/`
 
 ### playwright_video (Playwright Video Recording)
 - **Purpose**: Record browser interactions
@@ -363,6 +380,15 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   - Handle variations (Yes, yes!, YES, No, no, NO, etc.)
   - Request clarification if ambiguous
 - **Logic**: Simple string matching with normalization
+- **Actions on "yes"**:
+  - Mark iteration as final in MEMORY.md
+  - Push only latest approved assets, Godot code, and spreadsheet
+  - Delete old iteration folders (keep only approved iteration)
+  - Save commit SHA
+  - Stop autonomous loop
+- **Actions on "no"**:
+  - Increment iteration counter
+  - Restart loop at Step 2 (loop steps 2-7)
 
 ---
 
@@ -400,11 +426,13 @@ This document catalogs all skills and tools required for the autonomous 9-step r
   ```
   /iterations/
     /iteration_1/
+      iteration_1_analysis.xlsx  # or CSV files if fallback
       /videos/
         original_video_info.json
         generated_gameplay.mp4
       /assets/
         /symbols/
+        /textures/
         /animations/
         /effects/
       /code/
@@ -414,6 +442,8 @@ This document catalogs all skills and tools required for the autonomous 9-step r
         frame_002.png
         comparison_report.md
   ```
+- **Binary storage**: Store all assets directly in repo without Git LFS
+- **Cleanup on "yes"**: Delete old iteration folders (iteration_1, iteration_2, etc.) and keep only the latest approved iteration
 
 ---
 
@@ -422,13 +452,13 @@ This document catalogs all skills and tools required for the autonomous 9-step r
 ### Required
 - **Brave Search API**: For web search
 - **Kimi K-2.5 (Moonshot)**: For AI reasoning and vision
-- **Meshy.ai API**: For 3D asset generation
+- **Meshy.ai API or other generation tools**: For 3D asset generation
 - **Telegram Bot API**: For communication with Ron
 - **GitHub Token**: For deployment (if using GitHub Pages)
+- **pandas + openpyxl**: For Excel spreadsheet creation (with CSV fallback)
 
 ### Optional
 - **YouTube Data API**: For enhanced video metadata
-- **Google Sheets API**: For structured documentation
 - **Vercel Token**: For alternative deployment
 - **Cloudinary/Imgur**: For video hosting
 
@@ -440,8 +470,8 @@ Before starting each step, verify required tools are available:
 
 1. **Step 1**: web_search, browser
 2. **Step 2**: browser, screenshot, kimi_vision
-3. **Step 3**: google_sheets or csv_export
-4. **Step 4**: meshy_ai
+3. **Step 3**: pandas, openpyxl (or csv fallback)
+4. **Step 4**: meshy_ai or other generation tools
 5. **Step 5**: code_execution, godot_cli
 6. **Step 6**: gh_cli or vercel_cli
 7. **Step 7**: ffmpeg or browser recording
@@ -449,3 +479,5 @@ Before starting each step, verify required tools are available:
 9. **Step 9**: telegram
 
 If any required tool is missing, notify Ron via Telegram and request configuration or suggest alternatives.
+
+**Excel/CSV Rule**: Always try pandas + openpyxl first. If it fails (import error, installation issue), fall back to CSV files and log the fallback in MEMORY.md.
