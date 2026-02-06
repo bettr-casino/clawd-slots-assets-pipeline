@@ -289,12 +289,8 @@ configure_tavily_search() {
         exit 1
     fi
 
-    if ! openclaw config set tools.web.search.providers.tavily.enabled true; then
-        print_warning "Failed to enable Tavily provider, continuing..."
-    fi
-    if ! openclaw config set tools.web.search.providers.tavily.apiKey "$TAVILY_API_KEY"; then
-        print_warning "Failed to set Tavily API key, continuing..."
-    fi
+    print_info "OpenClaw 2026.2.2+ no longer accepts tools.web.search.providers.* keys."
+    print_info "Tavily fallback is driven by TAVILY_API_KEY when Brave fails."
 
     print_success "Tavily search configured"
     print_info "Tavily provider is enabled for web search"
