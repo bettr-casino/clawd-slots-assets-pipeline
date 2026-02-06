@@ -14,9 +14,18 @@ This file maintains the current state of the autonomous 9-step reverse-engineeri
   "step": 0,
   "status": "idle",
   "timestamp": null,
-  "human_decision": null
+  "human_decision": null,
+  "current_iteration_folder": null,
+  "last_approved_folder": null,
+  "last_approved_commit_sha": null
 }
 ```
+
+**Iteration Tracking Fields**:
+- `iteration`: Current iteration number (1, 2, 3, etc.)
+- `current_iteration_folder`: Current working folder (e.g., `iteration-001`, `iteration-002`)
+- `last_approved_folder`: Last human-approved iteration folder (e.g., `iteration-003`)
+- `last_approved_commit_sha`: Git commit SHA of last approved state (for Codespace restart resume)
 
 ---
 
@@ -33,6 +42,7 @@ Each iteration is logged with the following structure:
   "completed_at": "2026-02-06T05:30:00Z",
   "status": "completed",
   "human_decision": "no",
+  "current_iteration_folder": "iteration-001",
   "commit_sha": "abc123...",
   "checkpoints": [
     {
@@ -77,7 +87,8 @@ Each iteration is logged with the following structure:
       "timestamp": "2026-02-06T04:15:00Z",
       "data": {
         "assets_generated": 25,
-        "asset_dir": "/path/to/iterations/iteration_1/assets",
+        "current_iteration_folder": "iteration-001",
+        "asset_dir": "assets/generated/iteration-001",
         "generation_tool": "meshy-ai",
         "asset_types": ["symbols", "textures", "particles", "animations"]
       }
@@ -158,14 +169,19 @@ Store only the current iteration's in-progress checkpoints here. Completed itera
 
 1. **Always save checkpoint data after completing each step** to ensure restart resilience
 2. **Update `current_state` at the top** to reflect the latest iteration, step, and status
-3. **Log human decisions** (`yes`/`no`) in iteration history for audit trail
-4. **Store commit SHAs** after pushing approved iterations to track repository state
-5. **On human "yes" decision**: 
+3. **Track iteration folders**: Update `current_iteration_folder` (e.g., `iteration-001`, `iteration-002`) as iterations progress
+4. **Log human decisions** (`yes`/`no`) in iteration history for audit trail
+5. **Store commit SHAs** after pushing approved iterations to track repository state
+6. **On human "yes" decision**: 
    - Mark iteration as `final: true`
-   - Store commit SHA of the final approved state
+   - **Asset Cleanup**: Delete all older iteration folders (e.g., `assets/generated/iteration-001/` to `assets/generated/iteration-[N-1]/`)
+   - **Keep Only Latest**: Update `last_approved_folder` with the approved iteration folder name (e.g., `iteration-003`)
+   - **Git Commit**: Store `last_approved_commit_sha` of the final approved state
+   - Optionally copy or rename approved folder to `assets/generated/current/`
    - Delete previous iteration folders (keep only latest approved assets)
-6. **On Codespace restart**: 
+7. **On Codespace restart**: 
    - Read this file to determine current iteration and step
+   - Load `current_iteration_folder`, `last_approved_folder`, and `last_approved_commit_sha`
    - Resume from last completed checkpoint
    - Continue the 9-step loop where it left off
 
@@ -199,25 +215,30 @@ Store only the current iteration's in-progress checkpoints here. Completed itera
 
 ## Binary Asset Storage Rules
 
-1. **Store binary assets directly in repository** (textures, models, animations, videos)
-2. **Do NOT use Git LFS** - store files directly without LFS tracking
-3. **Organize by iteration**:
+1. **Folder Structure**: Store binary assets in `assets/generated/iteration-[N]/` (e.g., `iteration-001/`, `iteration-002/`, `iteration-003/`)
+2. **Storage Location**: All generated binary assets (textures, models, particles, animations, Godot scenes, etc.) go in the current iteration folder
+3. **No Git LFS**: Store files directly in repository without LFS tracking
+4. **Workspace-Relative Paths**: Use paths relative to workspace root (no hardcoded paths outside `assets/generated/`)
+5. **Organization within iteration folder**:
    ```
-   /iterations/
-     /iteration_1/
-       /assets/
-         /symbols/
-         /textures/
-         /particles/
-         /animations/
-       /videos/
-       iteration_1_analysis.xlsx
-       godot_project/
+   assets/generated/iteration-001/
+     symbols/
+     textures/
+     particles/
+     animations/
+     scenes/
    ```
-4. **On human "yes" decision**:
-   - Keep only the latest approved iteration folder
-   - Delete all previous iteration folders (`iteration_1`, `iteration_2`, etc. except the final one)
-   - This prevents repository bloat while maintaining the approved version
+6. **Version Control Flow**:
+   - Each iteration gets its own numbered folder
+   - Track current iteration number in `current_state.current_iteration_folder`
+   - On human "yes" decision:
+     - Delete all older iteration folders (e.g., `iteration-001` to `iteration-[N-1]`)
+     - Keep only the latest approved iteration folder
+     - Update `last_approved_folder` with approved folder name
+     - Optionally copy or rename to `assets/generated/current/` if desired
+     - Commit and push only latest approved assets + Godot code + spreadsheet
+     - Store commit SHA in `last_approved_commit_sha`
+7. **Restart Resume**: On Codespace restart, read `current_iteration_folder`, `last_approved_folder`, and `last_approved_commit_sha` to resume work
 
 ---
 
@@ -277,13 +298,17 @@ When Clawd restarts after a Codespace shutdown:
 
 1. **Read this MEMORY.md file**
 2. **Check `current_state` section** for iteration, step, and status
-3. **Load last completed checkpoint data** from `active_checkpoints` or `iteration_history`
-4. **Resume execution**:
+3. **Load tracking fields**:
+   - `current_iteration_folder` (e.g., `iteration-001`, `iteration-002`)
+   - `last_approved_folder` (e.g., `iteration-003` if previously approved)
+   - `last_approved_commit_sha` (Git SHA of last approved state)
+4. **Load last completed checkpoint data** from `active_checkpoints` or `iteration_history`
+5. **Resume execution**:
    - If mid-step: Continue that step from where it left off
    - If between steps: Start the next step
    - If waiting for human feedback: Check Telegram for response
-5. **Send Telegram status update** indicating resume and next planned action
-6. **Continue 9-step loop** until human approval or blocker
+6. **Send Telegram status update** indicating resume and next planned action
+7. **Continue 9-step loop** until human approval or blocker
 
 ---
 
@@ -296,7 +321,10 @@ When Clawd restarts after a Codespace shutdown:
   "step": 1,
   "status": "in_progress",
   "timestamp": "2026-02-06T03:00:00Z",
-  "human_decision": null
+  "human_decision": null,
+  "current_iteration_folder": "iteration-001",
+  "last_approved_folder": null,
+  "last_approved_commit_sha": null
 }
 ```
 
@@ -307,7 +335,10 @@ When Clawd restarts after a Codespace shutdown:
   "step": 5,
   "status": "in_progress",
   "timestamp": "2026-02-06T04:45:00Z",
-  "human_decision": null
+  "human_decision": null,
+  "current_iteration_folder": "iteration-001",
+  "last_approved_folder": null,
+  "last_approved_commit_sha": null
 }
 ```
 
@@ -318,7 +349,10 @@ When Clawd restarts after a Codespace shutdown:
   "step": 9,
   "status": "awaiting_human_decision",
   "timestamp": "2026-02-06T05:30:00Z",
-  "human_decision": "pending"
+  "human_decision": "pending",
+  "current_iteration_folder": "iteration-001",
+  "last_approved_folder": null,
+  "last_approved_commit_sha": null
 }
 ```
 
@@ -331,17 +365,25 @@ When Clawd restarts after a Codespace shutdown:
   "timestamp": "2026-02-06T06:00:00Z",
   "human_decision": "yes",
   "final": true,
-  "commit_sha": "abc123def456..."
+  "current_iteration_folder": "iteration-001",
+  "last_approved_folder": "iteration-001",
+  "last_approved_commit_sha": "abc123def456..."
 }
 ```
 
-### Starting Next Iteration (After "No")
+### Starting Next Iteration (After "No") - Restarts at Step 2
+
+**Note**: Step 2 is correct because Step 1 (web search) is only performed once at the beginning. When the human says "no", the loop restarts at Step 2.
+
 ```json
 {
   "iteration": 2,
-  "step": 1,
+  "step": 2,
   "status": "in_progress",
   "timestamp": "2026-02-06T06:15:00Z",
-  "human_decision": null
+  "human_decision": null,
+  "current_iteration_folder": "iteration-002",
+  "last_approved_folder": null,
+  "last_approved_commit_sha": null
 }
 ```

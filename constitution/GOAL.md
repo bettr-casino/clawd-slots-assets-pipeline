@@ -5,8 +5,11 @@
 Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube videos through a fully autonomous 9-step iterative loop. Generate original assets matching the look and feel, create Godot 4.6 implementations, deploy test versions, and iterate based on human feedback until approved.
 
 **Key Rules:**
-- Store binary assets in repo without Git LFS
+- Store binary assets in `assets/generated/iteration-[N]/` (e.g., `iteration-001/`, `iteration-002/`)
 - Keep only the latest approved iteration's assets (delete older iteration folders on "yes")
+- On human "yes": delete `iteration-001/` to `iteration-[N-1]/`, keep only latest, optionally rename to `current/`
+- Commit and push only latest approved assets + Godot code + spreadsheet (no Git LFS)
+- Use MEMORY.md to track current iteration number, last approved folder, and last commit SHA
 - Use Excel (pandas + openpyxl) with CSV fallback if needed
 - Use chain-of-thought reasoning for all decisions
 - Send Telegram progress updates and wait for human "yes"/"no" after each iteration
@@ -109,14 +112,22 @@ Reverse-engineer Las Vegas slot machines (like CLEOPATRA SLOTS) from YouTube vid
   - Never copy existing assets
   - Match look and feel, not exact replication
   - Create variations that honor the style
-- Save all generated assets to organized directory: `/iterations/iteration_{N}/assets/`
+- **Asset Storage Rules**:
+  - Store all generated binary assets in `assets/generated/iteration-[current iteration number]/` (e.g., `iteration-001/`, `iteration-002/`, `iteration-003/`)
+  - Use workspace-relative paths (no hardcoded paths outside of `assets/generated/`)
+  - Organize within iteration folder: `assets/generated/iteration-[N]/symbols/`, `assets/generated/iteration-[N]/textures/`, etc.
+  - Store binary assets directly in repo (no Git LFS)
+- **Asset Cleanup on Human "Yes"**:
+  - When human approves with "yes", delete all older iteration folders (e.g., `iteration-001/` to `iteration-[N-1]/`)
+  - Keep only the latest approved iteration folder
+  - Optionally copy or rename to `assets/generated/current/` if desired
+  - Commit and push only latest approved assets + Godot code + spreadsheet to GitHub
 - Document asset metadata (file paths, descriptions)
-- **Storage**: Store binary assets directly in repo without Git LFS
 
 **Output**: 
 - Generated asset files (GLB, PNG, FBX, etc.)
-- Asset manifest in MEMORY.md with file paths
-- Assets stored in `/iterations/iteration_{N}/assets/` subdirectories
+- Asset manifest in MEMORY.md with file paths and iteration number
+- Assets stored in `assets/generated/iteration-[N]/` subdirectories
 
 **Checkpoint**: Update MEMORY.md with `step: 4, status: complete`
 
@@ -252,16 +263,17 @@ Is it good enough? Reply 'yes' or 'no' to stop or continue iterations.
 - Wait for Ron's response
 - Update MEMORY.md with human decision:
   - If 'yes': Set `human_decision: approved`, mark iteration as final
-    - Push only the latest approved assets, Godot code, and spreadsheet to GitHub repo
-    - Delete older iteration folders (keep only the approved iteration)
-    - Save commit SHA in MEMORY.md
+    - **Asset Cleanup**: Delete all older iteration folders (e.g., `assets/generated/iteration-001/` to `assets/generated/iteration-[N-1]/`)
+    - **Keep Only Latest**: Keep only the latest approved iteration folder (optionally copy or rename to `assets/generated/current/`)
+    - **Git Commit**: Push only the latest approved assets, Godot code, and spreadsheet to GitHub repo (no Git LFS)
+    - **Save State**: Update MEMORY.md with last approved folder name and commit SHA for Codespace restart resume
     - Stop autonomous loop
   - If 'no': Set `human_decision: iterate`, increment iteration counter, restart loop at Step 2
 
 **Output**: 
 - Ron's decision saved in MEMORY.md
 - Loop control state updated
-- On "yes": Old iteration folders deleted, latest assets committed
+- On "yes": Old iteration folders deleted, latest assets committed with SHA saved
 
 **Checkpoint**: Update MEMORY.md with `step: 9, status: complete, human_decision: <yes/no>`
 
@@ -276,9 +288,10 @@ Is it good enough? Reply 'yes' or 'no' to stop or continue iterations.
 3. After Step 9, wait for human feedback
 4. **If Ron says 'yes'**:
    - Mark as `final: true` in MEMORY.md
-   - Push only the latest approved assets, Godot code, and spreadsheet to GitHub repo
-   - Delete older iteration folders (keep only approved iteration)
-   - Save commit SHA in MEMORY.md
+   - **Asset Cleanup**: Delete all older iteration folders (e.g., `assets/generated/iteration-001/` to `assets/generated/iteration-[N-1]/`)
+   - **Keep Only Latest**: Keep only the latest approved iteration folder (optionally copy or rename to `assets/generated/current/`)
+   - **Git Commit**: Push only the latest approved assets, Godot code, and spreadsheet to GitHub repo (no Git LFS)
+   - **Save State**: Update MEMORY.md with last approved folder name and commit SHA for Codespace restart resume
    - Stop autonomous loop
    - Send final confirmation to Ron
 5. **If Ron says 'no'**:
