@@ -372,6 +372,9 @@ When Clawd restarts after a Codespace shutdown:
 ```
 
 ### Starting Next Iteration (After "No")
+
+**Note**: Step 2 is correct. When human says "no", the loop restarts at Step 2 (not Step 1), as Step 1 (web search) is only performed once at the beginning.
+
 ```json
 {
   "iteration": 2,
@@ -384,4 +387,3 @@ When Clawd restarts after a Codespace shutdown:
   "last_approved_commit_sha": null
 }
 ```
-Note: Step 2 is correct. When human says "no", the loop restarts at Step 2 (not Step 1), as Step 1 (web search) is only performed once at the beginning.
