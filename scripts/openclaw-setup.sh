@@ -139,6 +139,13 @@ check_prerequisites() {
         print_error "TELEGRAM_API_KEY environment variable not set!"
         all_ok=false
     fi
+
+    if [[ -n "${TAVILY_API_KEY:-}" ]]; then
+        print_success "TAVILY_API_KEY is configured"
+    else
+        print_error "TAVILY_API_KEY environment variable not set!"
+        all_ok=false
+    fi
     
     # Check workspace directory
     if [[ -d "$CONSTITUTION_DIR" ]]; then
@@ -272,8 +279,31 @@ configure_brave_search() {
     prompt_continue
 }
 
+configure_tavily_search() {
+    print_header "Step 6: Configuring Tavily Search"
+
+    print_info "Setting up Tavily search agent..."
+
+    if [[ -z "${TAVILY_API_KEY:-}" ]]; then
+        print_error "TAVILY_API_KEY environment variable is not set"
+        exit 1
+    fi
+
+    if ! openclaw config set tools.web.search.providers.tavily.enabled true; then
+        print_warning "Failed to enable Tavily provider, continuing..."
+    fi
+    if ! openclaw config set tools.web.search.providers.tavily.apiKey "$TAVILY_API_KEY"; then
+        print_warning "Failed to set Tavily API key, continuing..."
+    fi
+
+    print_success "Tavily search configured"
+    print_info "Tavily provider is enabled for web search"
+
+    prompt_continue
+}
+
 configure_agents() {
-    print_header "Step 6: Configuring Agents Workspace"
+    print_header "Step 7: Configuring Agents Workspace"
     
     print_info "Setting agents default workspace to constitution directory..."
     
@@ -299,7 +329,7 @@ configure_agents() {
 }
 
 configure_telegram() {
-    print_header "Step 7: Configuring Telegram Integration"
+    print_header "Step 8: Configuring Telegram Integration"
     
     print_info "Setting up Telegram bot: @clawd_slots_bot"
     echo
@@ -348,7 +378,7 @@ configure_telegram() {
 }
 
 configure_gateway() {
-    print_header "Step 8: Configuring OpenClaw Gateway"
+    print_header "Step 9: Configuring OpenClaw Gateway"
     
     print_info "Generating secure authentication token..."
     local auth_token
@@ -377,7 +407,7 @@ configure_gateway() {
 }
 
 setup_chrome_browser() {
-    print_header "Step 9: Setting Up Chrome Browser"
+    print_header "Step 10: Setting Up Chrome Browser"
 
     local chrome_cmd
     if chrome_cmd=$(find_chrome_command); then
@@ -458,7 +488,7 @@ setup_chrome_browser() {
 }
 
 configure_plugins() {
-    print_header "Step 10: Configuring Plugins"
+    print_header "Step 11: Configuring Plugins"
     
     print_info "Disabling Slack plugin (using Telegram instead)..."
     if ! openclaw config set plugins.entries.slack.enabled false; then
@@ -478,7 +508,7 @@ configure_plugins() {
 }
 
 start_openclaw() {
-    print_header "Step 11: Starting OpenClaw Services"
+    print_header "Step 12: Starting OpenClaw Services"
     
     print_info "Checking OpenClaw status..."
     if ! openclaw status; then
@@ -493,7 +523,7 @@ start_openclaw() {
 }
 
 handle_telegram_pairing() {
-    print_header "Step 12: Telegram Pairing"
+    print_header "Step 13: Telegram Pairing"
 
     if [[ "$TELEGRAM_PAIRING_APPROVED" == true ]]; then
         print_info "Pairing already approved during Telegram setup."
@@ -537,7 +567,7 @@ handle_telegram_pairing() {
 }
 
 test_telegram() {
-    print_header "Step 13: Testing Telegram Integration"
+    print_header "Step 14: Testing Telegram Integration"
     
     print_info "Testing Telegram integration..."
     
@@ -557,7 +587,7 @@ test_telegram() {
 }
 
 start_gateway() {
-    print_header "Step 14: Starting Gateway (Optional)"
+    print_header "Step 15: Starting Gateway (Optional)"
     
     echo
     read -p "Do you want to start the OpenClaw gateway now? (y/N): " -r start_gw
@@ -603,6 +633,7 @@ show_summary() {
     echo "  • OpenClaw: Installed and running"
     echo "  • Moonshot AI: Configured with Kimi models"
     echo "  • Brave Search: Enabled for web search"
+    echo "  • Tavily Search: Enabled for web search"
     echo "  • Agents Workspace: $CONSTITUTION_DIR"
     echo "  • Browser: $BROWSER_SETUP_STATUS"
     echo "  • Telegram Bot: @clawd_slots_bot"
@@ -658,6 +689,7 @@ main() {
     echo "  • BRAVE_API_KEY environment variable set"
     echo "  • MOONSHOT_API_KEY environment variable set"
     echo "  • TELEGRAM_API_KEY environment variable set"
+    echo "  • TAVILY_API_KEY environment variable set"
     echo
     prompt_continue "Press Enter to begin setup..."
     
@@ -666,6 +698,7 @@ main() {
     run_initial_configuration
     configure_moonshot_ai
     configure_brave_search
+    configure_tavily_search
     configure_agents
     configure_telegram
     configure_gateway
