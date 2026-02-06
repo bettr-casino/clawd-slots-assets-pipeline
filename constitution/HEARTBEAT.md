@@ -29,7 +29,9 @@ For all decisions and analysis:
 Execute the appropriate step based on MEMORY.md state:
 
 **Step 1: Web Search**
-- Use Brave API or web_search to find YouTube videos
+- Attempt web_search with Brave first using `BRAVE_API_KEY`
+- If Brave fails (429 rate limit, 401 unauthorized, timeout, invalid key, or any error), immediately retry with Tavily using `TAVILY_API_KEY`
+- If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
 - Focus on Las Vegas slot machines (e.g., CLEOPATRA)
 - Find 5 high-quality videos from real casinos
 - Save video URLs and metadata to MEMORY.md

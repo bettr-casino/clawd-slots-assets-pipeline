@@ -18,7 +18,9 @@ This is the primary autonomous workflow that Clawd executes to reverse-engineer 
 **Objective**: Find 5 high-quality videos of target Las Vegas slot machines from real casinos
 
 **Actions**:
-- [ ] Use Brave API or web_search to query YouTube
+- [ ] Attempt web_search with Brave using `BRAVE_API_KEY`
+- [ ] If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
+- [ ] If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
 - [ ] Search terms: "[SLOT NAME] Las Vegas", "real casino slot machine gameplay", etc.
 - [ ] Evaluate video quality criteria:
   - Clear reel visibility
@@ -392,7 +394,7 @@ Is it good enough? Reply 'yes' or 'no' to stop or continue iterations.
 
 ## Tools Required
 
-- **Web Search**: Brave API for YouTube video discovery
+- **Web Search**: Brave primary with Tavily fallback for YouTube video discovery
 - **Browser Automation**: Playwright for video navigation and screenshots
 - **Kimi K-2.5**: AI vision analysis and reasoning
 - **pandas + openpyxl**: Excel spreadsheet creation (CSV fallback if needed)

@@ -19,6 +19,10 @@ Use real-world slot machine footage to:
 
 Conduct systematic searches using targeted queries to find high-quality reference footage:
 
+- [ ] Attempt web_search with Brave using `BRAVE_API_KEY`
+- [ ] If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
+- [ ] If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
+
 - [ ] **Primary Search**: "Cleopatra Grand slot machine gameplay"
   - Focus: General gameplay, reel symbols, UI elements
   - Target: 5-10 high-resolution videos

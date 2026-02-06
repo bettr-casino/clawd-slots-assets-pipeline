@@ -4,8 +4,10 @@
 
 ### Video Research & Analysis
 
-**Web Search (Brave API)**
-- Search YouTube for Las Vegas slot machine videos
+**Web Search (Brave primary, Tavily fallback)**
+- Search YouTube for Las Vegas slot machine videos using `BRAVE_API_KEY`
+- If Brave fails (429, 401, timeout, invalid key, or any error), retry with Tavily using `TAVILY_API_KEY`
+- If both fail, send Telegram: "Both Brave and Tavily search tools failed. Brave error: [error message]. Tavily error: [error message]. Please configure a working search API key or provide manual input."
 - Evaluate video quality and content
 - Build shortlists of target machines
 
@@ -109,7 +111,8 @@
 **APIs & Integration**
 - GitHub API (for Pages deployment)
 - Vercel API (for hosting)
-- Brave Search API (for video discovery)
+- Brave Search API (primary video discovery)
+- Tavily Search API (fallback video discovery)
 - pandas + openpyxl (for Excel spreadsheet generation)
 
 ## Technical Specifications
