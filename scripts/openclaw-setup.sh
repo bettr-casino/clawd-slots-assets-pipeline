@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# clawdbot-setup.sh - Interactive OpenClaw setup script for GitHub Codespaces
+# openclaw-setup.sh - Interactive OpenClaw setup script for GitHub Codespaces
 # Based on SETUP.md guide for Clawd Slots Assets Pipeline
 
 set -euo pipefail
@@ -20,6 +20,8 @@ GATEWAY_PORT=18789
 CDP_PORT=18801
 TELEGRAM_PAIRING_APPROVED=false
 BROWSER_SETUP_STATUS="Not installed"
+CLAWDBOT_SETUP_STATUS="Not run"
+MEDIA_TOOLS_STATUS="Not checked"
 OPENAI_FALLBACK_MODEL="openai/gpt-4o"
 XAI_FALLBACK_MODEL="xai/grok-2-vision"
 
@@ -303,8 +305,38 @@ check_prerequisites() {
     prompt_continue
 }
 
+setup_clawdbot_privileges() {
+    print_header "Step 2: ClawdBot Elevated Permissions + Media Tooling"
+
+    local setup_script="$WORKSPACE_DIR/scripts/clawdbot-setup.sh"
+    if [[ -f "$setup_script" ]]; then
+        read -p "Run ClawdBot elevated setup now? (y/N): " -r run_setup
+        if [[ "$run_setup" =~ ^[Yy]$ ]]; then
+            if bash "$setup_script"; then
+                CLAWDBOT_SETUP_STATUS="Completed"
+                MEDIA_TOOLS_STATUS="Installed"
+                print_success "ClawdBot elevated setup finished"
+            else
+                CLAWDBOT_SETUP_STATUS="Failed"
+                MEDIA_TOOLS_STATUS="Failed"
+                print_warning "ClawdBot elevated setup failed"
+            fi
+        else
+            CLAWDBOT_SETUP_STATUS="Skipped"
+            MEDIA_TOOLS_STATUS="Skipped"
+            print_warning "Skipping ClawdBot elevated setup"
+        fi
+    else
+        CLAWDBOT_SETUP_STATUS="Missing"
+        MEDIA_TOOLS_STATUS="Missing"
+        print_warning "ClawdBot setup script not found: $setup_script"
+    fi
+
+    prompt_continue
+}
+
 install_openclaw() {
-    print_header "Step 2: Installing OpenClaw"
+    print_header "Step 3: Installing OpenClaw"
     
     if check_command openclaw; then
         local current_version=$(openclaw --version 2>/dev/null || echo "unknown")
@@ -330,7 +362,7 @@ install_openclaw() {
 }
 
 run_initial_configuration() {
-    print_header "Step 3: Initial OpenClaw Configuration"
+    print_header "Step 4: Initial OpenClaw Configuration"
     
     if [[ -f "$OPENCLAW_CONFIG_FILE" ]]; then
         print_warning "Configuration file already exists: $OPENCLAW_CONFIG_FILE"
@@ -363,7 +395,7 @@ run_initial_configuration() {
 }
 
 configure_moonshot_ai() {
-    print_header "Step 4: Configuring AI Models (Primary + Fallbacks)"
+    print_header "Step 5: Configuring AI Models (Primary + Fallbacks)"
     
     print_info "Setting up LLM fallback chain: kimi-k2.5 → grok-2-vision → gpt-4o"
     
@@ -448,7 +480,7 @@ configure_moonshot_ai() {
 }
 
 configure_brave_search() {
-    print_header "Step 5: Configuring Brave Search"
+    print_header "Step 6: Configuring Brave Search"
     
     print_info "Setting up Brave Search API for web search capabilities..."
     
@@ -475,7 +507,7 @@ configure_brave_search() {
 }
 
 configure_tavily_search() {
-    print_header "Step 6: Configuring Tavily Search"
+    print_header "Step 7: Configuring Tavily Search"
 
     print_info "Setting up Tavily search agent..."
 
@@ -494,7 +526,7 @@ configure_tavily_search() {
 }
 
 configure_agents() {
-    print_header "Step 7: Configuring Agents Workspace"
+    print_header "Step 8: Configuring Agents Workspace"
     
     print_info "Setting agents default workspace to constitution directory..."
     
@@ -520,7 +552,7 @@ configure_agents() {
 }
 
 configure_telegram() {
-    print_header "Step 8: Configuring Telegram Integration"
+    print_header "Step 9: Configuring Telegram Integration"
     
     print_info "Setting up Telegram bot: @clawd_slots_bot"
     echo
@@ -569,7 +601,7 @@ configure_telegram() {
 }
 
 configure_gateway() {
-    print_header "Step 9: Configuring OpenClaw Gateway"
+    print_header "Step 10: Configuring OpenClaw Gateway"
     
     print_info "Generating secure authentication token..."
     local auth_token
@@ -598,7 +630,7 @@ configure_gateway() {
 }
 
 setup_chrome_browser() {
-    print_header "Step 10: Setting Up Chrome Browser"
+    print_header "Step 11: Setting Up Chrome Browser"
 
     local chrome_cmd
     if chrome_cmd=$(find_chrome_command); then
@@ -679,7 +711,7 @@ setup_chrome_browser() {
 }
 
 configure_plugins() {
-    print_header "Step 11: Configuring Plugins"
+    print_header "Step 12: Configuring Plugins"
     
     print_info "Disabling Slack plugin (using Telegram instead)..."
     if ! openclaw config set plugins.entries.slack.enabled false; then
@@ -699,7 +731,7 @@ configure_plugins() {
 }
 
 start_openclaw() {
-    print_header "Step 12: Starting OpenClaw Services"
+    print_header "Step 13: Starting OpenClaw Services"
     
     print_info "Checking OpenClaw status..."
     if ! openclaw status; then
@@ -714,7 +746,7 @@ start_openclaw() {
 }
 
 handle_telegram_pairing() {
-    print_header "Step 13: Telegram Pairing"
+    print_header "Step 14: Telegram Pairing"
 
     if [[ "$TELEGRAM_PAIRING_APPROVED" == true ]]; then
         print_info "Pairing already approved during Telegram setup."
@@ -758,7 +790,7 @@ handle_telegram_pairing() {
 }
 
 test_telegram() {
-    print_header "Step 14: Testing Telegram Integration"
+    print_header "Step 15: Testing Telegram Integration"
     
     print_info "Testing Telegram integration..."
     
@@ -778,7 +810,7 @@ test_telegram() {
 }
 
 start_gateway() {
-    print_header "Step 15: Starting Gateway (Optional)"
+    print_header "Step 16: Starting Gateway (Optional)"
     
     echo
     read -p "Do you want to start the OpenClaw gateway now? (y/N): " -r start_gw
@@ -828,6 +860,8 @@ show_summary() {
     echo "  • Tavily Search: Enabled for web search"
     echo "  • Agents Workspace: $CONSTITUTION_DIR"
     echo "  • Browser: $BROWSER_SETUP_STATUS"
+    echo "  • ClawdBot elevated setup: $CLAWDBOT_SETUP_STATUS"
+    echo "  • Media tools (ffmpeg + yt-dlp/youtube-dl): $MEDIA_TOOLS_STATUS"
     echo "  • Telegram Bot: @clawd_slots_bot"
     echo "  • Gateway Port: $GATEWAY_PORT"
     echo "  • Config File: $OPENCLAW_CONFIG_FILE"
@@ -888,6 +922,7 @@ main() {
     prompt_continue "Press Enter to begin setup..."
     
     check_prerequisites
+    setup_clawdbot_privileges
     install_openclaw
     run_initial_configuration
     configure_moonshot_ai
