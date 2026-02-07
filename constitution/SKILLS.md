@@ -111,7 +111,7 @@
 - **Purpose**: Download videos and extract frames
 - **Exec mode**: Use regular exec (non-elevated). No sudo required for cobalt or ffmpeg.
 - **CRITICAL SEQUENCE**: Always attempt download BEFORE extracting frames
-  1. `bash scripts/cobalt-download.sh "<url>" "<name>.mp4"` — download via cobalt.tools (no auth needed, regular exec)
+  1. `bash /workspaces/clawd-slots-assets-pipeline/scripts/cobalt-download.sh "<url>" "<name>.mp4"` — download via cobalt.tools (no auth needed, regular exec)
   2. **If cobalt fails**: switch to browser-screenshot mode
      - Use browser automation to play the video on YouTube
      - Capture frames via screenshots at key moments

@@ -198,6 +198,26 @@ auth_profiles = {
     "xai:default": {"provider": "xai", "mode": "api_key"},
 }
 provider_defaults = {
+    "moonshot": {
+        "baseUrl": "https://api.moonshot.ai/v1",
+        "api": "openai-completions",
+        "models": [
+            {
+                "id": "kimi-k2.5",
+                "name": "Kimi K2.5",
+                "reasoning": False,
+                "input": ["text"],
+                "cost": {
+                    "input": 0,
+                    "output": 0,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                },
+                "contextWindow": 256000,
+                "maxTokens": 8192,
+            }
+        ],
+    },
     "openai": {
         "baseUrl": "https://api.openai.com/v1",
         "api": "openai-completions",
@@ -248,7 +268,9 @@ if os.path.isfile(agent_models):
     # Ensure xai and openai providers exist with apiKey refs
     for pname, pdef in provider_defaults.items():
         entry = aprov.setdefault(pname, dict(pdef))
-        if pname == "xai":
+        if pname == "moonshot":
+            entry["apiKey"] = "MOONSHOT_API_KEY"
+        elif pname == "xai":
             entry["apiKey"] = "XAI_API_KEY"
         elif pname == "openai":
             entry["apiKey"] = "OPENAI_API_KEY"
