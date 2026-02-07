@@ -788,6 +788,7 @@ PY
         "/usr/local/bin/*"
         "/bin/*"
         "$HOME/.local/bin/*"
+        "**"
     )
     for pattern in "${allowlist_patterns[@]}"; do
         if ! openclaw approvals allowlist add --agent main "$pattern" 2>/dev/null; then
@@ -797,7 +798,7 @@ PY
 
     print_success "Elevated tools configured"
     print_info "Telegram is authorized to request elevated actions"
-    print_info "Exec-approvals allowlist populated — no approval timeouts"
+    print_info "Exec-approvals allowlist: catch-all (**) — no approval prompts"
 
     prompt_continue
 }
