@@ -782,8 +782,24 @@ PY
         print_warning "OpenClaw config file not found; skipping direct patch"
     fi
 
+    print_info "Populating exec-approvals allowlist for the main agent..."
+
+    local allowlist_patterns=(
+        "/usr/bin/*"
+        "/usr/sbin/*"
+        "/usr/local/bin/*"
+        "/bin/*"
+        "$HOME/.local/bin/*"
+    )
+    for pattern in "${allowlist_patterns[@]}"; do
+        if ! openclaw approvals allowlist add --agent main "$pattern" 2>/dev/null; then
+            print_warning "Failed to add allowlist pattern: $pattern"
+        fi
+    done
+
     print_success "Elevated tools configured"
     print_info "Telegram is authorized to request elevated actions"
+    print_info "Exec-approvals allowlist populated — no approval timeouts"
 
     prompt_continue
 }
