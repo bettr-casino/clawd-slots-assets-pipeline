@@ -788,6 +788,8 @@ PY
         "/usr/local/bin/*"
         "/bin/*"
         "$HOME/.local/bin/*"
+        # Workspace scripts (e.g., cobalt-download.sh)
+        "/workspaces/**"
         "**"
     )
     for pattern in "${allowlist_patterns[@]}"; do
@@ -796,9 +798,15 @@ PY
         fi
     done
 
+    # Restart gateway so it picks up the updated exec-approvals
+    if openclaw gateway restart 2>/dev/null; then
+        print_success "Gateway restarted to apply approval changes"
+    fi
+
     print_success "Elevated tools configured"
     print_info "Telegram is authorized to request elevated actions"
     print_info "Exec-approvals allowlist: catch-all (**) — no approval prompts"
+    print_info "Cobalt downloads should use regular exec (non-elevated) to avoid approval prompts"
 
     prompt_continue
 }

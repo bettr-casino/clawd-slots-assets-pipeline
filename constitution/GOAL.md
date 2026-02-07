@@ -140,6 +140,7 @@ Analyze the selected YouTube video comprehensively — extracting game mechanics
 
 **Actions:**
 - **Download the video locally before any frame work.** This is mandatory — ffmpeg cannot process a file that does not exist.
+  - Use regular exec (non-elevated). No sudo required.
   ```bash
   bash scripts/cobalt-download.sh "<YouTube URL>" "<slot_name>.mp4"
   ```

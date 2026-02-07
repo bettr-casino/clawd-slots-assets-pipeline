@@ -61,6 +61,7 @@
 - **Purpose**: Download YouTube videos for local processing
 - **No auth required** — free, no API key needed
 - **Helper script**: `scripts/cobalt-download.sh "<YouTube URL>" "<output.mp4>"`
+- **Exec mode**: Regular exec (non-elevated). No sudo required.
 - **Install**: Only needs `curl` and `jq` (both included in setup)
 - **Fallback chain**: cobalt.tools → browser screenshots
 
