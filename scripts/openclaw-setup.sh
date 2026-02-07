@@ -64,6 +64,122 @@ check_command() {
     fi
 }
 
+require_sudo() {
+    if ! command -v sudo &> /dev/null; then
+        print_error "sudo is required but not installed"
+        exit 1
+    fi
+
+    if ! sudo -n true 2>/dev/null; then
+        print_info "sudo access is required for this setup"
+        sudo true
+    fi
+}
+
+ensure_user() {
+    local user_name="$1"
+
+    if id "$user_name" &> /dev/null; then
+        print_success "User exists: $user_name"
+        return
+    fi
+
+    print_info "Creating user: $user_name"
+    sudo useradd --create-home --shell /bin/bash "$user_name"
+    print_success "User created: $user_name"
+}
+
+ensure_sudo_group() {
+    local user_name="$1"
+
+    if groups "$user_name" | grep -q "\bsudo\b"; then
+        print_success "User is already in sudo group: $user_name"
+        return
+    fi
+
+    print_info "Adding $user_name to sudo group"
+    sudo usermod -aG sudo "$user_name"
+    print_success "Added to sudo group: $user_name"
+}
+
+configure_sudoers() {
+    local user_name="$1"
+    local sudoers_path="/etc/sudoers.d/$user_name"
+    local sudoers_line="$user_name ALL=(ALL) NOPASSWD:ALL"
+
+    if sudo test -f "$sudoers_path"; then
+        if sudo grep -Fxq "$sudoers_line" "$sudoers_path"; then
+            print_success "Sudoers already grants passwordless sudo: $sudoers_path"
+            return
+        fi
+        print_warning "Existing sudoers file found for $user_name."
+        print_warning "It does not match the required passwordless sudo entry."
+    else
+        print_warning "This will allow $user_name to run sudo without a password."
+    fi
+
+    read -r -p "Write passwordless sudoers entry? (y/N): " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        print_warning "Skipping sudoers changes"
+        return
+    fi
+
+    print_info "Writing sudoers file: $sudoers_path"
+    echo "$sudoers_line" | sudo tee "$sudoers_path" > /dev/null
+    sudo chmod 0440 "$sudoers_path"
+
+    if sudo visudo -cf "$sudoers_path"; then
+        print_success "Sudoers entry validated"
+    else
+        print_error "Sudoers validation failed; removing file"
+        sudo rm -f "$sudoers_path"
+        exit 1
+    fi
+}
+
+install_media_tools() {
+    local missing=()
+
+    if ! command -v ffmpeg &> /dev/null; then
+        missing+=("ffmpeg")
+    fi
+
+    if ! command -v yt-dlp &> /dev/null && ! command -v youtube-dl &> /dev/null; then
+        missing+=("yt-dlp")
+    fi
+
+    if [[ ${#missing[@]} -eq 0 ]]; then
+        print_success "ffmpeg and yt-dlp/youtube-dl already installed"
+        return
+    fi
+
+    print_info "Installing: ${missing[*]}"
+    sudo apt-get update -o Dir::Etc::sourcelist="sources.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+    sudo apt-get install -y "${missing[@]}"
+
+    if command -v yt-dlp &> /dev/null; then
+        print_success "yt-dlp installed"
+    elif command -v youtube-dl &> /dev/null; then
+        print_success "youtube-dl installed"
+    else
+        print_warning "yt-dlp/youtube-dl not found after apt install; trying pip"
+        python3 -m pip install --user yt-dlp
+        if command -v yt-dlp &> /dev/null; then
+            print_success "yt-dlp installed via pip"
+        else
+            print_error "yt-dlp installation failed"
+            exit 1
+        fi
+    fi
+
+    if command -v ffmpeg &> /dev/null; then
+        print_success "ffmpeg installed"
+    else
+        print_error "ffmpeg installation failed"
+        exit 1
+    fi
+}
+
 ensure_fallbacks_in_config() {
     if [[ ! -f "$OPENCLAW_CONFIG_FILE" ]]; then
         print_warning "OpenClaw config file not found; skipping fallback file update"
@@ -308,29 +424,24 @@ check_prerequisites() {
 setup_clawdbot_privileges() {
     print_header "Step 2: ClawdBot Elevated Permissions + Media Tooling"
 
-    local setup_script="$WORKSPACE_DIR/scripts/clawdbot-setup.sh"
-    if [[ -f "$setup_script" ]]; then
-        read -p "Run ClawdBot elevated setup now? (y/N): " -r run_setup
-        if [[ "$run_setup" =~ ^[Yy]$ ]]; then
-            if bash "$setup_script"; then
-                CLAWDBOT_SETUP_STATUS="Completed"
-                MEDIA_TOOLS_STATUS="Installed"
-                print_success "ClawdBot elevated setup finished"
-            else
-                CLAWDBOT_SETUP_STATUS="Failed"
-                MEDIA_TOOLS_STATUS="Failed"
-                print_warning "ClawdBot elevated setup failed"
-            fi
-        else
-            CLAWDBOT_SETUP_STATUS="Skipped"
-            MEDIA_TOOLS_STATUS="Skipped"
-            print_warning "Skipping ClawdBot elevated setup"
-        fi
-    else
-        CLAWDBOT_SETUP_STATUS="Missing"
-        MEDIA_TOOLS_STATUS="Missing"
-        print_warning "ClawdBot setup script not found: $setup_script"
+    read -p "Run ClawdBot elevated setup now? (y/N): " -r run_setup
+    if [[ ! "$run_setup" =~ ^[Yy]$ ]]; then
+        CLAWDBOT_SETUP_STATUS="Skipped"
+        MEDIA_TOOLS_STATUS="Skipped"
+        print_warning "Skipping ClawdBot elevated setup"
+        prompt_continue
+        return
     fi
+
+    require_sudo
+    ensure_user "clawdbot"
+    ensure_sudo_group "clawdbot"
+    configure_sudoers "clawdbot"
+    install_media_tools
+
+    CLAWDBOT_SETUP_STATUS="Completed"
+    MEDIA_TOOLS_STATUS="Installed"
+    print_success "ClawdBot elevated setup finished"
 
     prompt_continue
 }
