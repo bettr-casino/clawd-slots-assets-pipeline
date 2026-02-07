@@ -33,6 +33,12 @@ This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) 
 
 **Goal**: Build a complete math model spreadsheet for the selected game.
 
+### Video Download (MUST happen first)
+
+1. Download the selected video: `bash scripts/cobalt-download.sh "<YouTube URL>" "<slot_name>.mp4"`
+2. Verify the file exists before proceeding
+3. Extract frames: `mkdir -p frames && ffmpeg -i "<slot_name>.mp4" -vf "fps=1" frames/frame_%04d.png`
+
 ### Analysis Checklist
 
 - Game name and manufacturer

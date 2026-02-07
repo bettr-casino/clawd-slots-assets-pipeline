@@ -147,32 +147,16 @@ install_media_tools() {
         missing+=("ffmpeg")
     fi
 
-    if ! command -v yt-dlp &> /dev/null && ! command -v youtube-dl &> /dev/null; then
-        missing+=("yt-dlp")
+    if ! command -v jq &> /dev/null; then
+        missing+=("jq")
     fi
 
     if [[ ${#missing[@]} -eq 0 ]]; then
-        print_success "ffmpeg and yt-dlp/youtube-dl already installed"
-        return
-    fi
-
-    print_info "Installing: ${missing[*]}"
-    sudo apt-get update -o Dir::Etc::sourcelist="sources.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
-    sudo apt-get install -y "${missing[@]}"
-
-    if command -v yt-dlp &> /dev/null; then
-        print_success "yt-dlp installed"
-    elif command -v youtube-dl &> /dev/null; then
-        print_success "youtube-dl installed"
+        print_success "ffmpeg and jq already installed"
     else
-        print_warning "yt-dlp/youtube-dl not found after apt install; trying pip"
-        python3 -m pip install --user yt-dlp
-        if command -v yt-dlp &> /dev/null; then
-            print_success "yt-dlp installed via pip"
-        else
-            print_error "yt-dlp installation failed"
-            exit 1
-        fi
+        print_info "Installing: ${missing[*]}"
+        sudo apt-get update -o Dir::Etc::sourcelist="sources.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+        sudo apt-get install -y "${missing[@]}"
     fi
 
     if command -v ffmpeg &> /dev/null; then
@@ -180,6 +164,20 @@ install_media_tools() {
     else
         print_error "ffmpeg installation failed"
         exit 1
+    fi
+
+    if command -v jq &> /dev/null; then
+        print_success "jq installed"
+    else
+        print_warning "jq not installed — cobalt.tools may not work"
+    fi
+
+    # Verify cobalt helper script
+    local cobalt_script="$WORKSPACE_DIR/scripts/cobalt-download.sh"
+    if [[ -f "$cobalt_script" ]]; then
+        print_success "cobalt-download.sh helper available (primary video downloader)"
+    else
+        print_warning "cobalt-download.sh not found at $cobalt_script"
     fi
 }
 
@@ -1065,7 +1063,7 @@ show_summary() {
     echo "  • Agents Workspace: $CONSTITUTION_DIR"
     echo "  • Browser: $BROWSER_SETUP_STATUS"
     echo "  • ClawdBot elevated setup: $CLAWDBOT_SETUP_STATUS"
-    echo "  • Media tools (ffmpeg + yt-dlp/youtube-dl): $MEDIA_TOOLS_STATUS"
+    echo "  • Media tools (ffmpeg + cobalt.tools): $MEDIA_TOOLS_STATUS"
     echo "  • Telegram Bot: @clawd_slots_bot"
     echo "  • Gateway Port: $GATEWAY_PORT"
     echo "  • Config File: $OPENCLAW_CONFIG_FILE"

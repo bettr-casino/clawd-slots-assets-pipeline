@@ -136,10 +136,35 @@ Analyze the selected YouTube video comprehensively — extracting game mechanics
 - Transcript text (if available)
 - Supplementary game data
 
-### Step 2.2: Video Frame Analysis
+### Step 2.2: Video Download & Frame Extraction
 
 **Actions:**
-- Capture screenshots at key timestamps:
+- **Download the video locally before any frame work.** This is mandatory — ffmpeg cannot process a file that does not exist.
+  ```bash
+  bash scripts/cobalt-download.sh "<YouTube URL>" "<slot_name>.mp4"
+  ```
+  Or manually:
+  ```bash
+  curl -s -X POST "https://api.cobalt.tools/" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"url":"<YouTube URL>"}' \
+    | jq -r '.url' | xargs curl -L -o "<slot_name>.mp4"
+  ```
+- **If cobalt fails**, fall back to **browser-based screenshot analysis only**:
+  1. Skip the video download entirely
+  2. Use browser automation to navigate to the YouTube video and play it
+  3. Capture screenshots at key timestamps using the OpenClaw browser's screenshot tool
+  4. Analyze the screenshots with vision AI as usual
+  5. Note in MEMORY.md: `video_download: failed, mode: browser_screenshots`
+  6. This is a valid analysis path — the spreadsheet can still be produced from screenshots alone
+- Verify the file exists (`ls -la <slot_name>.mp4`) before proceeding.
+- Extract frames at regular intervals for batch analysis:
+  ```bash
+  mkdir -p frames
+  ffmpeg -i "<slot_name>.mp4" -vf "fps=1" frames/frame_%04d.png
+  ```
+- Additionally capture screenshots at key timestamps:
   - Base game idle state (reels visible)
   - Multiple spin sequences (at least 5 different outcomes)
   - Win states showing paylines lit up

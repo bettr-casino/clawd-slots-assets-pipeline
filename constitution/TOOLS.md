@@ -57,10 +57,12 @@
 - **Install**: `apt install ffmpeg`
 - **Usage**: Extract frames at intervals from downloaded videos
 
-### yt-dlp
+### cobalt.tools API
 - **Purpose**: Download YouTube videos for local processing
-- **Install**: `pip install yt-dlp`
-- **Usage**: Download video files for ffmpeg frame extraction
+- **No auth required** — free, no API key needed
+- **Helper script**: `scripts/cobalt-download.sh "<YouTube URL>" "<output.mp4>"`
+- **Install**: Only needs `curl` and `jq` (both included in setup)
+- **Fallback chain**: cobalt.tools → browser screenshots
 
 ---
 
@@ -119,5 +121,5 @@
 | Browser | ❌ | ✅ | — |
 | Screenshots | ❌ | ✅ | — |
 | pandas/openpyxl | ❌ | ✅ | — |
-| ffmpeg/yt-dlp | ❌ | ✅ | — |
+| ffmpeg/cobalt | ❌ | ✅ | — |
 | Telegram | ✅ | ✅ | TELEGRAM_API_KEY |

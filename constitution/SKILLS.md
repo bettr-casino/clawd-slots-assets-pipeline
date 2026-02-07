@@ -108,12 +108,18 @@
 
 ### exec (Command Execution)
 
-- **Purpose**: Run ffmpeg or other video tools
-- **Capabilities**:
-  - Extract frames at intervals
-  - Convert video formats
-  - Process video files
-- **Tools**: ffmpeg, yt-dlp
+- **Purpose**: Download videos and extract frames
+- **CRITICAL SEQUENCE**: Always attempt download BEFORE extracting frames
+  1. `bash scripts/cobalt-download.sh "<url>" "<name>.mp4"` — download via cobalt.tools (no auth needed)
+  2. **If cobalt fails**: switch to browser-screenshot mode
+     - Use browser automation to play the video on YouTube
+     - Capture frames via screenshots at key moments
+     - Skip ffmpeg entirely — analysis proceeds from screenshots
+     - Log `video_download: failed, mode: browser_screenshots` in MEMORY.md
+  3. If download succeeded: verify file exists (`ls -la <name>.mp4`)
+  4. Extract frames: `ffmpeg -i "<name>.mp4" -vf "fps=1" frames/frame_%04d.png`
+- **Never run ffmpeg on a file that hasn't been downloaded yet**
+- **Tools**: cobalt.tools (download), ffmpeg (frame extraction)
 
 ---
 
