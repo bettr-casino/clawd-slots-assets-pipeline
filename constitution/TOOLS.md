@@ -100,6 +100,13 @@
 
 ---
 
+## Privileges & Installation
+
+- **Elevated Access**: ClawdBot has passwordless sudo permissions for administrative tasks
+- **Tooling**: Allowed to download and install required tools (system packages and Python utilities)
+
+---
+
 ## Tool Availability Summary
 
 | Tool | Phase 1 | Phase 2 | Key Required |
