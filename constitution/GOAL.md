@@ -149,7 +149,7 @@ Analyze the selected YouTube video comprehensively — extracting game mechanics
   - Special feature activations
   - UI elements (bet controls, balance, win display)
 - **Batch frames** into small sets (max 6-8 frames per request) to avoid context overflow. Summarize each batch before sending the next.
-- Use Kimi vision (with xai/grok-vision-beta and openai/gpt-4o as fallbacks) to analyze each batch and reverse engineer:
+- Use Kimi vision (with xai/grok-2-vision and openai/gpt-4o as fallbacks) to analyze each batch and reverse engineer:
   - **Reel Configuration**: Number of columns × rows
   - **Symbol Inventory**:
     - High-value (premium) symbols: names, descriptions, visual attributes

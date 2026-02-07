@@ -64,7 +64,7 @@
   - OCR for text elements (paytable values, bet amounts)
   - Reverse engineer: reel size, symbol types (wilds/scatters/premiums/lows), base mechanics, bonuses, paylines
 - **Model**: Kimi K-2.5 with vision capabilities
-- **Fallbacks**: xai/grok-vision-beta, openai/gpt-4o
+- **Fallbacks**: xai/grok-2-vision, openai/gpt-4o
 - **Usage**: Analyze screenshots in batches (max 6-8 frames per request) and summarize each batch before continuing
 
 ### transcript_extraction

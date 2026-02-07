@@ -21,7 +21,7 @@ CDP_PORT=18801
 TELEGRAM_PAIRING_APPROVED=false
 BROWSER_SETUP_STATUS="Not installed"
 OPENAI_FALLBACK_MODEL="openai/gpt-4o"
-XAI_FALLBACK_MODEL="xai/grok-vision-beta"
+XAI_FALLBACK_MODEL="xai/grok-2-vision"
 
 # Helper functions
 print_header() {
@@ -87,7 +87,7 @@ provider_defaults = {
     "xai": {
         "baseUrl": "https://api.x.ai/v1",
         "api": "openai-completions",
-        "models": [{"id": "grok-vision-beta", "name": "Grok Vision Beta", "input": ["text", "image"]}],
+        "models": [{"id": "grok-2-vision", "name": "Grok 2 Vision", "input": ["text", "image"]}],
     },
 }
 
@@ -365,7 +365,7 @@ run_initial_configuration() {
 configure_moonshot_ai() {
     print_header "Step 4: Configuring AI Models (Primary + Fallbacks)"
     
-    print_info "Setting up LLM fallback chain: kimi-k2.5 → grok-vision-beta → gpt-4o"
+    print_info "Setting up LLM fallback chain: kimi-k2.5 → grok-2-vision → gpt-4o"
     
     # Validate required API keys
     if [[ -z "${MOONSHOT_API_KEY:-}" ]]; then

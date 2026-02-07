@@ -23,9 +23,9 @@
 - **Capabilities**: Vision analysis, reasoning, code generation
 - **Env**: `MOONSHOT_API_KEY`
 
-### Grok Vision Beta (Fallback #1)
+### Grok 2 Vision (Fallback #1)
 - **Provider**: xai
-- **Model ID**: `xai/grok-vision-beta`
+- **Model ID**: `xai/grok-2-vision`
 - **Capabilities**: Vision analysis, reasoning
 - **Env**: `XAI_API_KEY`
 
@@ -36,7 +36,7 @@
 - **Env**: `OPENAI_API_KEY`
 
 ### Fallback Chain
-`kimi-k2.5` → `grok-vision-beta` → `gpt-4o`
+`kimi-k2.5` → `grok-2-vision` → `gpt-4o`
 
 ---
 

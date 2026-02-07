@@ -105,5 +105,8 @@ Ron can send these commands via Telegram at any time:
 | `status` | Reply with current phase, step, and progress |
 | `stop` | Pause all work, checkpoint state |
 | `resume` | Resume from last checkpoint |
+| `reset` or `restart` | Clear state and restart the workflow from Phase 1 |
+| `repeat phase 1` | Re-run Phase 1 selection loop (clears Phase 2 state) |
+| `repeat phase 2` | Re-run Phase 2 analysis using the last selected video |
 | `redo` | (During Phase 1) Search again with new query |
 | `[URL]` | Skip Phase 1, go directly to Phase 2 with this video |
