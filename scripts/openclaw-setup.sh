@@ -25,6 +25,9 @@ MEDIA_TOOLS_STATUS="Not checked"
 OPENAI_FALLBACK_MODEL="openai/gpt-4o"
 XAI_FALLBACK_MODEL="xai/grok-2-vision"
 
+# Suppress OpenClaw banner noise during setup
+export OPENCLAW_NO_BANNER=1
+
 # Helper functions
 print_header() {
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -711,8 +714,82 @@ configure_telegram() {
     prompt_continue
 }
 
+configure_elevated_tools() {
+    print_header "Step 10: Enabling Elevated Tools"
+
+    print_info "Allowing elevated tools from Telegram provider..."
+
+    if ! openclaw config set tools.elevated.enabled true; then
+        print_warning "Failed to enable elevated tools, continuing..."
+    fi
+    if ! openclaw config set tools.elevated.allowFrom '{"telegram":["*"]}'; then
+        print_warning "Failed to allow elevated tools from Telegram, continuing..."
+    fi
+
+    if [[ -f "$OPENCLAW_CONFIG_FILE" ]]; then
+        print_info "Patching OpenClaw config to allow elevated tools for the main agent..."
+        python3 - "$OPENCLAW_CONFIG_FILE" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+
+with open(path, "r", encoding="utf-8") as handle:
+    data = json.load(handle)
+
+tools = data.setdefault("tools", {})
+elevated = tools.setdefault("elevated", {})
+elevated["enabled"] = True
+allow_from = elevated.get("allowFrom")
+if not isinstance(allow_from, dict):
+    allow_from = {}
+allow_from["telegram"] = ["*"]
+elevated["allowFrom"] = allow_from
+
+agents = data.setdefault("agents", {})
+agent_list = agents.get("list")
+if not isinstance(agent_list, list):
+    agent_list = []
+    agents["list"] = agent_list
+
+def is_main(entry):
+    return entry.get("id") == "main" or entry.get("name") == "main"
+
+main_entry = None
+for entry in agent_list:
+    if isinstance(entry, dict) and is_main(entry):
+        main_entry = entry
+        break
+
+if main_entry is None:
+    main_entry = {"id": "main", "name": "main"}
+    agent_list.append(main_entry)
+
+agent_tools = main_entry.setdefault("tools", {})
+agent_elevated = agent_tools.setdefault("elevated", {})
+agent_elevated["enabled"] = True
+agent_allow = agent_elevated.get("allowFrom")
+if not isinstance(agent_allow, dict):
+    agent_allow = {}
+agent_allow["telegram"] = ["*"]
+agent_elevated["allowFrom"] = agent_allow
+
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(data, handle, indent=2)
+    handle.write("\n")
+PY
+    else
+        print_warning "OpenClaw config file not found; skipping direct patch"
+    fi
+
+    print_success "Elevated tools configured"
+    print_info "Telegram is authorized to request elevated actions"
+
+    prompt_continue
+}
+
 configure_gateway() {
-    print_header "Step 10: Configuring OpenClaw Gateway"
+    print_header "Step 11: Configuring OpenClaw Gateway"
     
     print_info "Generating secure authentication token..."
     local auth_token
@@ -741,7 +818,7 @@ configure_gateway() {
 }
 
 setup_chrome_browser() {
-    print_header "Step 11: Setting Up Chrome Browser"
+    print_header "Step 12: Setting Up Chrome Browser"
 
     local chrome_cmd
     if chrome_cmd=$(find_chrome_command); then
@@ -822,7 +899,7 @@ setup_chrome_browser() {
 }
 
 configure_plugins() {
-    print_header "Step 12: Configuring Plugins"
+    print_header "Step 13: Configuring Plugins"
     
     print_info "Disabling Slack plugin (using Telegram instead)..."
     if ! openclaw config set plugins.entries.slack.enabled false; then
@@ -842,7 +919,7 @@ configure_plugins() {
 }
 
 start_openclaw() {
-    print_header "Step 13: Starting OpenClaw Services"
+    print_header "Step 14: Starting OpenClaw Services"
     
     print_info "Checking OpenClaw status..."
     if ! openclaw status; then
@@ -857,7 +934,7 @@ start_openclaw() {
 }
 
 handle_telegram_pairing() {
-    print_header "Step 14: Telegram Pairing"
+    print_header "Step 15: Telegram Pairing"
 
     if [[ "$TELEGRAM_PAIRING_APPROVED" == true ]]; then
         print_info "Pairing already approved during Telegram setup."
@@ -901,7 +978,7 @@ handle_telegram_pairing() {
 }
 
 test_telegram() {
-    print_header "Step 15: Testing Telegram Integration"
+    print_header "Step 16: Testing Telegram Integration"
     
     print_info "Testing Telegram integration..."
     
@@ -921,7 +998,7 @@ test_telegram() {
 }
 
 start_gateway() {
-    print_header "Step 16: Starting Gateway (Optional)"
+    print_header "Step 17: Starting Gateway (Optional)"
     
     echo
     read -p "Do you want to start the OpenClaw gateway now? (y/N): " -r start_gw
@@ -1041,6 +1118,7 @@ main() {
     configure_tavily_search
     configure_agents
     configure_telegram
+    configure_elevated_tools
     configure_gateway
     setup_chrome_browser
     configure_plugins
