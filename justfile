@@ -1,14 +1,58 @@
 start:
-    openclaw gateway start
+    PID_FILE=".openclaw-gateway.pid"; \
+    LOG_FILE="$HOME/.openclaw/logs/gateway-manual.log"; \
+    if [ -f "$$PID_FILE" ] && kill -0 "$(cat "$$PID_FILE")" 2>/dev/null; then \
+        echo "Gateway already running (pid $(cat "$$PID_FILE"))"; \
+        exit 0; \
+    fi; \
+    mkdir -p "$(dirname "$$LOG_FILE")"; \
+    nohup openclaw gateway run --verbose > "$$LOG_FILE" 2>&1 & \
+    echo $$! > "$$PID_FILE"; \
+    echo "Started gateway (pid $$!)"
 
 stop:
-    openclaw gateway stop
+    PID_FILE=".openclaw-gateway.pid"; \
+    if [ -f "$$PID_FILE" ]; then \
+        PID="$(cat "$$PID_FILE")"; \
+        if kill -0 "$$PID" 2>/dev/null; then \
+            kill "$$PID"; \
+            echo "Stopped gateway (pid $$PID)"; \
+        else \
+            echo "Gateway pid not running (pid $$PID)"; \
+        fi; \
+        rm -f "$$PID_FILE"; \
+    else \
+        echo "No PID file found"; \
+    fi
 
 restart:
-    openclaw gateway restart
+    PID_FILE=".openclaw-gateway.pid"; \
+    LOG_FILE="$HOME/.openclaw/logs/gateway-manual.log"; \
+    if [ -f "$$PID_FILE" ]; then \
+        PID="$(cat "$$PID_FILE")"; \
+        if kill -0 "$$PID" 2>/dev/null; then \
+            kill "$$PID"; \
+            echo "Stopped gateway (pid $$PID)"; \
+        fi; \
+        rm -f "$$PID_FILE"; \
+    fi; \
+    mkdir -p "$(dirname "$$LOG_FILE")"; \
+    nohup openclaw gateway run --verbose > "$$LOG_FILE" 2>&1 & \
+    echo $$! > "$$PID_FILE"; \
+    echo "Started gateway (pid $$!)"
 
 status:
-    openclaw gateway status
+    PID_FILE=".openclaw-gateway.pid"; \
+    if [ -f "$$PID_FILE" ]; then \
+        PID="$(cat "$$PID_FILE")"; \
+        if kill -0 "$$PID" 2>/dev/null; then \
+            echo "Gateway running (pid $$PID)"; \
+        else \
+            echo "Gateway not running (stale pid $$PID)"; \
+        fi; \
+    else \
+        echo "Gateway not running (no pidfile)"; \
+    fi
 
 config:
     code ~/.openclaw/openclaw.json
