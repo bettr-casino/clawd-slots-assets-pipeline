@@ -64,14 +64,16 @@ config:
 
 download file:
     @test -n "$YT_BASE_DIR"
-    @case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
-    @mkdir -p "$YT_BASE_DIR/{{file}}/video" "$YT_BASE_DIR/{{file}}/frames"
-    @curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/{{file}}" -o "$YT_BASE_DIR/{{file}}/video/{{file}}"
+    @echo "{{file}}" | grep -Eq '^[A-Za-z0-9_-]+(\.webm)?$'
+    @base="{{file}}"; base="${base%.webm}"; \
+        mkdir -p "$YT_BASE_DIR/$base/video" "$YT_BASE_DIR/$base/frames"; \
+        curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/$base.webm" -o "$YT_BASE_DIR/$base/video/$base.webm"
 
 extract file timestamp:
     @test -n "$YT_BASE_DIR"
-    @case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
-    @./scripts/extract-frame.sh "$YT_BASE_DIR/{{file}}/video/{{file}}" "{{timestamp}}" "$YT_BASE_DIR/{{file}}/frames"
+    @echo "{{file}}" | grep -Eq '^[A-Za-z0-9_-]+(\.webm)?$'
+    @/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "{{file}}" "{{timestamp}}"
+
 
 reset-memory:
 	@printf '' > constitution/MEMORY.md
