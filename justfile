@@ -1,54 +1,56 @@
 start:
-    @PID_FILE=".pid"; \
-    LOG_FILE=".log"; \
-    if [ -f "$$PID_FILE" ] && kill -0 "$(cat "$$PID_FILE")" 2>/dev/null; then \
-        echo "Gateway already running (pid $(cat "$$PID_FILE"))"; \
+    @if [ -f ".pid.current" ] && kill -0 "$(cat .pid.current)" 2>/dev/null; then \
+        echo "Gateway already running (pid $(cat .pid.current))"; \
         exit 0; \
     fi; \
-    mkdir -p "$(dirname "$$LOG_FILE")"; \
-    nohup openclaw gateway run --verbose > "$$LOG_FILE" 2>&1 & \
-    echo $$! > "$$PID_FILE"; \
-    echo "Started gateway (pid $$!)"
+    nohup openclaw gateway run --verbose > ".log.tmp" 2>&1 & \
+    PID="$!"; \
+    mv ".log.tmp" "${PID}.log"; \
+    echo "$PID" > "${PID}.pid"; \
+    ln -sf "${PID}.pid" .pid.current; \
+    ln -sf "${PID}.log" .log.current; \
+    echo "Started gateway (pid ${PID})"
 
 stop:
-    @PID_FILE=".pid"; \
-    if [ -f "$$PID_FILE" ]; then \
-        PID="$(cat "$$PID_FILE")"; \
-        if kill -0 "$$PID" 2>/dev/null; then \
-            kill "$$PID"; \
-            echo "Stopped gateway (pid $$PID)"; \
+    @if [ -f .pid.current ]; then \
+        PID="$(cat .pid.current)"; \
+        if kill -0 "$PID" 2>/dev/null; then \
+            kill "$PID"; \
+            echo "Stopped gateway (pid ${PID})"; \
         else \
-            echo "Gateway pid not running (pid $$PID)"; \
+            echo "Gateway pid not running (pid ${PID})"; \
         fi; \
-        rm -f "$$PID_FILE"; \
+        rm -f "${PID}.pid" "${PID}.log"; \
+        rm -f .pid.current .log.current; \
     else \
         echo "No PID file found"; \
     fi
 
 restart:
-    @PID_FILE=".pid"; \
-    LOG_FILE=".log"; \
-    if [ -f "$$PID_FILE" ]; then \
-        PID="$(cat "$$PID_FILE")"; \
-        if kill -0 "$$PID" 2>/dev/null; then \
-            kill "$$PID"; \
-            echo "Stopped gateway (pid $$PID)"; \
+    @if [ -f .pid.current ]; then \
+        PID="$(cat .pid.current)"; \
+        if kill -0 "$PID" 2>/dev/null; then \
+            kill "$PID"; \
+            echo "Stopped gateway (pid ${PID})"; \
         fi; \
-        rm -f "$$PID_FILE"; \
+        rm -f .pid.current .log.current; \
     fi; \
-    mkdir -p "$(dirname "$$LOG_FILE")"; \
-    nohup openclaw gateway run --verbose > "$$LOG_FILE" 2>&1 & \
-    echo $$! > "$$PID_FILE"; \
-    echo "Started gateway (pid $$!)"
+    nohup openclaw gateway run --verbose > ".log.tmp" 2>&1 & \
+    PID="$!"; \
+    mv ".log.tmp" "${PID}.log"; \
+    echo "$PID" > "${PID}.pid"; \
+    ln -sf "${PID}.pid" .pid.current; \
+    ln -sf "${PID}.log" .log.current; \
+    echo "Started gateway (pid ${PID})"
 
 status:
-    @PID_FILE=".pid"; \
-    if [ -f "$$PID_FILE" ]; then \
-        PID="$(cat "$$PID_FILE")"; \
-        if kill -0 "$$PID" 2>/dev/null; then \
-            echo "Gateway running (pid $$PID)"; \
+    @if [ -f .pid.current ]; then \
+        PID="$(cat .pid.current)"; \
+        if kill -0 "$PID" 2>/dev/null; then \
+            echo "Gateway running (pid ${PID})"; \
+            echo "Log: ${PID}.log"; \
         else \
-            echo "Gateway not running (stale pid $$PID)"; \
+            echo "Gateway not running (stale pid ${PID})"; \
         fi; \
     else \
         echo "Gateway not running (no pidfile)"; \
