@@ -69,3 +69,6 @@ extract file timestamp:
     @test -n "$YT_BASE_DIR"
     @case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
     @./scripts/extract-frame.sh "$YT_BASE_DIR/{{file}}/video/{{file}}" "{{timestamp}}" "$YT_BASE_DIR/{{file}}/frames"
+
+reset-memory:
+	@printf '' > constitution/MEMORY.md
