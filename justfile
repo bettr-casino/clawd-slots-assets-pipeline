@@ -1,6 +1,6 @@
 start:
-    PID_FILE=".openclaw-gateway.pid"; \
-    LOG_FILE="$HOME/.openclaw/logs/gateway-manual.log"; \
+    @PID_FILE=".pid"; \
+    LOG_FILE=".log"; \
     if [ -f "$$PID_FILE" ] && kill -0 "$(cat "$$PID_FILE")" 2>/dev/null; then \
         echo "Gateway already running (pid $(cat "$$PID_FILE"))"; \
         exit 0; \
@@ -11,7 +11,7 @@ start:
     echo "Started gateway (pid $$!)"
 
 stop:
-    PID_FILE=".openclaw-gateway.pid"; \
+    @PID_FILE=".pid"; \
     if [ -f "$$PID_FILE" ]; then \
         PID="$(cat "$$PID_FILE")"; \
         if kill -0 "$$PID" 2>/dev/null; then \
@@ -26,8 +26,8 @@ stop:
     fi
 
 restart:
-    PID_FILE=".openclaw-gateway.pid"; \
-    LOG_FILE="$HOME/.openclaw/logs/gateway-manual.log"; \
+    @PID_FILE=".pid"; \
+    LOG_FILE=".log"; \
     if [ -f "$$PID_FILE" ]; then \
         PID="$(cat "$$PID_FILE")"; \
         if kill -0 "$$PID" 2>/dev/null; then \
@@ -42,7 +42,7 @@ restart:
     echo "Started gateway (pid $$!)"
 
 status:
-    PID_FILE=".openclaw-gateway.pid"; \
+    @PID_FILE=".pid"; \
     if [ -f "$$PID_FILE" ]; then \
         PID="$(cat "$$PID_FILE")"; \
         if kill -0 "$$PID" 2>/dev/null; then \
@@ -55,15 +55,15 @@ status:
     fi
 
 config:
-    code ~/.openclaw/openclaw.json
+    @code ~/.openclaw/openclaw.json
 
 download file:
-    test -n "$YT_BASE_DIR"
-    case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
-    mkdir -p "$YT_BASE_DIR/{{file}}/video" "$YT_BASE_DIR/{{file}}/frames"
-    curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/{{file}}" -o "$YT_BASE_DIR/{{file}}/video/{{file}}"
+    @test -n "$YT_BASE_DIR"
+    @case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
+    @mkdir -p "$YT_BASE_DIR/{{file}}/video" "$YT_BASE_DIR/{{file}}/frames"
+    @curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/{{file}}" -o "$YT_BASE_DIR/{{file}}/video/{{file}}"
 
 extract file timestamp:
-    test -n "$YT_BASE_DIR"
-    case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
-    ./scripts/extract-frame.sh "$YT_BASE_DIR/{{file}}/video/{{file}}" "{{timestamp}}" "$YT_BASE_DIR/{{file}}/frames"
+    @test -n "$YT_BASE_DIR"
+    @case "{{file}}" in *..*|*/*|*\$*|*~*) echo "Invalid file name: {{file}}"; exit 1;; esac
+    @./scripts/extract-frame.sh "$YT_BASE_DIR/{{file}}/video/{{file}}" "{{timestamp}}" "$YT_BASE_DIR/{{file}}/frames"
