@@ -56,6 +56,9 @@ status:
         echo "Gateway not running (no pidfile)"; \
     fi
 
+logs:
+    @openclaw logs --follow
+
 config:
     @code ~/.openclaw/openclaw.json
 

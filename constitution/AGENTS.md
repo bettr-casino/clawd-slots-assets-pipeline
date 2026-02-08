@@ -15,16 +15,16 @@
 Clawd operates in a single-phase workflow:
 
 **Phase 1: Video Intake + Frame Extraction**
-1. **Verify Video**: Check for a local video file under `yt/<file-name>/video/`
-2. **Ask for Name**: If missing, ask the human for the filename (default: `CLEOPATRA.webm`)
-3. **Download**: Pull from `s3://bettr-casino-assets/yt/<file-name>` into `yt/<file-name>/video/<file-name>`
-4. **Ask for Timestamps**: Confirm whether frames are needed and collect a list (e.g., `00:14:00 00:21:35`)
-5. **Extract Frames**: Use `scripts/extract-frame.sh` to extract one frame per timestamp into `yt/<file-name>/frames/`
+1. **Ask for Name**: If missing, ask the human for the base filename (default: `CLEOPATRA`); if `.webm` is provided, strip it
+2. **Confirm YouTube URL**: Default to `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`, ask for updates if not confirmed
+3. **Ask for Timestamps**: Confirm whether frames are needed and collect a list (e.g., `00:14:00 00:21:35`)
+4. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to extract one frame per timestamp into `yt/<file-name>/frames/`
+	- The script downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm` if the video is missing
 
 ### Frame Extraction Tools
 
 - **ffmpeg**: Extract frames at precise timestamps
-- **extract-frame.sh**: Wrapper script for consistent frame extraction
+- **extract-frame.sh**: Wrapper script for consistent frame extraction (use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh`)
 
 ### Spreadsheet Creation
 

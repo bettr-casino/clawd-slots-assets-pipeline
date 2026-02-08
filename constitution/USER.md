@@ -17,26 +17,36 @@ Ensure `YT_BASE_DIR` is set before starting downloads or extraction.
 If the video file is missing, ask:
 
 ```
-I do not see a local video under yt/. What is the filename to use?
-Default is CLEOPATRA.webm. Reply with a filename or say "default".
+I do not see a local video under yt/. What is the base filename to use?
+Default is CLEOPATRA. Reply with a base filename (or `CLEOPATRA.webm`, which will be stripped) or say "default".
 ```
 
 ### Requesting Timestamps
 
-After download, ask:
+Before extraction, ask:
 
 ```
 Do you want to extract frames at specific timestamps?
 Reply with a space-separated list like: 00:14:00 00:21:35 00:34:12
 Or reply "skip" to finish.
+
+### Confirming YouTube URL
+
+Ask the user to confirm the URL before requesting timestamps:
+
+```
+Is this the correct YouTube URL?
+Default: https://www.youtube.com/watch?v=Ks8o3bl7OYQ
+Reply with "yes" to confirm or provide the updated URL.
+```
 ```
 
 ### Handling User Responses
 
 | User Says | Action |
 |-----------|--------|
-| `default` | Use `CLEOPATRA.webm` |
-| `<filename>` | Use that filename |
+| `default` | Use `CLEOPATRA` |
+| `<filename>` | Use that base filename |
 | `<timestamps>` | Extract one frame per timestamp |
 | `skip` | Skip extraction and mark phase complete |
 | Anything else | Ask for clarification with the expected format |
@@ -57,9 +67,13 @@ Ron can send these commands via Telegram at any time:
 
 | Command | Action |
 |---------|--------|
-| `start [filename]` | Begin Phase 1 with optional filename (defaults to `CLEOPATRA.webm` if omitted) |
+| `start [filename]` | Begin Phase 1 with optional base filename (defaults to `CLEOPATRA` if omitted) |
 | `status` | Reply with current phase, step, and progress |
 | `stop` | Pause all work, checkpoint state |
 | `resume` | Resume from last checkpoint |
 | `reset` or `restart` | Clear state and restart the workflow from Phase 1 |
 | `extract [timestamps]` | Extract frames for the provided timestamps |
+
+## Checkpoint Data
+
+Include the confirmed YouTube URL in MEMORY.md whenever it is provided or updated.

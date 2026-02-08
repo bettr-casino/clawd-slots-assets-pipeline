@@ -47,10 +47,10 @@
 
 | State | Action |
 |-------|--------|
-| `idle` / no filename | Ask the human for a video filename (default: `CLEOPATRA.webm`) |
-| Filename set, file missing | Download from public URL into `$YT_BASE_DIR/<file-name>/video/` |
-| Video present, timestamps not requested | Ask whether to extract timestamps |
-| Timestamps provided, frames not extracted | Run `scripts/extract-frame.sh` for each timestamp |
+| `idle` / no filename | Ask the human for a base filename (default: `CLEOPATRA`); strip `.webm` if provided |
+| Filename set, URL not confirmed | Confirm YouTube URL (default: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`) |
+| URL confirmed, timestamps not requested | Ask whether to extract timestamps |
+| Timestamps provided, frames not extracted | Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each timestamp (auto-downloads if missing) |
 | Frames extracted | Mark phase complete and return to idle |
 
 ## Heartbeat Rules

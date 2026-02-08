@@ -4,7 +4,7 @@
 
 ### Public S3 HTTP
 - **Purpose**: Download source videos from the public asset bucket
-- **Usage**: `curl -L https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name> -o $YT_BASE_DIR/<file-name>/video/<file-name>`
+- **Usage**: `curl -L https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm -o $YT_BASE_DIR/<file-name>/video/<file-name>.webm`
 - **Requires**: `YT_BASE_DIR` set to the local yt root
 
 ## AI Models
@@ -41,7 +41,7 @@
 
 ### extract-frame.sh
 - **Purpose**: Wrapper script for consistent frame extraction
-- **Usage**: `./scripts/extract-frame.sh <video> <timestamp> <output-dir>`
+- **Usage**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh <file-name> <timestamp>` (optional `.webm` suffix is stripped)
 
 ---
 

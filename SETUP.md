@@ -28,7 +28,7 @@ This script will:
 - Run health checks
 
 Notes:
-- Video downloads use the public URL `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>` by default
+- Video downloads use the public URL `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm` by default
 - AWS CLI is optional; configure it if you prefer authenticated access
 - Set `YT_BASE_DIR` to the local yt root (example: `/workspaces/clawd-slots-assets-pipeline/yt`)
 

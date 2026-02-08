@@ -8,33 +8,25 @@ This document replaces the old 9-step loop with the **single-phase workflow**.
 
 ### Steps
 
-1. **Verify Video**
-	- Check for a local video file under `$YT_BASE_DIR/<file-name>/video/`.
-	- If missing, ask the human for the video file name (default: `CLEOPATRA.webm`).
+1. **Confirm YouTube URL**
+	- Ask the human to confirm the YouTube URL.
+	- Default URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`
+	- If not confirmed, request the updated URL.
 
-2. **Download**
-	- Download from S3 and place it under `yt/<file-name>/video/`:
-
-	```bash
-	mkdir -p "$YT_BASE_DIR/<file-name>/video" "$YT_BASE_DIR/<file-name>/frames"
-	curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>" \
-	  -o "$YT_BASE_DIR/<file-name>/video/<file-name>"
-	```
-
-3. **Collect Timestamps**
+2. **Collect Timestamps**
 	- Ask if timestamps should be extracted.
 	- Accept a list like `00:14:00 00:21:35 00:34:12`.
 
-4. **Extract Frames**
-	- For each timestamp, extract a frame into `$YT_BASE_DIR/<file-name>/frames/`:
+3. **Extract Frames (Auto-Download if Missing)**
+	- For each timestamp, extract a frame into `$YT_BASE_DIR/<file-name>/frames/`. The script downloads the video from S3 if missing:
 
 	```bash
-	./scripts/extract-frame.sh "$YT_BASE_DIR/<file-name>/video/<file-name>" "00:14:00" "$YT_BASE_DIR/<file-name>/frames"
+	/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "<file-name>" "00:14:00"
 	```
 
 ### Output
 
-- Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>`
+- Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
 - Frames stored under `$YT_BASE_DIR/<file-name>/frames/`
 - MEMORY.md updated with download status and extracted timestamps
 

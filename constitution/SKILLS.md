@@ -4,22 +4,22 @@
 
 ### file_validation
 
-- **Purpose**: Confirm the video file exists under `$YT_BASE_DIR/<file-name>/video/`
+- **Purpose**: Confirm the video file exists under `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
 - **Checks**: File path exists, file size > 0
 
 ### public_url_download (curl or wget)
 
 - **Purpose**: Download the source video from the public S3 URL
-- **Command**: `curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>" -o "$YT_BASE_DIR/<file-name>/video/<file-name>"`
+- **Command**: `curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm" -o "$YT_BASE_DIR/<file-name>/video/<file-name>.webm"`
 - **Requirements**: `curl` or `wget`
-- **Safety**: Reject filenames containing `..`, `/`, `$`, or `~`
+- **Safety**: Only allow base filenames with `A-Z`, `a-z`, `0-9`, `_`, `-` (optional `.webm` suffix is stripped)
 
 ### ffmpeg_frame_extraction
 
 - **Purpose**: Extract a single frame at a specific timestamp
-- **Tool**: `scripts/extract-frame.sh`
-- **Input**: Video file path, timestamp `HH:MM:SS`, output directory
-- **Output**: One PNG per timestamp in `$YT_BASE_DIR/<file-name>/frames/`
+- **Tool**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh`
+- **Input**: Base filename (optional `.webm` suffix), timestamp `HH:MM:SS`
+- **Output**: One PNG per timestamp in `$YT_BASE_DIR/<file-name>/frames/` (auto-downloads video if missing)
 
 ### telegram_messaging
 
@@ -29,7 +29,7 @@
 
 ### exec (Command Execution)
 
-- **Purpose**: Run `curl`/`wget` and `extract-frame.sh`
+- **Purpose**: Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` (auto-downloads if missing)
 - **Exec mode**: Use regular exec (non-elevated). No sudo required for ffmpeg.
 - **Guardrail**: Never run frame extraction on a missing file
 
@@ -67,7 +67,7 @@
 ### file_management
 
 - **Purpose**: Organize output files
-- **Videos**: `$YT_BASE_DIR/<file-name>/video/<file-name>`
+- **Videos**: `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
 - **Frames**: `$YT_BASE_DIR/<file-name>/frames/frame_<timestamp>.png`
 - **Logs**: Intake progress in MEMORY.md
 
