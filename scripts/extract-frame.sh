@@ -73,7 +73,8 @@ if [[ -z "$end_ts" ]]; then
   echo "Wrote $output_file"
   if [[ -n "$comment" ]]; then
     tags_file="$frames_dir/../tags.txt"
-    echo -e "frame__${safe_stamp}.01.png\t$start_ts\t$comment" >> "$tags_file"
+    # Format: 00:00:16.01 00:00:16.01    comment
+    printf "%s %s\t%s\n" "${start_ts}.01" "${start_ts}.01" "$comment" >> "$tags_file"
   fi
   exit 0
 fi
@@ -91,7 +92,18 @@ temp_dir="$(mktemp -d)"
   ffmpeg -y -ss "$start_ts" -t "$duration_seconds" -i "$video_path" -vf "fps=60" \
     -start_number 0 "$temp_dir/frame_%06d.png" -hide_banner -loglevel error
 
-  tags_file="$frames_dir/../tags.txt"
+  if [[ -n "$comment" ]]; then
+    tags_file="$frames_dir/../tags.txt"
+    # Format: 00:00:24.01 00:00:32.01    comment
+    start_tag="${start_ts}.01"
+    end_seconds=$((end_seconds + 1))
+    hh=$(printf "%02d" $((end_seconds / 3600)))
+    mm=$(printf "%02d" $(((end_seconds % 3600) / 60)))
+    ss=$(printf "%02d" $((end_seconds % 60)))
+    end_tag="${hh}:${mm}:${ss}.01"
+    printf "%s %s\t%s\n" "$start_tag" "$end_tag" "$comment" >> "$tags_file"
+  fi
+
   shopt -s nullglob
   for frame_path in "$temp_dir"/frame_*.png; do
     frame_base="$(basename "$frame_path")"
@@ -110,9 +122,6 @@ temp_dir="$(mktemp -d)"
     output_file="$frames_dir/frame__${stamp}.${frame_suffix}.png"
 
     mv "$frame_path" "$output_file"
-    if [[ -n "$comment" ]]; then
-      echo -e "frame__${stamp}.${frame_suffix}.png\t${hh}:${mm}:${ss}\t$comment" >> "$tags_file"
-    fi
   done
 
   rmdir "$temp_dir"
