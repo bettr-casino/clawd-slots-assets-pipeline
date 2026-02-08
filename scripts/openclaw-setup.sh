@@ -225,6 +225,8 @@ with open(path, "r", encoding="utf-8") as handle:
 agents = data.setdefault("agents", {})
 defaults = agents.setdefault("defaults", {})
 agent_model_config = defaults.setdefault("model", {})
+defaults["maxConcurrent"] = 1
+defaults.setdefault("subagents", {})["maxConcurrent"] = 2
 defaults_models = defaults.setdefault("models", {})
 for entry in models:
     defaults_models.setdefault(entry, {})
