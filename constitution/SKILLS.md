@@ -35,6 +35,14 @@
 
 ---
 
+## Phase 2: Multimodal LLM Analysis Skills
+
+### multimodal_llm_analysis
+- **Purpose**: Analyze extracted frames and tags.txt for a specific video
+- **Tool**: Multimodal LLM (e.g., Kimi K2.5)
+- **Input**: Frames directory, tags.txt
+- **Output**: analysis.md with slot symbols, reel layout, and symbol animations
+
 ## Cross-Cutting Skills
 
 ### chain_of_thought

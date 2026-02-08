@@ -10,9 +10,9 @@
 - **Fallback chain**: kimi-k2.5 → grok-2-vision → gpt-4o
 - **Purpose**: Video search, selection, analysis, and math model extraction
 
-### Single-Phase Workflow
+### Two-Phase Workflow
 
-Clawd operates in a single-phase workflow:
+Clawd operates in a two-phase workflow:
 
 **Phase 1: Video Intake + Frame Extraction**
 1. **Ask for Name**: If missing, ask the human for the base filename (default: `CLEOPATRA`); if `.webm` is provided, strip it
@@ -20,6 +20,12 @@ Clawd operates in a single-phase workflow:
 3. **Ask for Timestamps**: Confirm whether frames are needed and collect a list (e.g., `00:14:00 00:21:35`)
 4. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to extract one frame per timestamp into `yt/<file-name>/frames/`
 	- The script downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm` if the video is missing
+
+**Phase 2: Multimodal LLM Analysis**
+1. Confirm video and tags are ready
+2. Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt for the video
+3. Identify slot symbols, reel layout, and symbol landing animations
+4. Write results to `$YT_BASE_DIR/<video-name>/analysis.md`
 
 ### Frame Extraction Tools
 

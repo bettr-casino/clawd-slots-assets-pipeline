@@ -4,44 +4,37 @@ Central pipeline and configuration hub for the Clawd virtual worker in social ca
 
 ## Overview
 
-This repository serves as the operational control center for Clawd, an OpenClaw-based architect and social casino slots expert. Clawd autonomously reverse-engineers Las Vegas slot machines from YouTube videos, generates original assets, creates Godot 4.6 implementations, and iterates based on human feedback.
+This repository serves as the operational control center for Clawd, an OpenClaw-based analyst for social casino slots. Clawd extracts frames from YouTube videos and performs multimodal analysis to document symbols, reel layout, and animations.
 
 ### Clawd's Role
 
-Clawd functions as an autonomous reverse-engineering specialist responsible for:
+Clawd functions as an autonomous analysis specialist responsible for:
 
-- **Video Analysis**: Analyzing YouTube videos of Las Vegas slot machines frame-by-frame
-- **Asset Generation**: Creating original 3D models, textures, and animations using meshy-ai
-- **Game Implementation**: Writing Godot 4.6 GDScript code for complete slot machines
-- **Deployment**: Publishing test versions with public URLs for review
-- **Iteration**: Comparing generated vs original videos and refining based on feedback
-- **Communication**: Providing 30-minute progress updates via Telegram
+- **Video Intake**: Confirming the YouTube URL and extracting frames by timestamp
+- **Frame Analysis**: Using a multimodal LLM to identify symbols, reel layout, and animations
+- **Documentation**: Writing analysis.md based on frames and tags.txt
+- **Communication**: Providing progress updates via Telegram
 
 ### Technology Stack
 
-- **AI/LLM**: Kimi K-2.5 for reasoning, code generation, and vision analysis
-- **3D Generation**: Meshy-ai or other generation tools for original models, textures, particle effects, animations
-- **Game Engine**: Godot 4.6 with GDScript for slot machine implementation
-- **Deployment**: GitHub Pages or Vercel for public test URLs
-- **Video Analysis**: Browser automation + screenshot + Kimi K-2.5 vision
+- **AI/LLM**: Kimi K-2.5 for reasoning and vision analysis
+- **Video Analysis**: Frame extraction + multimodal LLM
 - **Communication**: Telegram for progress updates and human feedback
-- **Documentation**: Excel (pandas + openpyxl) with CSV fallback for asset tracking, MEMORY.md for checkpoints
+- **Documentation**: analysis.md for findings, MEMORY.md for checkpoints
 
-## The 9-Step Autonomous Workflow
+## Two-Phase Workflow
 
-Clawd operates in a continuous autonomous loop executing these 9 steps:
+Clawd operates in a two-phase workflow:
 
-1. **Web Search**: Find high-quality YouTube videos of Las Vegas slot machines
-2. **Video Analysis**: Frame-by-frame analysis using Kimi K-2.5 vision
-3. **Spreadsheet Creation**: Create Excel file (pandas + openpyxl) or CSV fallback with iteration log, math model, symbol analysis, checkpoints
-4. **Asset Generation**: Generate original assets with meshy-ai or other generation tools (never copy)
-5. **Code Generation**: Implement complete game in Godot 4.6 GDScript
-6. **Deploy**: Publish test version with public URL
-7. **Record Video**: Capture gameplay video of generated slot
-8. **Compare**: Use Kimi K-2.5 vision to compare generated vs original
-9. **Human Feedback**: Request Ron's yes/no decision to continue or stop
-
-The loop continues iterating until Ron approves by replying 'yes' to the iteration summary.
+1. **Phase 1: Video Intake + Frame Extraction**
+    - Confirm the YouTube URL
+    - Collect timestamps and optional comments
+    - Extract frames (auto-download from S3 if missing)
+    - Append tags to tags.txt
+2. **Phase 2: Multimodal LLM Analysis**
+    - Analyze frames and tags.txt with a multimodal LLM
+    - Identify symbols, reel layout, and animations
+    - Write analysis.md to the video folder
 
 ## Repository Structure
 
@@ -49,12 +42,12 @@ The loop continues iterating until Ron approves by replying 'yes' to the iterati
 clawd-slots-assets-pipeline/
 ├── constitution/          # Core operational guidelines for Clawd
 │   ├── SOUL.md           # Identity, mission, and values
-│   ├── AGENTS.md         # AI agent capabilities and 9-step loop
+│   ├── AGENTS.md         # AI agent capabilities and two-phase workflow
 │   ├── USER.md           # User interaction guidelines (Telegram)
 │   ├── TOOLS.md          # Development tools and specifications
 │   ├── SKILLS.md         # Required skills for each workflow step
 │   ├── HEARTBEAT.md      # 30-minute cycle execution protocol
-│   ├── GOAL.md           # 9-step autonomous workflow definition
+│   ├── GOAL.md           # Two-phase workflow definition
 │   └── MEMORY.md         # Checkpoint state and iteration tracking
 │
 ├── prompts/              # AI generation prompt templates
@@ -78,15 +71,15 @@ clawd-slots-assets-pipeline/
 
 ### Constitution Directory
 
-The `constitution/` directory contains Clawd's operational framework defining the autonomous 9-step reverse-engineering workflow:
+The `constitution/` directory contains Clawd's operational framework defining the two-phase analysis workflow:
 
 - **SOUL.md**: Core identity as reverse-engineering architect
-- **AGENTS.md**: 9-step autonomous loop capabilities
+- **AGENTS.md**: Two-phase workflow capabilities
 - **USER.md**: Telegram communication protocol
-- **TOOLS.md**: Video analysis, asset generation, and deployment tools
+- **TOOLS.md**: Video analysis and extraction tools
 - **SKILLS.md**: Required capabilities for each workflow step
 - **HEARTBEAT.md**: 30-minute execution cycle protocol
-- **GOAL.md**: Complete 9-step workflow definition
+- **GOAL.md**: Complete two-phase workflow definition
 - **MEMORY.md**: Checkpoint state for restart resilience
 
 This framework can be symlinked to the broader OpenClaw workspace:
@@ -102,11 +95,11 @@ This enables Clawd to maintain consistent autonomous behavior across different p
 
 All workflow state is saved in `constitution/MEMORY.md` with checkpoint data:
 
-- Current iteration number
-- Current step (1-9) in the workflow
-- Completed checkpoint data for each step
-- Human feedback decision status
-- URLs, file paths, and reference data
+- Current phase and step
+- Extracted timestamps and tags.txt updates
+- Confirmed YouTube URL
+- analysis.md status
+- File paths and reference data
 
 If the process restarts, Clawd resumes from the last completed checkpoint automatically.
 
@@ -115,36 +108,26 @@ If the process restarts, Clawd resumes from the last completed checkpoint automa
 ### For Ron (Human in the Loop)
 
 1. Clawd sends Telegram updates every 30 minutes during active work
-2. After each complete iteration (9 steps), review:
-   - Summary message with test URL
-   - Deployed slot machine prototype
-   - Comparison analysis vs original video
-3. Reply 'yes' to approve and stop iterations, or 'no' to continue refining
-4. Provide clarification if Clawd encounters blockers
+2. After Phase 2 completes, review:
+    - Summary message with analysis.md findings
+    - Extracted frames and tags.txt entries
+3. Provide clarification if Clawd encounters blockers
 
 ### For Clawd Operations
 
 1. Check MEMORY.md for current iteration and step state
-2. Load GOAL.md for 9-step workflow definition
+2. Load GOAL.md for two-phase workflow definition
 3. Execute next step based on current position
 4. Save checkpoint after each step completion
 5. Send Telegram progress update every 30 minutes
-6. Request human feedback after completing all 9 steps
-7. Continue iterating until Ron approves with 'yes'
+6. Request human confirmation before Phase 2
 
 ## Development Workflow
 
-### Autonomous 9-Step Execution
+### Two-Phase Execution
 
-1. **Web Search**: Find YouTube videos of target slot machines
-2. **Video Analysis**: Extract game mechanics and visual design with Kimi K-2.5 vision
-3. **Spreadsheet Creation**: Document comprehensive inventory in Excel (pandas + openpyxl) or CSV fallback
-4. **Asset Generation**: Create original assets with meshy-ai or other generation tools matching look/feel
-5. **Code Generation**: Implement complete game in Godot 4.6 GDScript
-6. **Deploy**: Publish to GitHub Pages or Vercel with public URL
-7. **Record**: Capture gameplay video of generated slot machine
-8. **Compare**: Analyze quality match with Kimi K-2.5 vision
-9. **Feedback**: Send iteration summary to Ron via Telegram and wait for yes/no decision
+1. **Video Intake + Frame Extraction**: Confirm URL, collect timestamps, extract frames, and update tags.txt
+2. **Multimodal LLM Analysis**: Analyze frames and tags.txt and write analysis.md
 
 ### Chain-of-Thought Reasoning
 
@@ -156,12 +139,9 @@ All steps use transparent reasoning:
 
 ### Quality Gates
 
-Each iteration includes validation checkpoints:
-- **Post-Analysis**: Complete symbol and mechanics inventory
-- **Post-Generation**: Original assets matching aesthetic (never copied)
-- **Post-Implementation**: Functional Godot game with all features
-- **Post-Deployment**: Accessible public URL with working gameplay
-- **Post-Comparison**: Detailed quality assessment with improvement notes
+Each run includes validation checkpoints:
+- **Post-Extraction**: Frames and tags.txt present
+- **Post-Analysis**: Complete symbol inventory, reel layout, and animation notes in analysis.md
 
 ## Contributing
 
@@ -175,15 +155,14 @@ Changes to constitution, workflows, or standards should:
 
 ## Project Status
 
-**Current Focus**: Autonomous reverse-engineering of Las Vegas slot machines from YouTube videos
+**Current Focus**: Multimodal analysis of slot machine videos from YouTube
 
 Active capabilities:
-- 9-step autonomous workflow loop
+- Two-phase workflow (extraction + analysis)
 - Checkpoint resilience with MEMORY.md state tracking
-- Original asset generation (never copying)
-- Godot 4.6 implementation and deployment
-- AI-powered video comparison with Kimi vision
-- Human feedback loop for iteration control
+- Frame extraction with tags.txt metadata
+- analysis.md generation
+- Human confirmation before analysis
 
 See `/constitution/MEMORY.md` for current iteration state and progress checkpoints.
 

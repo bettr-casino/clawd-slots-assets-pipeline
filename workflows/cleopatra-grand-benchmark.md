@@ -1,10 +1,17 @@
 # Cleopatra Grand Benchmark (Single-Phase Workflow)
-
 This workflow applies the single-phase intake + frame extraction process to the Cleopatra Grand slot machine.
 
 ## Phase 1: Video Intake + Frame Extraction (Cleopatra Grand)
 
-**Goal**: Ensure a Cleopatra Grand video is available locally and extract requested frames.
+---
+
+## Phase 2: Multimodal LLM Analysis
+
+After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
+
+- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
+- Identify slot symbols, reel layout, and symbol landing animations
+- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
 
 ### Step 1: Confirm YouTube URL
 

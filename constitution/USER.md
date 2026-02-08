@@ -53,6 +53,14 @@ Reply with "yes" to confirm or provide the updated URL.
 
 ---
 
+## Phase 2: Multimodal LLM Analysis Interaction
+
+After frame extraction and tags.txt are ready, confirm with the user via Telegram before starting analysis.
+
+- Notify user that analysis will use the extracted frames and tags.txt
+- Ask for confirmation to proceed
+- After analysis, send summary and link to analysis.md
+
 ## General Rules
 
 1. **Don't spam**: Only message when there's actionable information

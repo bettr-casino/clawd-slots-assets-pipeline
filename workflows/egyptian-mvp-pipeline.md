@@ -1,10 +1,17 @@
 # Egyptian MVP Pipeline (Single-Phase Workflow)
-
 This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) using the new single-phase intake + frame extraction process.
 
 ## Phase 1: Video Intake + Frame Extraction
 
-**Goal**: Ensure the source video exists locally and extract requested frames for analysis.
+---
+
+## Phase 2: Multimodal LLM Analysis
+
+After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
+
+- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
+- Identify slot symbols, reel layout, and symbol landing animations
+- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
 
 ### Step 1: Confirm YouTube URL
 

@@ -48,3 +48,24 @@ Ensure the video file exists locally and extract frames at the requested timesta
 ```
 
 **Checkpoint:** Update MEMORY.md with video status and extracted timestamps.
+
+---
+
+## Phase 2: Multimodal LLM Analysis
+
+### Objective
+Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) using a multimodal LLM (e.g., Kimi K2.5) after confirmation from the human via Telegram.
+
+### Inputs
+- Frames: `$YT_BASE_DIR/<video-name>/frames/`
+- Tags: `$YT_BASE_DIR/<video-name>/tags.txt`
+
+### Actions
+- Use the tags.txt metadata to guide analysis of specific time ranges and frames.
+- Identify:
+	- Symbols used in the slot machine
+	- Reel layout (number of reels and visible symbols per reel)
+	- Symbol landing animations for some symbols
+
+### Output
+- Generate `analysis.md` at `$YT_BASE_DIR/<video-name>/analysis.md` containing the results.

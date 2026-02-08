@@ -51,7 +51,15 @@
 | Filename set, URL not confirmed | Confirm YouTube URL (default: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`) |
 | URL confirmed, timestamps not requested | Ask whether to extract timestamps |
 | Timestamps provided, frames not extracted | Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each timestamp (auto-downloads if missing) |
-| Frames extracted | Mark phase complete and return to idle |
+| Frames extracted | Mark phase complete and proceed to Phase 2 |
+
+## Phase 2 Heartbeat Actions
+
+| State | Action |
+|-------|--------|
+| Frames and tags.txt ready | Confirm with human to start analysis |
+| Analysis started | Run multimodal LLM analysis on frames and tags.txt |
+| Analysis complete | Write results to analysis.md and mark phase complete |
 
 ## Heartbeat Rules
 

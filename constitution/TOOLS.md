@@ -43,6 +43,11 @@
 - **Purpose**: Wrapper script for consistent frame extraction
 - **Usage**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh <file-name> <timestamp>` (optional `.webm` suffix is stripped)
 
+### Multimodal LLM (Kimi K2.5)
+- **Purpose**: Analyze frames and tags.txt for slot machine analysis
+- **Usage**: Run after frame extraction and tags.txt are ready
+- **Output**: analysis.md
+
 ---
 
 ## Data & Spreadsheet Tools
