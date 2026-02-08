@@ -1,0 +1,9 @@
+Element,Description,Source Frame
+Primary Theme,Ancient Egyptian with Cleopatra focus,frame__000016.01.png
+Color Palette,"Purple, gold, blue, green, red",All frames
+Reel Background,Parchment texture with Egyptian patterns,frame__000023.01.png
+Symbol Style,3D rendered with gold accents and Egyptian motifs,frame__000023.01.png
+UI Background,Purple gradient with gold trim,frame__000023.01.png
+Typography Style,Ornate Egyptian for title; clean sans-serif for UI,frame__000016.01.png
+Animation Style,Smooth reel spins with symbol landing effects,frame__000024-32 sequence
+Frame Rate,60fps observed in frame sequence,frame sequence analysis

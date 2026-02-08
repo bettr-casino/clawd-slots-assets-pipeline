@@ -1,0 +1,11 @@
+Symbol ID,Symbol Name,Type,Estimated Frequency,Appearance
+SYM_01,Jack (J),Low,High,Green J
+SYM_02,Queen (Q),Low,High,Purple Q
+SYM_03,King (K),Low,High,Blue K
+SYM_04,Ace (A),Low-Mid,High,Red/Gold A
+SYM_05,Scarab Beetle,Mid,Medium,Blue beetle with gold
+SYM_06,Lotus Flower,Mid,Medium,Blue lotus
+SYM_07,Crook & Flail,Mid-High,Medium,Crossed crook & flail
+SYM_08,Pharaoh Mask,High,Low,Golden pharaoh head
+SYM_WILD,Wild,Special,Very Low,TBD
+SYM_SCATTER,Scatter/Bonus,Special,Very Low,TBD
