@@ -1,66 +1,48 @@
-# Cleopatra Grand Benchmark (2-Phase Workflow)
+# Cleopatra Grand Benchmark (Single-Phase Workflow)
 
-This workflow applies the standard **2-phase** process to the Cleopatra Grand slot machine.
+This workflow applies the single-phase intake + frame extraction process to the Cleopatra Grand slot machine.
 
-## Phase 1: Selection (Cleopatra Grand)
+## Phase 1: Video Intake + Frame Extraction (Cleopatra Grand)
 
-**Goal**: Select a clear YouTube video of Cleopatra Grand gameplay.
+**Goal**: Ensure a Cleopatra Grand video is available locally and extract requested frames.
 
-### Search Queries
+### Step 1: Verify or Download the Video
 
-- "Cleopatra Grand slot machine gameplay 4K after:2024-02-06"
-- "IGT Cleopatra Grand Las Vegas gameplay 4K after:2024-02-06"
-- "Cleopatra Grand bonus round 4K after:2024-02-06"
+1. Check for a local video file under `$YT_BASE_DIR/<file-name>/video/`.
+2. If it does not exist, ask the human for the video file name (default: `CLEOPATRA.webm`).
+3. Download from S3 and place it under `yt/<file-name>/video/`:
 
-### Selection Criteria
+```bash
+mkdir -p "$YT_BASE_DIR/<file-name>/video" "$YT_BASE_DIR/<file-name>/frames"
+curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>" \
+	-o "$YT_BASE_DIR/<file-name>/video/<file-name>"
+```
 
-- Clear reel visibility and UI
-- Multiple spins and at least one bonus round
-- Paytable or rules visible if possible
-- Minimal camera shake and glare
-- Upload date within the last 24 months (discard older videos)
-- Date filters apply **only** to YouTube video searches.
+### Step 2: Collect Timestamps
+
+After download, ask the human if they want to extract timestamps. If yes, request a list like:
+
+```
+00:14:00 00:21:35 00:34:12
+```
+
+### Step 3: Extract Frames
+
+For each timestamp, extract a frame into `$YT_BASE_DIR/<file-name>/frames/`:
+
+```bash
+./scripts/extract-frame.sh "$YT_BASE_DIR/<file-name>/video/<file-name>" "00:14:00" "$YT_BASE_DIR/<file-name>/frames"
+```
 
 ### Output
 
-- Top 5 videos sent to Ron via Telegram
-- Selected video saved to MEMORY.md
-
----
-
-## Phase 2: Video Analysis (Cleopatra Grand)
-
-**Goal**: Produce a complete math model spreadsheet and visual evidence notes.
-
-### Required Extracts
-
-- Reel layout (likely 5x3)
-- Symbols (Cleopatra, Pharaoh, Scarab, card values)
-- Wilds/scatters and trigger rules
-- Bonus features and retrigger behavior
-- Paytable values (capture from video)
-- Any visible RTP/volatility references
-
-### Deliverables
-
-- Spreadsheet: `[slot_name]_math_model.xlsx`
-- 7 sheets:
-  - game_overview
-  - symbol_inventory
-  - paytable
-  - math_model
-  - bonus_features
-  - visual_analysis
-  - analysis_log
-
-### Delivery
-
-- Send summary + spreadsheet via Telegram
-- Update MEMORY.md and mark phase complete
+- Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>`
+- Frames stored under `$YT_BASE_DIR/<file-name>/frames/`
+- MEMORY.md updated with download status and extracted timestamps
 
 ---
 
 ## Notes
 
-- If multiple variants appear, specify the exact variant analyzed.
-- If any values are inferred, mark them as "estimated" and cite evidence.
+- Use the default `CLEOPATRA.webm` when the human does not specify a filename.
+- Multiple timestamps are allowed and should be processed one-by-one.

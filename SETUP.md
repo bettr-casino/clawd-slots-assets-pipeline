@@ -23,7 +23,14 @@ This script will:
 - Set up the agents workspace
 - Configure and start the gateway
 - Handle Telegram bot pairing
+- Install `ffmpeg` for frame extraction
+- Create `scripts/extract-frame.sh`
 - Run health checks
+
+Notes:
+- Video downloads use the public URL `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>` by default
+- AWS CLI is optional; configure it if you prefer authenticated access
+- Set `YT_BASE_DIR` to the local yt root (example: `/workspaces/clawd-slots-assets-pipeline/yt`)
 
 **Prerequisites for automated setup:**
 - `BRAVE_API_KEY` environment variable must be set
@@ -139,13 +146,7 @@ openclaw pairing approve telegram YOUR_PAIRING_CODE
 
 #### 6.4 Test Telegram Integration
 
-Use the provided test script:
-
-```bash
-./scripts/telegram-send-test-message.sh
-```
-
-Or manually test:
+Manually test:
 
 ```bash
 curl -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage" \
@@ -177,17 +178,7 @@ openclaw config set gateway.remote.token "YOUR_GENERATED_TOKEN"
 
 #### 7.3 Start the Gateway
 
-Use the provided script:
-
-```bash
-# Foreground mode (Ctrl+C to stop)
-./scripts/openclaw-gateway-start.sh
-
-# Background mode
-./scripts/openclaw-gateway-start.sh --background
-```
-
-Or start manually:
+Start manually:
 
 ```bash
 openclaw gateway start
@@ -199,29 +190,7 @@ Check gateway status:
 openclaw status
 ```
 
-### 8. Configure Browser Profile
-
-Set up browser automation profile:
-
-```bash
-# Browser profile "clawd-slots" is pre-configured
-# CDP Port: 18801
-# Color: #0066CC
-```
-
-Start the browser:
-
-```bash
-./scripts/openclaw-browser-start.sh
-```
-
-Or manually:
-
-```bash
-openclaw browser --browser-profile clawd-slots start
-```
-
-### 9. Disable Slack Plugin
+### 8. Disable Slack Plugin
 
 Since we're using Telegram, disable Slack:
 
@@ -239,10 +208,7 @@ openclaw config set plugins.entries.telegram.enabled true
 openclaw start
 
 # Start Gateway (in background)
-./scripts/openclaw-gateway-start.sh --background
-
-# Start Browser (if needed)
-./scripts/openclaw-browser-start.sh
+openclaw gateway start
 ```
 
 ### Check Status

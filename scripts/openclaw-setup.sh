@@ -17,9 +17,7 @@ CONSTITUTION_DIR="$WORKSPACE_DIR/constitution"
 OPENCLAW_CONFIG_DIR="$HOME/.openclaw"
 OPENCLAW_CONFIG_FILE="$OPENCLAW_CONFIG_DIR/openclaw.json"
 GATEWAY_PORT=18789
-CDP_PORT=18801
 TELEGRAM_PAIRING_APPROVED=false
-BROWSER_SETUP_STATUS="Not installed"
 CLAWDBOT_SETUP_STATUS="Not run"
 MEDIA_TOOLS_STATUS="Not checked"
 OPENAI_FALLBACK_MODEL="openai/gpt-4o"
@@ -169,15 +167,7 @@ install_media_tools() {
     if command -v jq &> /dev/null; then
         print_success "jq installed"
     else
-        print_warning "jq not installed — cobalt.tools may not work"
-    fi
-
-    # Verify cobalt helper script
-    local cobalt_script="$WORKSPACE_DIR/scripts/cobalt-download.sh"
-    if [[ -f "$cobalt_script" ]]; then
-        print_success "cobalt-download.sh helper available (primary video downloader)"
-    else
-        print_warning "cobalt-download.sh not found at $cobalt_script"
+        print_warning "jq not installed — some tooling may not work"
     fi
 }
 
@@ -326,17 +316,6 @@ print(f"Auth store updated: {path}")
 PY
 }
 
-find_chrome_command() {
-    local cmd
-    for cmd in google-chrome google-chrome-stable chromium chromium-browser; do
-        if command -v "$cmd" &> /dev/null; then
-            echo "$cmd"
-            return 0
-        fi
-    done
-    return 1
-}
-
 # Main setup functions
 check_prerequisites() {
     print_header "Step 1: Checking Prerequisites"
@@ -427,6 +406,13 @@ check_prerequisites() {
         all_ok=false
     fi
 
+    if [[ -n "${YT_BASE_DIR:-}" ]]; then
+        print_success "YT_BASE_DIR is configured: $YT_BASE_DIR"
+    else
+        print_warning "YT_BASE_DIR is not set (downloads/extraction will fail)"
+        print_info "Set it like: export YT_BASE_DIR=\"$WORKSPACE_DIR/yt\""
+    fi
+
     # Check workspace directory
     if [[ -d "$CONSTITUTION_DIR" ]]; then
         print_success "Constitution directory found: $CONSTITUTION_DIR"
@@ -444,8 +430,58 @@ check_prerequisites() {
     prompt_continue
 }
 
+install_media_tools_step() {
+    print_header "Step 2: Installing Media Tools (ffmpeg, jq)"
+
+    require_sudo
+    install_media_tools
+
+    MEDIA_TOOLS_STATUS="Installed"
+    print_success "Media tools installed"
+
+    prompt_continue
+}
+
+ensure_extract_frame_script() {
+    print_header "Step 3: Creating extract-frame.sh"
+
+    local script_path="$WORKSPACE_DIR/scripts/extract-frame.sh"
+    if [[ -f "$script_path" ]]; then
+        print_success "extract-frame.sh already exists"
+        prompt_continue
+        return
+    fi
+
+    cat > "$script_path" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage: $0 <video-path> <timestamp HH:MM:SS> [output-dir]"
+  exit 1
+fi
+
+video_path="$1"
+timestamp="$2"
+output_dir="${3:-$(dirname "$video_path")/../frames}"
+
+mkdir -p "$output_dir"
+
+safe_stamp="${timestamp//:/}"
+output_file="$output_dir/frame_${safe_stamp}.png"
+
+ffmpeg -ss "$timestamp" -i "$video_path" -frames:v 1 "$output_file" -hide_banner -loglevel error
+echo "Wrote $output_file"
+EOF
+
+    chmod +x "$script_path"
+    print_success "Created $script_path"
+
+    prompt_continue
+}
+
 setup_clawdbot_privileges() {
-    print_header "Step 2: ClawdBot Elevated Permissions + Media Tooling"
+    print_header "Step 4: ClawdBot Elevated Permissions"
 
     read -p "Run ClawdBot elevated setup now? (y/N): " -r run_setup
     if [[ ! "$run_setup" =~ ^[Yy]$ ]]; then
@@ -460,17 +496,14 @@ setup_clawdbot_privileges() {
     ensure_user "clawdbot"
     ensure_sudo_group "clawdbot"
     configure_sudoers "clawdbot"
-    install_media_tools
-
     CLAWDBOT_SETUP_STATUS="Completed"
-    MEDIA_TOOLS_STATUS="Installed"
     print_success "ClawdBot elevated setup finished"
 
     prompt_continue
 }
 
 install_openclaw() {
-    print_header "Step 3: Installing OpenClaw"
+    print_header "Step 5: Installing OpenClaw"
     
     if check_command openclaw; then
         local current_version=$(openclaw --version 2>/dev/null || echo "unknown")
@@ -496,7 +529,7 @@ install_openclaw() {
 }
 
 run_initial_configuration() {
-    print_header "Step 4: Initial OpenClaw Configuration"
+    print_header "Step 6: Initial OpenClaw Configuration"
     
     if [[ -f "$OPENCLAW_CONFIG_FILE" ]]; then
         print_warning "Configuration file already exists: $OPENCLAW_CONFIG_FILE"
@@ -529,7 +562,7 @@ run_initial_configuration() {
 }
 
 configure_moonshot_ai() {
-    print_header "Step 5: Configuring AI Models (Primary + Fallbacks)"
+    print_header "Step 7: Configuring AI Models (Primary + Fallbacks)"
     
     print_info "Setting up LLM fallback chain: kimi-k2.5 → grok-2-vision → gpt-4o"
     
@@ -614,7 +647,7 @@ configure_moonshot_ai() {
 }
 
 configure_brave_search() {
-    print_header "Step 6: Configuring Brave Search"
+    print_header "Step 8: Configuring Brave Search"
     
     print_info "Setting up Brave Search API for web search capabilities..."
     
@@ -641,7 +674,7 @@ configure_brave_search() {
 }
 
 configure_tavily_search() {
-    print_header "Step 7: Configuring Tavily Search"
+    print_header "Step 9: Configuring Tavily Search"
 
     print_info "Setting up Tavily search agent..."
 
@@ -660,7 +693,7 @@ configure_tavily_search() {
 }
 
 configure_agents() {
-    print_header "Step 8: Configuring Agents Workspace"
+    print_header "Step 10: Configuring Agents Workspace"
     
     print_info "Setting agents default workspace to constitution directory..."
     
@@ -686,7 +719,7 @@ configure_agents() {
 }
 
 configure_telegram() {
-    print_header "Step 9: Configuring Telegram Integration"
+    print_header "Step 11: Configuring Telegram Integration"
     
     print_info "Setting up Telegram bot: @clawd_slots_bot"
     echo
@@ -735,7 +768,7 @@ configure_telegram() {
 }
 
 configure_elevated_tools() {
-    print_header "Step 10: Enabling Elevated Tools"
+    print_header "Step 12: Enabling Elevated Tools"
 
     print_info "Allowing elevated tools from Telegram provider..."
 
@@ -810,7 +843,7 @@ PY
         "/usr/local/bin/*"
         "/bin/*"
         "$HOME/.local/bin/*"
-        # Workspace scripts (e.g., cobalt-download.sh)
+        # Workspace scripts
         "/workspaces/**"
         "**"
     )
@@ -828,13 +861,13 @@ PY
     print_success "Elevated tools configured"
     print_info "Telegram is authorized to request elevated actions"
     print_info "Exec-approvals allowlist: catch-all (**) — no approval prompts"
-    print_info "Cobalt downloads should use regular exec (non-elevated) to avoid approval prompts"
+    print_info "Media tooling should use regular exec (non-elevated) to avoid approval prompts"
 
     prompt_continue
 }
 
 configure_gateway() {
-    print_header "Step 11: Configuring OpenClaw Gateway"
+    print_header "Step 13: Configuring OpenClaw Gateway"
     
     print_info "Generating secure authentication token..."
     local auth_token
@@ -862,89 +895,8 @@ configure_gateway() {
     prompt_continue
 }
 
-setup_chrome_browser() {
-    print_header "Step 12: Setting Up Chrome Browser"
-
-    local chrome_cmd
-    if chrome_cmd=$(find_chrome_command); then
-        local chrome_version=$($chrome_cmd --version 2>/dev/null || echo "unknown")
-        print_success "Browser installed: $chrome_version ($chrome_cmd)"
-        BROWSER_SETUP_STATUS="$chrome_version ($chrome_cmd)"
-        prompt_continue
-        return
-    fi
-
-    print_warning "Chrome/Chromium not found in the Codespace."
-    read -p "Install Google Chrome Stable (recommended)? (y/N): " -r install_chrome
-
-    if [[ "$install_chrome" =~ ^[Yy]$ ]]; then
-        read -p "This will add Google's signing key and apt repository. Continue? (y/N): " -r allow_repo
-        if [[ "$allow_repo" =~ ^[Yy]$ ]]; then
-            if ! check_command gpg; then
-                print_error "gpg is required to install Google Chrome"
-                print_info "Install gpg and rerun this step."
-                prompt_continue
-                return
-            fi
-
-            if ! check_command curl && ! check_command wget; then
-                print_error "curl or wget is required to download the Google signing key"
-                print_info "Install curl or wget and rerun this step."
-                prompt_continue
-                return
-            fi
-
-            print_info "Adding Google Chrome apt key and repository..."
-            sudo install -m 0755 -d /etc/apt/keyrings
-
-            if check_command curl; then
-                curl -fsSL "https://dl.google.com/linux/linux_signing_key.pub" | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
-            else
-                wget -qO- "https://dl.google.com/linux/linux_signing_key.pub" | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
-            fi
-
-            echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
-
-            if sudo apt-get update && sudo apt-get install -y google-chrome-stable; then
-                if chrome_cmd=$(find_chrome_command); then
-                    local chrome_version=$($chrome_cmd --version 2>/dev/null || echo "unknown")
-                    print_success "Chrome installed: $chrome_version ($chrome_cmd)"
-                    BROWSER_SETUP_STATUS="$chrome_version ($chrome_cmd)"
-                    prompt_continue
-                    return
-                fi
-            else
-                print_warning "Google Chrome installation failed."
-            fi
-        else
-            print_info "Skipping Google Chrome installation."
-        fi
-    fi
-
-    read -p "Install Chromium from Ubuntu repositories instead? (y/N): " -r install_chromium
-    if [[ "$install_chromium" =~ ^[Yy]$ ]]; then
-        print_info "Installing Chromium..."
-        if sudo apt-get update -o Dir::Etc::sourcelist="sources.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" \
-            && (sudo apt-get install -y chromium || sudo apt-get install -y chromium-browser); then
-            if chrome_cmd=$(find_chrome_command); then
-                local chrome_version=$($chrome_cmd --version 2>/dev/null || echo "unknown")
-                print_success "Chromium installed: $chrome_version ($chrome_cmd)"
-                BROWSER_SETUP_STATUS="$chrome_version ($chrome_cmd)"
-                prompt_continue
-                return
-            fi
-        else
-            print_warning "Chromium installation failed."
-        fi
-    fi
-
-    print_warning "No Chrome/Chromium installation completed. Browser automation may fail."
-    BROWSER_SETUP_STATUS="Not installed"
-    prompt_continue
-}
-
 configure_plugins() {
-    print_header "Step 13: Configuring Plugins"
+    print_header "Step 14: Configuring Plugins"
     
     print_info "Disabling Slack plugin (using Telegram instead)..."
     if ! openclaw config set plugins.entries.slack.enabled false; then
@@ -964,13 +916,13 @@ configure_plugins() {
 }
 
 start_openclaw() {
-    print_header "Step 14: Starting OpenClaw Services"
+    print_header "Step 15: Starting OpenClaw Services"
     
     print_info "Checking OpenClaw status..."
     if ! openclaw status; then
         print_warning "OpenClaw gateway may not be running"
         print_info "You can start it in the next step or run:"
-        print_info "  ./scripts/openclaw-gateway-start.sh --background"
+        print_info "  openclaw gateway start"
     fi
     
     print_success "OpenClaw status checked"
@@ -979,7 +931,7 @@ start_openclaw() {
 }
 
 handle_telegram_pairing() {
-    print_header "Step 15: Telegram Pairing"
+    print_header "Step 16: Telegram Pairing"
 
     if [[ "$TELEGRAM_PAIRING_APPROVED" == true ]]; then
         print_info "Pairing already approved during Telegram setup."
@@ -1023,55 +975,31 @@ handle_telegram_pairing() {
 }
 
 test_telegram() {
-    print_header "Step 16: Testing Telegram Integration"
-    
-    print_info "Testing Telegram integration..."
-    
-    local test_script="$WORKSPACE_DIR/scripts/telegram-send-test-message.sh"
-    if [[ -f "$test_script" ]]; then
-        print_info "Running test script: $test_script"
-        bash "$test_script" || print_warning "Test script may need to be updated with your bot token"
-    else
-        print_info "Test script not found, skipping automated test"
-    fi
-    
-    echo
+    print_header "Step 17: Testing Telegram Integration"
+
     print_info "You can manually test by sending a message to @clawd_slots_bot"
     print_info "The bot should respond if everything is configured correctly."
-    
+
     prompt_continue
 }
 
 start_gateway() {
-    print_header "Step 17: Starting Gateway (Optional)"
+    print_header "Step 18: Starting Gateway (Optional)"
     
     echo
     read -p "Do you want to start the OpenClaw gateway now? (y/N): " -r start_gw
     
     if [[ "$start_gw" =~ ^[Yy]$ ]]; then
-        local gateway_script="$WORKSPACE_DIR/scripts/openclaw-gateway-start.sh"
-        
-        if [[ -f "$gateway_script" ]]; then
-            print_info "Starting gateway in background..."
-            bash "$gateway_script" --background || {
-                print_error "Failed to start gateway"
-                print_info "You can start it manually later with:"
-                print_info "  $gateway_script --background"
-            }
-        else
-            print_info "Starting gateway directly..."
-            openclaw gateway start || {
-                print_error "Failed to start gateway"
-            }
-        fi
+        print_info "Starting gateway directly..."
+        openclaw gateway start || {
+            print_error "Failed to start gateway"
+        }
         
         sleep 2
         print_info "Checking gateway status..."
         openclaw status || true
     else
         print_info "Gateway not started. You can start it later with:"
-        print_info "  ./scripts/openclaw-gateway-start.sh --background"
-        print_info "or:"
         print_info "  openclaw gateway start"
     fi
     
@@ -1092,11 +1020,9 @@ show_summary() {
     echo "  • Brave Search: Enabled for web search"
     echo "  • Tavily Search: Enabled for web search"
     echo "  • Agents Workspace: $CONSTITUTION_DIR"
-    echo "  • Browser: $BROWSER_SETUP_STATUS"
     echo "  • ClawdBot elevated setup: $CLAWDBOT_SETUP_STATUS"
-    echo "  • Media tools (ffmpeg + cobalt.tools): $MEDIA_TOOLS_STATUS"
+    echo "  • Media tools (ffmpeg): $MEDIA_TOOLS_STATUS"
     echo "  • Telegram Bot: @clawd_slots_bot"
-    echo "  • Gateway Port: $GATEWAY_PORT"
     echo "  • Config File: $OPENCLAW_CONFIG_FILE"
     echo
     
@@ -1114,6 +1040,7 @@ show_summary() {
     echo "  2. Test Telegram by messaging @clawd_slots_bot"
     echo "  3. Review constitution files in: $CONSTITUTION_DIR"
     echo "  4. Start working on asset pipeline workflows"
+    echo "  5. Set YT_BASE_DIR (example: export YT_BASE_DIR=\"$WORKSPACE_DIR/yt\")"
     echo
     
     print_info "For more information, see SETUP.md in the repository."
@@ -1155,6 +1082,8 @@ main() {
     prompt_continue "Press Enter to begin setup..."
     
     check_prerequisites
+    install_media_tools_step
+    ensure_extract_frame_script
     setup_clawdbot_privileges
     install_openclaw
     run_initial_configuration
@@ -1165,7 +1094,6 @@ main() {
     configure_telegram
     configure_elevated_tools
     configure_gateway
-    setup_chrome_browser
     configure_plugins
     start_openclaw
     handle_telegram_pairing

@@ -1,19 +1,11 @@
 # TOOLS.md
 
-## Search Tools
+## Storage Tools
 
-### Brave Search API
-- **Purpose**: Primary web search for YouTube videos and slot machine research
-- **Env**: `BRAVE_API_KEY`
-- **Usage**: Find videos, paytable data, RTP info, manufacturer specs
-- **Fallback**: Tavily
-
-### Tavily Search API
-- **Purpose**: Fallback web search when Brave fails or is rate-limited
-- **Env**: `TAVILY_API_KEY`
-- **Usage**: Same as Brave — automatic fallback on any Brave error
-
----
+### Public S3 HTTP
+- **Purpose**: Download source videos from the public asset bucket
+- **Usage**: `curl -L https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name> -o $YT_BASE_DIR/<file-name>/video/<file-name>`
+- **Requires**: `YT_BASE_DIR` set to the local yt root
 
 ## AI Models
 
@@ -40,30 +32,16 @@
 
 ---
 
-## Browser & Video Tools
-
-### Browser Automation (OpenClaw built-in)
-- **Purpose**: Navigate to YouTube, interact with pages
-- **Capabilities**: Navigate URLs, click elements, scroll, extract content
-- **Usage**: Video playback control, metadata extraction
-
-### Screenshot Capture (OpenClaw built-in)
-- **Purpose**: Capture video frames for vision analysis
-- **Capabilities**: Full-page and element screenshots
-- **Usage**: Capture reel states, paytables, bonus screens
+## Video Tools
 
 ### ffmpeg
 - **Purpose**: Video frame extraction and processing
 - **Install**: `apt install ffmpeg`
-- **Usage**: Extract frames at intervals from downloaded videos
+- **Usage**: Extract frames at exact timestamps from downloaded videos
 
-### cobalt.tools API
-- **Purpose**: Download YouTube videos for local processing
-- **No auth required** — free, no API key needed
-- **Helper script**: `bash /workspaces/clawd-slots-assets-pipeline/scripts/cobalt-download.sh "<YouTube URL>" "<output.mp4>"`
-- **Exec mode**: Regular exec (non-elevated). No sudo required.
-- **Install**: Only needs `curl` and `jq` (both included in setup)
-- **Fallback chain**: cobalt.tools → browser screenshots
+### extract-frame.sh
+- **Purpose**: Wrapper script for consistent frame extraction
+- **Usage**: `./scripts/extract-frame.sh <video> <timestamp> <output-dir>`
 
 ---
 
@@ -88,8 +66,7 @@
 - **Purpose**: Communication with Ron
 - **Env**: `TELEGRAM_API_KEY`
 - **Usage**:
-  - Phase 1: Present top 5 video options, receive selection
-  - Phase 2: Send analysis summary and spreadsheet file
+  - Phase 1: Confirm filename and timestamps
 
 ---
 
@@ -112,15 +89,11 @@
 
 ## Tool Availability Summary
 
-| Tool | Phase 1 | Phase 2 | Key Required |
-|------|---------|---------|--------------|
-| Brave Search | ✅ | ✅ | BRAVE_API_KEY |
-| Tavily Search | ✅ | ✅ | TAVILY_API_KEY |
-| Kimi K-2.5 | ✅ | ✅ | MOONSHOT_API_KEY |
-| Grok Vision | ✅ | ✅ | XAI_API_KEY |
-| GPT-4o | ✅ | ✅ | OPENAI_API_KEY |
-| Browser | ❌ | ✅ | — |
-| Screenshots | ❌ | ✅ | — |
-| pandas/openpyxl | ❌ | ✅ | — |
-| ffmpeg/cobalt | ❌ | ✅ | — |
-| Telegram | ✅ | ✅ | TELEGRAM_API_KEY |
+| Tool | Phase 1 | Key Required |
+|------|---------|--------------|
+| Public S3 HTTP | ✅ | — |
+| Kimi K-2.5 | ✅ | MOONSHOT_API_KEY |
+| Grok Vision | ✅ | XAI_API_KEY |
+| GPT-4o | ✅ | OPENAI_API_KEY |
+| ffmpeg | ✅ | — |
+| Telegram | ✅ | TELEGRAM_API_KEY |

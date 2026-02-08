@@ -10,35 +10,21 @@
 - **Fallback chain**: kimi-k2.5 → grok-2-vision → gpt-4o
 - **Purpose**: Video search, selection, analysis, and math model extraction
 
-### 2-Phase Workflow
+### Single-Phase Workflow
 
-Clawd operates in a 2-phase workflow:
+Clawd operates in a single-phase workflow:
 
-**Phase 1: Selection** (iterative loop)
-1. **Web Search**: Use Brave first (Tavily fallback) to discover **popular, 4K Cleopatra-themed Las Vegas slot videos uploaded within the last 24 months** on YouTube when no slot name is provided; send Telegram if both fail
-2. **Present to Human**: Send top 5 videos to Ron via Telegram with quality assessments
-3. **Human Decision**: Ron picks a video (1-5) or says "redo" to search again
-4. Loop continues until Ron selects a video
+**Phase 1: Video Intake + Frame Extraction**
+1. **Verify Video**: Check for a local video file under `yt/<file-name>/video/`
+2. **Ask for Name**: If missing, ask the human for the filename (default: `CLEOPATRA.webm`)
+3. **Download**: Pull from `s3://bettr-casino-assets/yt/<file-name>` into `yt/<file-name>/video/<file-name>`
+4. **Ask for Timestamps**: Confirm whether frames are needed and collect a list (e.g., `00:14:00 00:21:35`)
+5. **Extract Frames**: Use `scripts/extract-frame.sh` to extract one frame per timestamp into `yt/<file-name>/frames/`
 
-**Phase 2: Video Analysis**
-1. **Metadata & Text Analysis**: Extract video metadata, transcript/captions, and supplementary game data from review sites
-2. **Frame Analysis**: Capture screenshots and use AI vision to reverse engineer reel configuration, symbols (wilds/scatters/premiums/lows), mechanics, bonuses, paylines, visual style
-  - **Batch frames**: Max 6-8 frames per request; summarize each batch before continuing
-3. **Math Model Spreadsheet**: Create Excel spreadsheet (pandas + openpyxl) with game overview, symbol inventory, paytable, math model, bonus features, visual analysis, and analysis log
-4. **Summary to Human**: Send analysis summary to Ron via Telegram
+### Frame Extraction Tools
 
-### Video Analysis Tools
-
-- **Browser Automation**: Navigate to YouTube, play videos, capture frames
-- **Screenshot Capture**: Extract frames at specific timestamps
-- **AI Vision** (Kimi K-2.5 with Grok/GPT-4o fallbacks): Analyze frames to identify:
-  - Reel configurations (columns × rows)
-  - Symbol designs, types, and counts
-  - Color schemes and visual style
-  - Animation patterns and timing
-  - UI/UX elements
-  - Bonus features and mechanics
-  - Payline patterns
+- **ffmpeg**: Extract frames at precise timestamps
+- **extract-frame.sh**: Wrapper script for consistent frame extraction
 
 ### Spreadsheet Creation
 
@@ -50,21 +36,19 @@ Clawd operates in a 2-phase workflow:
 
 **Telegram (Primary Channel):**
 - 30-minute heartbeat progress updates to Ron
-- Phase 1: Present top 5 video candidates and wait for selection
-- Phase 2: Send analysis summary when complete
+- Phase 1: Ask for filename (if missing) and timestamps
 - Blocker notifications and clarification questions
 
 ## Agent Responsibilities
 
 ### Workflow Execution
 1. Check MEMORY.md for current phase and step
-2. Execute next step in the 2-phase workflow
+2. Execute next step in the single-phase workflow
 3. Save checkpoints after each step completion
 4. Update MEMORY.md with progress and state
 5. Send Telegram updates every 30 minutes
 6. Use chain-of-thought reasoning for all decisions
-7. Use Excel (pandas + openpyxl) or CSV fallback for spreadsheets
-8. If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store (xai/openai) before retrying
+7. If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store (xai/openai) before retrying
 
 ### Chain-of-Thought Reasoning
 
@@ -80,7 +64,7 @@ Clawd operates in a 2-phase workflow:
 When user sends "status", provide comprehensive overview:
 
 ### Status Structure
-- Current phase (1: Selection or 2: Video Analysis)
+- Current phase (single phase)
 - Current step within the phase
 - Last completed checkpoint
 - Progress summary

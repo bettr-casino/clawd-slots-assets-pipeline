@@ -1,86 +1,47 @@
 # autonomous-9-step-loop.md
 
-This document replaces the old 9-step loop with the **2-phase workflow**.
+This document replaces the old 9-step loop with the **single-phase workflow**.
 
-## Phase 1: Selection
+## Phase 1: Video Intake + Frame Extraction
 
-**Goal**: Find and select one high-quality YouTube video of a specific slot machine.
-
-### Steps
-
-1. **Search**
-	- Use Brave Search with fallback to Tavily.
-	- Default target when no slot name is provided: **popular, 4K Cleopatra-themed Las Vegas slots uploaded within the last 24 months**.
-	- Use YouTube-focused queries (4K) to prioritize high-res videos.
-	- Target: clear reel visibility, multiple spins, real casino footage, 4K resolution, last 24 months.
-	- Enforce recency by discarding any result older than 24 months based on published date metadata.
-	- Date filters apply **only** to YouTube video searches.
-
-2. **Evaluate**
-	- Score each candidate for clarity, duration, and variety of gameplay.
-	- Capture timeline timestamps, spins observed, and whether a bonus appears.
-	- Keep the top 5.
-
-3. **Present Top 5**
-	- Send a Telegram message listing the top 5.
-	- Ask for selection (1-5) or "redo".
-
-4. **Handle Response**
-	- If user picks a number: proceed to Phase 2.
-	- If user says "redo": run a new search and repeat Phase 1.
-
-### Output
-
-- Selected video URL and metadata saved to MEMORY.md.
-
----
-
-## Phase 2: Video Analysis
-
-**Goal**: Analyze the selected video and produce a complete math model spreadsheet.
+**Goal**: Ensure the source video exists locally and extract requested frames.
 
 ### Steps
 
-1. **Metadata & Transcript**
-	- Extract title, channel, duration, and description.
-	- Fetch transcript/captions if available.
+1. **Verify Video**
+	- Check for a local video file under `$YT_BASE_DIR/<file-name>/video/`.
+	- If missing, ask the human for the video file name (default: `CLEOPATRA.webm`).
 
-2. **Frame Capture**
-	- Capture key timestamps for reels, wins, bonuses, paytables.
-	- Use browser screenshots or ffmpeg for frame extraction.
-	- **Batch analysis**: Send frames to the model in small sets (max 6-8) and summarize each batch.
+2. **Download**
+	- Download from S3 and place it under `yt/<file-name>/video/`:
 
-3. **Vision Analysis**
-	- Analyze frames with Kimi K-2.5 (fallbacks: Grok, GPT-4o).
-	- Extract symbols, reels, paylines, bonus mechanics, UI details.
+	```bash
+	mkdir -p "$YT_BASE_DIR/<file-name>/video" "$YT_BASE_DIR/<file-name>/frames"
+	curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>" \
+	  -o "$YT_BASE_DIR/<file-name>/video/<file-name>"
+	```
 
-4. **Supplementary Research**
-	- Search for RTP, volatility, paytable details.
-	- Validate any inferred values.
+3. **Collect Timestamps**
+	- Ask if timestamps should be extracted.
+	- Accept a list like `00:14:00 00:21:35 00:34:12`.
 
-5. **Spreadsheet Generation**
-	- Create the math model spreadsheet with 7 sheets:
-	  - game_overview
-	  - symbol_inventory
-	  - paytable
-	  - math_model
-	  - bonus_features
-	  - visual_analysis
-	  - analysis_log
+4. **Extract Frames**
+	- For each timestamp, extract a frame into `$YT_BASE_DIR/<file-name>/frames/`:
 
-6. **Delivery**
-	- Send summary + spreadsheet to Ron via Telegram.
-	- Update MEMORY.md to mark phase complete.
+	```bash
+	./scripts/extract-frame.sh "$YT_BASE_DIR/<file-name>/video/<file-name>" "00:14:00" "$YT_BASE_DIR/<file-name>/frames"
+	```
 
 ### Output
 
-- `[slot_name]_math_model.xlsx` with 7 sheets.
-- Summary message sent via Telegram.
+- Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>`
+- Frames stored under `$YT_BASE_DIR/<file-name>/frames/`
+- MEMORY.md updated with download status and extracted timestamps
 
 ---
 
 ## Rules
 
-- Only these two phases are allowed.
+- Only this single phase is allowed.
 - Always checkpoint progress in MEMORY.md.
-- Use fallbacks for search and AI vision failures.
+- If the video already exists, skip the download step.

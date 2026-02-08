@@ -24,14 +24,7 @@
 │       Based on current state        │
 └──────────────┬──────────────────────┘
                │
-        ┌──────┴──────┐
-        ▼             ▼
-   ┌─────────┐  ┌──────────┐
-   │ Phase 1 │  │ Phase 2  │
-   │Selection│  │ Analysis │
-   └────┬────┘  └────┬─────┘
-        │             │
-        ▼             ▼
+               ▼
 ┌─────────────────────────────────────┐
 │       3. EXECUTE STEP               │
 │       Do work for current step      │
@@ -54,24 +47,11 @@
 
 | State | Action |
 |-------|--------|
-| `idle` / no search done | Run search query (default to popular 4K Cleopatra search from last 24 months if none provided), evaluate results |
-| Search done, top 5 not sent | Send top 5 to Ron via Telegram |
-| Top 5 sent, no response | Wait (do nothing) |
-| User said "redo" | Run new search with refined query |
-| User selected a video | Transition to Phase 2 |
-
-## Phase 2 Heartbeat Actions
-
-| State | Action |
-|-------|--------|
-| Video selected, no metadata | Extract video metadata |
-| Metadata done, no transcript | Extract transcript/captions |
-| Transcript done, no frames | Capture video frames |
-| Frames captured, not analyzed | Analyze frames with AI vision |
-| Analysis done, no research | Do supplementary web research |
-| Research done, no spreadsheet | Generate math model spreadsheet |
-| Spreadsheet done, not sent | Send summary + file to Ron via Telegram |
-| Summary sent | Mark phase complete, return to idle |
+| `idle` / no filename | Ask the human for a video filename (default: `CLEOPATRA.webm`) |
+| Filename set, file missing | Download from public URL into `$YT_BASE_DIR/<file-name>/video/` |
+| Video present, timestamps not requested | Ask whether to extract timestamps |
+| Timestamps provided, frames not extracted | Run `scripts/extract-frame.sh` for each timestamp |
+| Frames extracted | Mark phase complete and return to idle |
 
 ## Heartbeat Rules
 
@@ -83,7 +63,7 @@
 
 ## Idle Behavior
 
-When both phases are complete (or no work is pending):
+When the phase is complete (or no work is pending):
 - Check MEMORY.md for `phase: idle`
 - Send no messages
 - Do nothing until triggered by user via Telegram
