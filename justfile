@@ -1,3 +1,5 @@
+set shell := ["bash", "-cu"]
+
 start:
     @if [ -f ".pid.current" ] && kill -0 "$(cat .pid.current)" 2>/dev/null; then \
         echo "Gateway already running (pid $(cat .pid.current))"; \
@@ -76,4 +78,10 @@ extract file timestamp:
 
 
 reset-memory:
-	@printf '' > constitution/MEMORY.md
+    @printf '' > constitution/MEMORY.md
+    @if [ -f /home/codespace/.openclaw/memory/main.sqlite ]; then \
+        mv /home/codespace/.openclaw/memory/main.sqlite /home/codespace/.openclaw/memory/main.sqlite.bak; \
+        echo "Moved main.sqlite to main.sqlite.bak"; \
+    else \
+        echo "No main.sqlite found"; \
+    fi

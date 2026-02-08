@@ -3,15 +3,6 @@ This document replaces the old 9-step loop with the **single-phase workflow**.
 
 ## Phase 1: Video Intake + Frame Extraction
 
----
-
-## Phase 2: Multimodal LLM Analysis
-
-After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
-
-- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
-- Identify slot symbols, reel layout, and symbol landing animations
-- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
 ### Steps
 
 1. **Confirm YouTube URL**
@@ -35,6 +26,16 @@ After frame extraction and tags.txt are ready, confirm with the user before star
 - Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
 - Frames stored under `$YT_BASE_DIR/<file-name>/frames/`
 - MEMORY.md updated with download status and extracted timestamps
+
+---
+
+## Phase 2: Multimodal LLM Analysis
+
+After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
+
+- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
+- Identify slot symbols, reel layout, and symbol landing animations
+- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
 
 ---
 

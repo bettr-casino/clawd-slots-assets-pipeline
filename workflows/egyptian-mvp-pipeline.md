@@ -3,16 +3,6 @@ This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) 
 
 ## Phase 1: Video Intake + Frame Extraction
 
----
-
-## Phase 2: Multimodal LLM Analysis
-
-After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
-
-- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
-- Identify slot symbols, reel layout, and symbol landing animations
-- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
-
 ### Step 1: Confirm YouTube URL
 
 Ask the human to confirm the YouTube URL.
@@ -41,6 +31,16 @@ For each timestamp, extract a frame into `$YT_BASE_DIR/<file-name>/frames/`. The
 - Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
 - Frames stored under `$YT_BASE_DIR/<file-name>/frames/`
 - MEMORY.md updated with download status and extracted timestamps
+
+---
+
+## Phase 2: Multimodal LLM Analysis
+
+After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
+
+- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
+- Identify slot symbols, reel layout, and symbol landing animations
+- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
 
 ---
 

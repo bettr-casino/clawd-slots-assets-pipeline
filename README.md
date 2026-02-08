@@ -50,8 +50,8 @@ clawd-slots-assets-pipeline/
 │   ├── GOAL.md           # Two-phase workflow definition
 │   └── MEMORY.md         # Checkpoint state and iteration tracking
 │
-├── prompts/              # AI generation prompt templates
-│   └── meshy-ai/         # Meshy.ai specific prompts
+├── prompts/              # AI prompt templates (legacy; not used in current workflow)
+│   └── meshy-ai/         # Legacy prompt templates
 │       ├── egyptian-symbols.md    # Reel symbol generation prompts
 │       ├── backgrounds.md         # Background element prompts
 │       └── win-effects.md         # Effect object prompts
@@ -100,6 +100,12 @@ All workflow state is saved in `constitution/MEMORY.md` with checkpoint data:
 - Confirmed YouTube URL
 - analysis.md status
 - File paths and reference data
+
+## Non-Goals
+
+- Asset creation or 3D generation
+- Godot game implementation
+- Deployment or playable builds
 
 If the process restarts, Clawd resumes from the last completed checkpoint automatically.
 

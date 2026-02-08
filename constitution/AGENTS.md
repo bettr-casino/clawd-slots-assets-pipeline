@@ -26,6 +26,7 @@ Clawd operates in a two-phase workflow:
 2. Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt for the video
 3. Identify slot symbols, reel layout, and symbol landing animations
 4. Write results to `$YT_BASE_DIR/<video-name>/analysis.md`
+5. Do not create assets or implement the game in this phase
 
 ### Frame Extraction Tools
 

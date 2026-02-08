@@ -12,6 +12,7 @@ Prepare local video sources and extract requested frames through a **single-phas
 - `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` takes a **base file name** (no extension); if `.webm` is provided it is stripped before use
 - The script downloads from S3 if the video is missing
 - S3 public URL format: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm`
+- No asset creation or game implementation occurs in this workflow; only analysis.md output
 - Send Telegram updates at each decision point
 - Save checkpoint data in MEMORY.md (phase, status, decisions, confirmed YouTube URL)
 
@@ -66,6 +67,7 @@ Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) 
 	- Symbols used in the slot machine
 	- Reel layout (number of reels and visible symbols per reel)
 	- Symbol landing animations for some symbols
+- Do not create assets or implement the game in this phase
 
 ### Output
 - Generate `analysis.md` at `$YT_BASE_DIR/<video-name>/analysis.md` containing the results.
