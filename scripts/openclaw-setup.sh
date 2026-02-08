@@ -21,7 +21,7 @@ TELEGRAM_PAIRING_APPROVED=false
 CLAWDBOT_SETUP_STATUS="Not run"
 MEDIA_TOOLS_STATUS="Not checked"
 OPENAI_FALLBACK_MODEL="openai/gpt-4o"
-XAI_FALLBACK_MODEL="xai/grok-2-vision"
+XAI_FALLBACK_MODEL="xai/grok-vision-beta"
 
 # Suppress OpenClaw banner noise during setup
 export OPENCLAW_NO_BANNER=1
@@ -196,7 +196,7 @@ provider_defaults = {
                 "id": "kimi-k2.5",
                 "name": "Kimi K2.5",
                 "reasoning": False,
-                "input": ["text"],
+                "input": ["text", "image"],
                 "cost": {
                     "input": 0,
                     "output": 0,
@@ -216,17 +216,15 @@ provider_defaults = {
     "xai": {
         "baseUrl": "https://api.x.ai/v1",
         "api": "openai-completions",
-        "models": [{"id": "grok-2-vision", "name": "Grok 2 Vision", "input": ["text", "image"]}],
+        "models": [{"id": "grok-vision-beta", "name": "Grok Vision Beta", "input": ["text", "image"]}],
     },
 }
 
 with open(path, "r", encoding="utf-8") as handle:
     data = json.load(handle)
-
 agents = data.setdefault("agents", {})
 defaults = agents.setdefault("defaults", {})
-model = defaults.setdefault("model", {})
-model["fallbacks"] = models
+agent_model_config = defaults.setdefault("model", {})
 defaults_models = defaults.setdefault("models", {})
 for entry in models:
     defaults_models.setdefault(entry, {})
@@ -241,6 +239,53 @@ models_config.setdefault("mode", "merge")
 providers = models_config.setdefault("providers", {})
 for provider, payload in provider_defaults.items():
     providers.setdefault(provider, payload)
+
+vision_ids = {
+    "kimi-k2.5",
+    "kimi-k2",
+    "gpt-4o",
+    "grok-2-vision",
+    "grok-vision-beta",
+}
+
+def ensure_image_input(model):
+    model_id = (model.get("id") or "").lower()
+    name = (model.get("name") or "").lower()
+    if (
+        model_id in vision_ids
+        or "vision" in model_id
+        or "vision" in name
+        or "kimi-k2" in model_id
+        or "kimi k2" in name
+    ):
+        inputs = list(model.get("input") or [])
+        if "text" not in inputs:
+            inputs.insert(0, "text")
+        if "image" not in inputs:
+            inputs.append("image")
+        model["input"] = inputs
+
+for payload in providers.values():
+    for model_def in payload.get("models", []):
+        ensure_image_input(model_def)
+
+available_models = set()
+for provider, payload in providers.items():
+    for model_def in payload.get("models", []):
+        model_id = model_def.get("id")
+        if model_id:
+            available_models.add(f"{provider}/{model_id}")
+
+preferred_primary = [
+    "moonshot/kimi-k2.5",
+    "xai/grok-vision-beta",
+    "openai/gpt-4o",
+]
+for candidate in preferred_primary:
+    if candidate in available_models:
+    agent_model_config["primary"] = candidate
+        break
+agent_model_config["fallbacks"] = [m for m in models if m in available_models]
 
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(data, handle, indent=2)
@@ -264,6 +309,8 @@ if os.path.isfile(agent_models):
             entry["apiKey"] = "XAI_API_KEY"
         elif pname == "openai":
             entry["apiKey"] = "OPENAI_API_KEY"
+        for model in entry.get("models", []):
+            ensure_image_input(model)
     with open(agent_models, "w", encoding="utf-8") as handle:
         json.dump(adata, handle, indent=2)
         handle.write("\n")

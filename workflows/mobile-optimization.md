@@ -21,3 +21,4 @@ This file replaces the old mobile optimization workflow. It now defines **qualit
 
 - Human confirmation recorded (download and timestamps)
 - MEMORY.md updated with final status
+- Any bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`

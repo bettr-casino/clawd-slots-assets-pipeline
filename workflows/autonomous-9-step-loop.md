@@ -36,6 +36,7 @@ After frame extraction and tags.txt are ready, confirm with the user before star
 - Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
 - Identify slot symbols, reel layout, and symbol landing animations
 - Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
+- Any bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
 ---
 

@@ -40,8 +40,9 @@
 ### multimodal_llm_analysis
 - **Purpose**: Analyze extracted frames and tags.txt for a specific video
 - **Tool**: Multimodal LLM (e.g., Kimi K2.5)
-- **Input**: Frames directory, tags.txt
+- **Input**: Frames directory, tags.txt (use absolute paths under `$YT_BASE_DIR`)
 - **Output**: analysis.md with slot symbols, reel layout, and symbol animations
+- **Helper scripts**: If needed, place under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
 ## Cross-Cutting Skills
 
@@ -71,12 +72,13 @@
   - If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store and retry
   - Send Telegram notification for unrecoverable issues
   - Never silently fail
+  - Use absolute paths when referencing files in logs or commands
 
 ### file_management
 
 - **Purpose**: Organize output files
-- **Videos**: `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
-- **Frames**: `$YT_BASE_DIR/<file-name>/frames/frame_<timestamp>.png`
+- **Videos**: `$YT_BASE_DIR/<file-name>/video/<file-name>.webm` (use absolute paths)
+- **Frames**: `$YT_BASE_DIR/<file-name>/frames/frame_<timestamp>.png` (use absolute paths)
 - **Logs**: Intake progress in MEMORY.md
 
 ---

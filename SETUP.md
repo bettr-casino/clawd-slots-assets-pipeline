@@ -80,7 +80,7 @@ Set up the Moonshot AI provider for LLM capabilities:
 The configuration includes:
 - **Base URL**: `https://api.moonshot.ai/v1`
 - **Models**: 
-  - `kimi-k2-0905-preview` (256K context window)
+  - `kimi-k2.5` (256K context window)
   - `kimi-k2.5` (primary model)
 
 ### 4. Configure Agents

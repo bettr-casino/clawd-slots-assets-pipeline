@@ -13,6 +13,7 @@ Prepare local video sources and extract requested frames through a **single-phas
 - The script downloads from S3 if the video is missing
 - S3 public URL format: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm`
 - No asset creation or game implementation occurs in this workflow; only analysis.md output
+- Always use absolute paths for file access and tool calls
 - Send Telegram updates at each decision point
 - Save checkpoint data in MEMORY.md (phase, status, decisions, confirmed YouTube URL)
 
@@ -63,6 +64,10 @@ Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) 
 
 ### Actions
 - Use the tags.txt metadata to guide analysis of specific time ranges and frames.
+- Ask for approval once per Phase 2 run, record approval in MEMORY.md before executing, and do not re-ask on retries or command failures
+- Helper scripts are allowed if needed; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
+- Missing scripts must not block Phase 2; create them or proceed with direct multimodal analysis
+- When accessing frames, use absolute paths under `$YT_BASE_DIR` to avoid cwd issues
 - Identify:
 	- Symbols used in the slot machine
 	- Reel layout (number of reels and visible symbols per reel)

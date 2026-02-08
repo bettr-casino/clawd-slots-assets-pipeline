@@ -15,7 +15,8 @@
                ▼
 ┌─────────────────────────────────────┐
 │       1. READ MEMORY.md            │
-│       Check current phase/step      │
+│       Check current phase/step by reading directly from disk:                 │
+│       /workspaces/clawd-slots-assets-pipeline/constitution/MEMORY.md           │
 └──────────────┬──────────────────────┘
                │
                ▼
@@ -57,8 +58,8 @@
 
 | State | Action |
 |-------|--------|
-| Frames and tags.txt ready | Confirm with human to start analysis |
-| Analysis started | Run multimodal LLM analysis on frames and tags.txt |
+| Frames and tags.txt ready, approval not recorded | Ask once for approval to start analysis, record approval in MEMORY.md immediately |
+| Approval recorded | Run multimodal LLM analysis on frames and tags.txt (do not re-ask on retries) |
 | Analysis complete | Write results to analysis.md and mark phase complete |
 
 ## Heartbeat Rules
@@ -68,6 +69,7 @@
 3. **Respect user wait**: If waiting for user input, don't do busy work
 4. **Log everything**: Every heartbeat should produce a log entry
 5. **Handle errors in-cycle**: If a step fails, try fallback, log error, checkpoint
+6. **Memory source**: Always read MEMORY.md directly from disk and do not use embeddings or the memory plugin for state
 
 ## Idle Behavior
 

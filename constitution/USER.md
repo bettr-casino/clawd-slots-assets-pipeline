@@ -58,7 +58,7 @@ Reply with "yes" to confirm or provide the updated URL.
 After frame extraction and tags.txt are ready, confirm with the user via Telegram before starting analysis.
 
 - Notify user that analysis will use the extracted frames and tags.txt
-- Ask for confirmation to proceed
+- Ask for confirmation to proceed once per Phase 2 run, record approval in MEMORY.md before executing, and do not re-ask on retries or command failures
 - After analysis, send summary and link to analysis.md
 
 ## General Rules
@@ -68,6 +68,8 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 3. **Always include next steps**: Tell Ron what to expect next
 4. **Handle silence**: If no response after 24 hours, send a gentle reminder once
 5. **Error notifications**: If blocked, tell Ron what's wrong and what's needed
+6. **State source**: Read `MEMORY.md` directly from disk; do not use embeddings-based memory lookups
+7. **Paths**: Always use absolute paths for file access and tool calls; never rely on cwd
 
 ## Trigger Commands
 
