@@ -203,20 +203,36 @@ provider_defaults = {
                     "cacheRead": 0,
                     "cacheWrite": 0,
                 },
-                "contextWindow": 256000,
-                "maxTokens": 8192,
+                "contextWindow": 512000,
+                "maxTokens": 16384,
             }
         ],
     },
     "openai": {
         "baseUrl": "https://api.openai.com/v1",
         "api": "openai-completions",
-        "models": [{"id": "gpt-4o", "name": "GPT-4o", "input": ["text", "image"]}],
+        "models": [
+            {
+                "id": "gpt-4o",
+                "name": "GPT-4o",
+                "input": ["text", "image"],
+                "contextWindow": 400000,
+                "maxTokens": 16384,
+            }
+        ],
     },
     "xai": {
         "baseUrl": "https://api.x.ai/v1",
         "api": "openai-completions",
-        "models": [{"id": "grok-vision-beta", "name": "Grok Vision Beta", "input": ["text", "image"]}],
+        "models": [
+            {
+                "id": "grok-vision-beta",
+                "name": "Grok Vision Beta",
+                "input": ["text", "image"],
+                "contextWindow": 400000,
+                "maxTokens": 16384,
+            }
+        ],
     },
 }
 
@@ -226,7 +242,7 @@ agents = data.setdefault("agents", {})
 defaults = agents.setdefault("defaults", {})
 agent_model_config = defaults.setdefault("model", {})
 defaults["maxConcurrent"] = 1
-defaults.setdefault("subagents", {})["maxConcurrent"] = 2
+defaults.setdefault("subagents", {})["maxConcurrent"] = 1
 defaults_models = defaults.setdefault("models", {})
 for entry in models:
     defaults_models.setdefault(entry, {})

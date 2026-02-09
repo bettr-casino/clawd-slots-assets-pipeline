@@ -1,11 +1,14 @@
 set shell := ["bash", "-cu"]
 
 start:
+    @test -n "$MOONSHOT_API_KEY" || (echo "Missing MOONSHOT_API_KEY" && exit 1)
+    @test -n "$OPENAI_API_KEY" || (echo "Missing OPENAI_API_KEY" && exit 1)
+    @test -n "$XAI_API_KEY" || (echo "Missing XAI_API_KEY" && exit 1)
     @if [ -f ".pid.current" ] && kill -0 "$(cat .pid.current)" 2>/dev/null; then \
         echo "Gateway already running (pid $(cat .pid.current))"; \
         exit 0; \
     fi; \
-    nohup openclaw gateway run --verbose > ".log.tmp" 2>&1 & \
+    nohup openclaw gateway run > ".log.tmp" 2>&1 & \
     PID="$!"; \
     mv ".log.tmp" "${PID}.log"; \
     echo "$PID" > "${PID}.pid"; \
@@ -29,6 +32,9 @@ stop:
     fi
 
 restart:
+    @test -n "$MOONSHOT_API_KEY" || (echo "Missing MOONSHOT_API_KEY" && exit 1)
+    @test -n "$OPENAI_API_KEY" || (echo "Missing OPENAI_API_KEY" && exit 1)
+    @test -n "$XAI_API_KEY" || (echo "Missing XAI_API_KEY" && exit 1)
     @if [ -f .pid.current ]; then \
         PID="$(cat .pid.current)"; \
         if kill -0 "$PID" 2>/dev/null; then \
@@ -37,7 +43,7 @@ restart:
         fi; \
         rm -f .pid.current .log.current; \
     fi; \
-    nohup openclaw gateway run --verbose > ".log.tmp" 2>&1 & \
+    nohup openclaw gateway run > ".log.tmp" 2>&1 & \
     PID="$!"; \
     mv ".log.tmp" "${PID}.log"; \
     echo "$PID" > "${PID}.pid"; \
