@@ -1,5 +1,5 @@
 # cleopatra-research.md
-This workflow is a **game-specific instance** of the single-phase pipeline, scoped to Cleopatra or Cleopatra-style slots.
+This workflow is a **game-specific instance** of the three-phase pipeline, scoped to Cleopatra or Cleopatra-style slots.
 
 ## Phase 1: Video Intake + Frame Extraction (Cleopatra Focus)
 
@@ -41,7 +41,19 @@ After frame extraction and tags.txt are ready, confirm with the user before star
 - Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
 - Identify slot symbols, reel layout, and symbol landing animations
 - Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
+- Write math model spreadsheets and CSVs to `$YT_BASE_DIR/<file-name>/output/`
 - Any bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
+
+---
+
+## Phase 3: Symbol Asset Generation
+
+After Phase 2 analysis is complete, generate symbol textures using the frames, tags.txt, and analysis.md.
+
+- Generate a texture per symbol that closely matches the original symbol in the frames
+- Save textures under `$YT_BASE_DIR/<file-name>/output/symbols/` with filenames that include the symbol name
+- Present all symbol textures for review
+- If the user rejects all or specific symbols, regenerate only those symbols and re-present
 
 ---
 

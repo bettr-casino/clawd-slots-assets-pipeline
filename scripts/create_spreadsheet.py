@@ -1,8 +1,11 @@
-import pandas as pd
 import os
+import sys
 
-# Create output directory
-output_dir = '/workspaces/clawd-slots-assets-pipeline/output'
+import pandas as pd
+
+video_name = sys.argv[1].strip() if len(sys.argv) > 1 else "CLEOPATRA"
+yt_base_dir = os.environ.get("YT_BASE_DIR", "/workspaces/clawd-slots-assets-pipeline/yt")
+output_dir = os.path.join(yt_base_dir, video_name, "output")
 os.makedirs(output_dir, exist_ok=True)
 
 # Sheet 1: Game Overview
@@ -110,7 +113,7 @@ analysis_log = pd.DataFrame({
         'Math model spreadsheet created'
     ],
     'Details': [
-        'CLEOPATRA.webm available in yt/CLEOPATRA/video/',
+        f"{video_name}.webm available in yt/{video_name}/video/",
         '11 frames extracted at timestamps: 00:00:16, 00:00:23, 00:00:24-32',
         'Approval received from Ron via Telegram',
         'Identified game as Cleopatra Triple Fortune, 5x3 reels, 20 paylines',
@@ -120,7 +123,7 @@ analysis_log = pd.DataFrame({
 })
 
 # Create Excel file with all sheets
-output_file = os.path.join(output_dir, 'CLEOPATRA_Math_Model.xlsx')
+output_file = os.path.join(output_dir, f"{video_name}_Math_Model.xlsx")
 
 with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
     game_overview.to_excel(writer, sheet_name='game_overview', index=False)

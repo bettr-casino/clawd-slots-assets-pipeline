@@ -61,6 +61,28 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 - Ask for confirmation to proceed once per Phase 2 run, record approval in MEMORY.md before executing, and do not re-ask on retries or command failures
 - After analysis, send summary and link to analysis.md
 
+---
+
+## Phase 3: Symbol Asset Generation Interaction
+
+After Phase 2 analysis is complete, generate symbol textures from the frames, tags.txt, and analysis.md.
+
+- Present all generated symbol textures to the user with symbol names.
+- Ask the user to approve all, reject all, or reject specific symbols by name.
+- If any symbols are rejected, regenerate only those symbols and re-present for review.
+
+### Review Prompt
+
+```
+Symbol textures are ready for review:
+<list of symbols with filenames/paths>
+
+Reply with one of:
+- "approve all"
+- "reject all"
+- "reject: <symbol-name-1>, <symbol-name-2>"
+```
+
 ## General Rules
 
 1. **Don't spam**: Only message when there's actionable information

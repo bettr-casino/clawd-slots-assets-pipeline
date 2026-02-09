@@ -62,6 +62,15 @@
 | Approval recorded | Run multimodal LLM analysis on frames and tags.txt (do not re-ask on retries) |
 | Analysis complete | Write results to analysis.md and mark phase complete |
 
+## Phase 3 Heartbeat Actions
+
+| State | Action |
+|-------|--------|
+| Analysis ready, symbols not generated | Generate symbol textures from frames, tags.txt, and analysis.md |
+| Symbols generated, review not recorded | Present assets to user for review with approve/reject options |
+| Rejected symbols provided | Regenerate only rejected symbols and re-present for review |
+| Symbols approved | Mark phase complete |
+
 ## Heartbeat Rules
 
 1. **One step per heartbeat**: Complete one meaningful step, checkpoint, then yield

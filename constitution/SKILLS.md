@@ -44,6 +44,17 @@
 - **Output**: analysis.md with slot symbols, reel layout, and symbol animations
 - **Helper scripts**: If needed, place under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
+---
+
+## Phase 3: Symbol Asset Generation Skills
+
+### symbol_texture_generation
+- **Purpose**: Generate symbol texture assets closely matching the original frame symbols
+- **Input**: Frames directory, tags.txt, analysis.md (use absolute paths under `$YT_BASE_DIR`)
+- **Output**: One texture per symbol under `$YT_BASE_DIR/<file-name>/output/symbols/`
+- **Naming**: Asset filenames must include the symbol name
+- **Review**: Present all generated assets; regenerate only rejected symbols
+
 ## Cross-Cutting Skills
 
 ### chain_of_thought
@@ -79,6 +90,8 @@
 - **Purpose**: Organize output files
 - **Videos**: `$YT_BASE_DIR/<file-name>/video/<file-name>.webm` (use absolute paths)
 - **Frames**: `$YT_BASE_DIR/<file-name>/frames/frame_<timestamp>.png` (use absolute paths)
+- **Output**: `$YT_BASE_DIR/<file-name>/output/` for math model spreadsheets and CSVs
+- **Symbols**: `$YT_BASE_DIR/<file-name>/output/symbols/` for texture assets
 - **Logs**: Intake progress in MEMORY.md
 
 ---

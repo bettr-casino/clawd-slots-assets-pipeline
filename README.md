@@ -4,7 +4,7 @@ Central pipeline and configuration hub for the Clawd virtual worker in social ca
 
 ## Overview
 
-This repository serves as the operational control center for Clawd, an OpenClaw-based analyst for social casino slots. Clawd extracts frames from YouTube videos and performs multimodal analysis to document symbols, reel layout, and animations.
+This repository serves as the operational control center for Clawd, an OpenClaw-based analyst for social casino slots. Clawd extracts frames from YouTube videos, performs multimodal analysis, and generates symbol texture assets to document symbols, reel layout, and animations.
 
 ### Clawd's Role
 
@@ -13,6 +13,7 @@ Clawd functions as an autonomous analysis specialist responsible for:
 - **Video Intake**: Confirming the YouTube URL and extracting frames by timestamp
 - **Frame Analysis**: Using a multimodal LLM to identify symbols, reel layout, and animations
 - **Documentation**: Writing analysis.md based on frames and tags.txt
+- **Symbol Textures**: Generating symbol texture assets closely matching the frames
 - **Communication**: Providing progress updates via Telegram
 
 ### Technology Stack
@@ -22,9 +23,9 @@ Clawd functions as an autonomous analysis specialist responsible for:
 - **Communication**: Telegram for progress updates and human feedback
 - **Documentation**: analysis.md for findings, MEMORY.md for checkpoints
 
-## Two-Phase Workflow
+## Three-Phase Workflow
 
-Clawd operates in a two-phase workflow:
+Clawd operates in a three-phase workflow:
 
 1. **Phase 1: Video Intake + Frame Extraction**
     - Confirm the YouTube URL
@@ -35,6 +36,10 @@ Clawd operates in a two-phase workflow:
     - Analyze frames and tags.txt with a multimodal LLM
     - Identify symbols, reel layout, and animations
     - Write analysis.md to the video folder
+3. **Phase 3: Symbol Asset Generation**
+    - Generate symbol textures using frames, tags.txt, and analysis.md
+    - Save textures under yt/<file-name>/output/symbols/
+    - Present assets for approval; regenerate rejected symbols
 
 ## Repository Structure
 
@@ -42,12 +47,12 @@ Clawd operates in a two-phase workflow:
 clawd-slots-assets-pipeline/
 ├── constitution/          # Core operational guidelines for Clawd
 │   ├── SOUL.md           # Identity, mission, and values
-│   ├── AGENTS.md         # AI agent capabilities and two-phase workflow
+│   ├── AGENTS.md         # AI agent capabilities and three-phase workflow
 │   ├── USER.md           # User interaction guidelines (Telegram)
 │   ├── TOOLS.md          # Development tools and specifications
 │   ├── SKILLS.md         # Required skills for each workflow step
 │   ├── HEARTBEAT.md      # 30-minute cycle execution protocol
-│   ├── GOAL.md           # Two-phase workflow definition
+│   ├── GOAL.md           # Three-phase workflow definition
 │   └── MEMORY.md         # Checkpoint state and iteration tracking
 │
 ├── prompts/              # AI prompt templates (legacy; not used in current workflow)
@@ -71,15 +76,15 @@ clawd-slots-assets-pipeline/
 
 ### Constitution Directory
 
-The `constitution/` directory contains Clawd's operational framework defining the two-phase analysis workflow:
+The `constitution/` directory contains Clawd's operational framework defining the three-phase workflow:
 
 - **SOUL.md**: Core identity as reverse-engineering architect
-- **AGENTS.md**: Two-phase workflow capabilities
+- **AGENTS.md**: Three-phase workflow capabilities
 - **USER.md**: Telegram communication protocol
 - **TOOLS.md**: Video analysis and extraction tools
 - **SKILLS.md**: Required capabilities for each workflow step
 - **HEARTBEAT.md**: 30-minute execution cycle protocol
-- **GOAL.md**: Complete two-phase workflow definition
+- **GOAL.md**: Complete three-phase workflow definition
 - **MEMORY.md**: Checkpoint state for restart resilience
 
 This framework can be symlinked to the broader OpenClaw workspace:
@@ -99,11 +104,12 @@ All workflow state is saved in `constitution/MEMORY.md` with checkpoint data:
 - Extracted timestamps and tags.txt updates
 - Confirmed YouTube URL
 - analysis.md status
+- symbol texture generation status
 - File paths and reference data
 
 ## Non-Goals
 
-- Asset creation or 3D generation
+- 3D asset creation or modeling
 - Godot game implementation
 - Deployment or playable builds
 
@@ -117,23 +123,27 @@ If the process restarts, Clawd resumes from the last completed checkpoint automa
 2. After Phase 2 completes, review:
     - Summary message with analysis.md findings
     - Extracted frames and tags.txt entries
-3. Provide clarification if Clawd encounters blockers
+3. After Phase 3 completes, review:
+    - Symbol texture assets under yt/<file-name>/output/symbols/
+4. Provide clarification if Clawd encounters blockers
 
 ### For Clawd Operations
 
 1. Check MEMORY.md for current iteration and step state
-2. Load GOAL.md for two-phase workflow definition
+2. Load GOAL.md for three-phase workflow definition
 3. Execute next step based on current position
 4. Save checkpoint after each step completion
 5. Send Telegram progress update every 30 minutes
 6. Request human confirmation before Phase 2
+7. Present symbol textures for review in Phase 3
 
 ## Development Workflow
 
-### Two-Phase Execution
+### Three-Phase Execution
 
 1. **Video Intake + Frame Extraction**: Confirm URL, collect timestamps, extract frames, and update tags.txt
 2. **Multimodal LLM Analysis**: Analyze frames and tags.txt and write analysis.md
+3. **Symbol Asset Generation**: Generate symbol textures and review with the user
 
 ### Chain-of-Thought Reasoning
 
@@ -148,6 +158,7 @@ All steps use transparent reasoning:
 Each run includes validation checkpoints:
 - **Post-Extraction**: Frames and tags.txt present
 - **Post-Analysis**: Complete symbol inventory, reel layout, and animation notes in analysis.md
+- **Post-Generation**: Symbol textures created and reviewed
 
 ## Contributing
 
@@ -164,10 +175,11 @@ Changes to constitution, workflows, or standards should:
 **Current Focus**: Multimodal analysis of slot machine videos from YouTube
 
 Active capabilities:
-- Two-phase workflow (extraction + analysis)
+- Three-phase workflow (extraction + analysis + symbol textures)
 - Checkpoint resilience with MEMORY.md state tracking
 - Frame extraction with tags.txt metadata
 - analysis.md generation
+- symbol texture generation and review
 - Human confirmation before analysis
 
 See `/constitution/MEMORY.md` for current iteration state and progress checkpoints.

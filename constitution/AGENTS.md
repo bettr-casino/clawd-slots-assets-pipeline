@@ -10,9 +10,9 @@
 - **Fallback chain**: kimi-k2.5 → grok-2-vision → gpt-4o
 - **Purpose**: Video search, selection, analysis, and math model extraction
 
-### Two-Phase Workflow
+### Three-Phase Workflow
 
-Clawd operates in a two-phase workflow:
+Clawd operates in a three-phase workflow:
 
 **Phase 1: Video Intake + Frame Extraction**
 1. **Ask for Name**: If missing, ask the human for the base filename (default: `CLEOPATRA`); if `.webm` is provided, strip it
@@ -31,6 +31,13 @@ Clawd operates in a two-phase workflow:
 7. When loading frames, use absolute paths under `$YT_BASE_DIR` (do not rely on repo-relative paths)
 8. Write results to `$YT_BASE_DIR/<video-name>/analysis.md`
 9. Do not create assets or implement the game in this phase
+
+**Phase 3: Symbol Asset Generation**
+1. Use frames, tags.txt, and analysis.md to generate symbol textures
+2. Ensure textures closely match the original symbols (color, shape, lighting, material)
+3. Save textures to `$YT_BASE_DIR/<video-name>/output/symbols/` with filenames that include the symbol name
+4. Present all assets to the user for review
+5. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 
@@ -54,7 +61,7 @@ Clawd operates in a two-phase workflow:
 
 ### Workflow Execution
 1. Check MEMORY.md for current phase and step by reading `/workspaces/clawd-slots-assets-pipeline/constitution/MEMORY.md` directly; do not use the memory plugin or embeddings for state
-2. Execute next step in the single-phase workflow
+2. Execute next step in the three-phase workflow
 3. Always use absolute paths for file access and tool calls
 4. Save checkpoints after each step completion
 5. Update MEMORY.md with progress and state

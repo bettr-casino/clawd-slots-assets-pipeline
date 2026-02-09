@@ -1,0 +1,4 @@
+00:00:16.01 00:00:16.01    game banner, denom
+00:00:23.01	00:00:23.01    initial screen with symbols
+00:00:24.01 00:00:32.01	   complete spin with animation
+

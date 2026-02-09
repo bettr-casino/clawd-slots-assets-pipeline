@@ -81,7 +81,7 @@
 - **Path**: `/workspaces/clawd-slots-assets-pipeline`
 - **Constitution**: `constitution/` — bot behavior and workflow definitions
 - **Scripts**: `scripts/` — setup and utility scripts
-- **Output**: Math model spreadsheets saved in workspace root or dedicated output folder
+- **Output**: Math model spreadsheets saved in `$YT_BASE_DIR/<file-name>/output/`
 
 ---
 

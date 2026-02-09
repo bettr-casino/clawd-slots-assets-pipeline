@@ -2,7 +2,7 @@
 
 ## Primary Goal
 
-Prepare local video sources and extract requested frames through a **single-phase workflow**. The agent collects timestamps, ensures the video exists under the `yt/` workspace folder (downloading from S3 if needed), and extracts frames at the human-provided timestamps.
+Prepare local video sources, analyze frames, and generate symbol textures through a **three-phase workflow**. The agent collects timestamps, ensures the video exists under the `yt/` workspace folder (downloading from S3 if needed), extracts frames at the human-provided timestamps, produces analysis, and generates symbol assets.
 
 **Key Rules:**
 - Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for timestamped frame extraction
@@ -12,7 +12,7 @@ Prepare local video sources and extract requested frames through a **single-phas
 - `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` takes a **base file name** (no extension); if `.webm` is provided it is stripped before use
 - The script downloads from S3 if the video is missing
 - S3 public URL format: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm`
-- No asset creation or game implementation occurs in this workflow; only analysis.md output
+- No game implementation occurs in this workflow; asset creation is limited to Phase 3 symbol textures
 - Always use absolute paths for file access and tool calls
 - Send Telegram updates at each decision point
 - Save checkpoint data in MEMORY.md (phase, status, decisions, confirmed YouTube URL)
@@ -76,3 +76,26 @@ Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) 
 
 ### Output
 - Generate `analysis.md` at `$YT_BASE_DIR/<video-name>/analysis.md` containing the results.
+- Write any math model spreadsheets and CSVs to `$YT_BASE_DIR/<video-name>/output/`.
+
+---
+
+## Phase 3: Symbol Asset Generation
+
+### Objective
+Generate symbol texture assets that are very close to the original symbols in the extracted frames.
+
+### Inputs
+- Frames: `$YT_BASE_DIR/<video-name>/frames/`
+- Tags: `$YT_BASE_DIR/<video-name>/tags.txt`
+- Analysis: `$YT_BASE_DIR/<video-name>/analysis.md`
+
+### Actions
+- Use Phase 1 frames, tags.txt, and Phase 2 analysis as the source of truth for symbol appearance.
+- Generate a texture per symbol that closely matches the original symbol in color, shape, lighting, and material.
+- Each asset filename must include the symbol name from the analysis.
+- Present all generated symbols to the user for review.
+- If the user rejects all or specific symbols, regenerate only the rejected symbols and re-present for review.
+
+### Output
+- Write symbol textures to `$YT_BASE_DIR/<video-name>/output/symbols/`.

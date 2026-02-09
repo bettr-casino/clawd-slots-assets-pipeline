@@ -1,7 +1,12 @@
 constitution/IDENTITY.md
 
 # Local video downloads (YT_BASE_DIR default)
-yt/
+yt/**
+!yt/**/
+!yt/**/analysis.md
+!yt/**/tags.txt
+!yt/**/output/
+!yt/**/output/**
 
 # Gateway pid/log artifacts
 *.pid
