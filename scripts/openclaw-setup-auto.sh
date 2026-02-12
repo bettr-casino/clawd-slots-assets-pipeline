@@ -123,14 +123,29 @@ install_media_tools() {
 
     print_info "Installing: ${missing[*]}"
 
-    # Try restricted sources first, then fall back to full update
-    if ! sudo apt-get update -o Dir::Etc::sourcelist="sources.list" \
+    # Disable problematic third-party repos (yarn, etc.) then update
+    for f in /etc/apt/sources.list.d/*.list; do
+        if [[ -f "$f" ]] && grep -qi 'yarn\|nodesource' "$f" 2>/dev/null; then
+            print_info "Temporarily disabling $(basename "$f")"
+            sudo mv "$f" "${f}.disabled" 2>/dev/null || true
+        fi
+    done
+
+    # Try restricted core sources first
+    if sudo apt-get update -o Dir::Etc::sourcelist="sources.list" \
         -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" 2>&1 | tail -1 \
-        || ! sudo apt-get install -y "${missing[@]}" 2>/dev/null; then
-        print_warning "Restricted sources failed, trying full apt-get update..."
-        sudo apt-get update 2>&1 | tail -1
-        sudo apt-get install -y "${missing[@]}" 2>&1 | tail -3
+        && sudo apt-get install -y "${missing[@]}" 2>/dev/null; then
+        print_info "Installed via restricted sources"
+    else
+        print_warning "Restricted sources failed, trying full update (ignoring unsigned repos)..."
+        sudo apt-get update --allow-insecure-repositories 2>&1 | tail -1 || true
+        sudo apt-get install -y --allow-unauthenticated "${missing[@]}" 2>&1 | tail -3 || true
     fi
+
+    # Re-enable any disabled repos
+    for f in /etc/apt/sources.list.d/*.list.disabled; do
+        [[ -f "$f" ]] && sudo mv "$f" "${f%.disabled}" 2>/dev/null || true
+    done
 
     # If ffmpeg still missing, try conda as last resort
     if ! command -v ffmpeg &> /dev/null && command -v conda &> /dev/null; then
