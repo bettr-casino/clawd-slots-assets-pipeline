@@ -118,14 +118,27 @@ install_media_tools() {
 
     if [[ ${#missing[@]} -eq 0 ]]; then
         print_success "ffmpeg and jq already installed"
-    else
-        print_info "Installing: ${missing[*]}"
-        sudo apt-get update -o Dir::Etc::sourcelist="sources.list" \
-            -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" 2>&1 | tail -1
+        return
+    fi
+
+    print_info "Installing: ${missing[*]}"
+
+    # Try restricted sources first, then fall back to full update
+    if ! sudo apt-get update -o Dir::Etc::sourcelist="sources.list" \
+        -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" 2>&1 | tail -1 \
+        || ! sudo apt-get install -y "${missing[@]}" 2>/dev/null; then
+        print_warning "Restricted sources failed, trying full apt-get update..."
+        sudo apt-get update 2>&1 | tail -1
         sudo apt-get install -y "${missing[@]}" 2>&1 | tail -3
     fi
 
-    check_command ffmpeg && print_success "ffmpeg installed" || print_error "ffmpeg installation failed"
+    # If ffmpeg still missing, try conda as last resort
+    if ! command -v ffmpeg &> /dev/null && command -v conda &> /dev/null; then
+        print_info "Trying conda for ffmpeg..."
+        conda install -y -c conda-forge ffmpeg 2>&1 | tail -3
+    fi
+
+    check_command ffmpeg && print_success "ffmpeg installed" || print_warning "ffmpeg not available (non-fatal)"
     check_command jq && print_success "jq installed" || print_warning "jq not installed"
 }
 
