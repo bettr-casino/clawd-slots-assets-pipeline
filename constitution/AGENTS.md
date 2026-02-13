@@ -6,29 +6,29 @@
 
 - **LLM**: Kimi K-2.5 (moonshot/kimi-k2.5) — Moonshot only, no fallback providers
 - **Capabilities**: Native multimodal (vision + text), 256K context, agent tasks, tool calling
-- **Purpose**: Video search, selection, analysis, and math model extraction
+- **Purpose**: Frame analysis, paytable/math reverse-engineering, and symbol asset generation
 - **Env**: `MOONSHOT_API_KEY`
 
 ### Three-Phase Workflow
 
 Clawd operates in a three-phase workflow:
 
-**Phase 1: Video Intake + Frame Extraction**
-1. **Filename**: The video filename is hardcoded as `CLEOPATRA` (do not ask the human for a filename)
-2. **YouTube URL**: Hardcoded as `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation)
-3. **Ask for Timestamps**: Collect a list of timestamps from the human (e.g., `00:14:00 00:21:35`)
-4. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to extract one frame per timestamp into `yt/CLEOPATRA/frames/`
-	- The script downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm` if the video is missing
+**Phase 1: Frame Extraction**
+1. **Read tags.txt**: The human authors `$YT_BASE_DIR/CLEOPATRA/tags.txt` with timestamps and descriptions — do not ask the human for timestamps; read the file
+2. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each tags.txt entry
+   - Single frame entries (start == end): one PNG
+   - Animation range entries (start < end): all frames at 60fps
+   - The script auto-downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm` if the video is missing
 
 **Phase 2: Multimodal LLM Analysis**
-1. Confirm video and tags are ready
-2. Ask the human for approval once per Phase 2 run; record approval in MEMORY.md before executing any command and do not re-ask on retries
-3. Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt for the video
-4. You may create and run a helper script if it materially improves the analysis; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
-5. Do not block Phase 2 on a missing script; create it if needed or fall back to direct multimodal analysis
-6. Identify slot symbols, reel layout, and symbol landing animations
-7. When loading frames, use absolute paths under `$YT_BASE_DIR` (do not rely on repo-relative paths)
-8. Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
+1. Ask the human for approval once via Telegram; record approval in MEMORY.md; do not re-ask on retries
+2. Use Kimi K2.5 to analyze frames guided by tags.txt descriptions
+3. Reverse-engineer: symbol inventory, reel layout, paytable (public info), math model, bonus features, animations, visual style
+4. Use animation-range frames to document spin/landing/win animations
+5. Helper scripts allowed under `/workspaces/clawd-slots-assets-pipeline/scripts/`
+6. Use absolute paths under `$YT_BASE_DIR`
+7. Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
+8. Write math model spreadsheets/CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`
 9. Do not create assets or implement the game in this phase
 
 **Phase 3: Symbol Asset Generation**
@@ -53,7 +53,8 @@ Clawd operates in a three-phase workflow:
 
 **Telegram (Primary Channel):**
 - 30-minute heartbeat progress updates to Ron
-- Phase 1: Ask for filename (if missing) and timestamps
+- Phase 1: Notify when frame extraction is complete
+- Phase 2: Request approval before starting analysis
 - Blocker notifications and clarification questions
 
 ## Agent Responsibilities

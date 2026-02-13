@@ -19,21 +19,33 @@
 
 ---
 
+## Input Files
+
+### tags.txt (human-authored)
+- **Purpose**: Defines which frames/animations to extract from the video
+- **Path**: `$YT_BASE_DIR/CLEOPATRA/tags.txt`
+- **Format**: `START_TS END_TS\tdescription` — one entry per line
+- **Single frame**: start == end (extracts one PNG)
+- **Animation range**: start < end (extracts all frames at 60fps)
+- **IMPORTANT**: The bot reads tags.txt — it never writes or modifies it
+
 ## Video Tools
 
 ### ffmpeg
 - **Purpose**: Video frame extraction and processing
 - **Install**: `apt install ffmpeg`
-- **Usage**: Extract frames at exact timestamps from downloaded videos
+- **Usage**: Extract single frames or animation sequences from the video
 
 ### extract-frame.sh
-- **Purpose**: Wrapper script for consistent frame extraction
-- **Usage**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh CLEOPATRA <timestamp>`
+- **Purpose**: Wrapper script for consistent frame extraction (single frame or range)
+- **Single frame**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh CLEOPATRA "00:00:16"`
+- **Animation range**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh CLEOPATRA "00:00:24" "00:00:32" "# complete spin"`
+- **Output**: PNGs in `$YT_BASE_DIR/CLEOPATRA/frames/`
 
 ### Multimodal LLM (Kimi K2.5)
-- **Purpose**: Analyze frames and tags.txt for slot machine analysis
-- **Usage**: Run after frame extraction and tags.txt are ready
-- **Output**: analysis.md
+- **Purpose**: Analyze frames using tags.txt descriptions to reverse-engineer symbols, paytable, animations
+- **Usage**: Run after frame extraction; use tags.txt descriptions to understand what each frame shows
+- **Output**: analysis.md, math model spreadsheets
 
 ---
 
@@ -58,7 +70,9 @@
 - **Purpose**: Communication with Ron
 - **Env**: `TELEGRAM_API_KEY`
 - **Usage**:
-  - Phase 1: Confirm filename and timestamps
+  - Phase 1: Notify when extraction is complete
+  - Phase 2: Request approval before analysis
+  - All phases: Progress updates, blocker notifications
 
 ---
 

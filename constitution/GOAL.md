@@ -2,81 +2,106 @@
 
 ## Primary Goal
 
-Prepare local video sources, analyze frames, and generate symbol textures through a **three-phase workflow**. The agent collects timestamps, ensures the video exists under the `yt/` workspace folder (downloading from S3 if needed), extracts frames at the human-provided timestamps, produces analysis, and generates symbol assets.
+Reverse-engineer a Las Vegas CLEOPATRA slot machine from a YouTube video to build a social casino slot (not real money) with the same look, feel, and animations. The human manually reviews the video, authors `tags.txt` with timestamps and descriptions, and the bot processes those tags to extract frames, analyze symbols/paytable/animations, and generate assets.
 
 **Key Rules:**
-- Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for timestamped frame extraction
-- Video filename is hardcoded as `CLEOPATRA` (do not ask the human for a filename)
+- Video filename: `CLEOPATRA` (hardcoded — do not ask)
+- YouTube URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (hardcoded — do not ask)
+- S3 URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
+- `tags.txt` is **human-authored** — the bot reads it, never writes or modifies it
+- Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for frame extraction
 - Store videos under `$YT_BASE_DIR/CLEOPATRA/video/` and frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
 - `YT_BASE_DIR` must be set before downloads or extraction
-- `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` takes the base file name `CLEOPATRA` (no extension)
-- The script downloads from S3 if the video is missing
-- S3 public URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
-- No game implementation occurs in this workflow; asset creation is limited to Phase 3 symbol textures
 - Always use absolute paths for file access and tool calls
 - Send Telegram updates at each decision point
-- Save checkpoint data in MEMORY.md (phase, status, decisions, confirmed YouTube URL)
+- Save checkpoint data in MEMORY.md
 
-## Phase 1: Video Intake + Frame Extraction
+## tags.txt Format
 
-### Objective
-Ensure the video file exists locally and extract frames at the requested timestamps.
+The human authors `$YT_BASE_DIR/CLEOPATRA/tags.txt` with one entry per line:
 
-### Step 1.1: Collect Timestamps
-
-**Actions:**
-- YouTube URL is hardcoded: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation)
-- Ask the human for timestamps to extract, e.g. `00:14:00 00:21:35 00:34:12`
-
-### Step 1.3: Extract Frames (Auto-Download if Missing)
-
-**Actions:**
-- For each timestamp, run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to capture a single frame
-- If the video is missing, the script downloads it from the public S3 URL
-- Public URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
-- Store frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
-
-**Example:**
-
-```bash
-/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "CLEOPATRA" "00:14:00"
+```
+START_TS END_TS    description
 ```
 
-**Checkpoint:** Update MEMORY.md with video status and extracted timestamps.
+- **Single frame**: `START_TS == END_TS` — extract one frame at that timestamp
+- **Animation range**: `START_TS < END_TS` — extract all frames at 60fps across the range
+
+Examples:
+```
+00:00:16.01 00:00:16.01    game banner, denom
+00:00:23.01 00:00:23.01    initial screen with symbols
+00:00:24.01 00:00:32.01    complete spin with animation
+```
+
+The bot must parse tags.txt and use the descriptions to understand what each frame or sequence represents.
+
+---
+
+## Phase 1: Frame Extraction
+
+### Objective
+Read `tags.txt` (authored by the human), download the video if missing, and extract frames for every entry.
+
+### Steps
+
+1. **Read tags.txt** at `$YT_BASE_DIR/CLEOPATRA/tags.txt` — do not ask the human for timestamps; they are already in the file
+2. **Download video** if missing — the script auto-downloads from S3
+3. **Extract frames** for each tags.txt entry:
+   - Single frame (start == end): one PNG
+   - Animation range (start < end): all frames at 60fps across the range
+4. **Checkpoint**: Update MEMORY.md with extraction status
+
+### Command
+
+```bash
+# Single frame
+/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "CLEOPATRA" "00:00:16"
+
+# Animation range
+/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "CLEOPATRA" "00:00:24" "00:00:32" "# complete spin with animation"
+```
+
+### Output
+- Single frames: `$YT_BASE_DIR/CLEOPATRA/frames/frame__HHMMSS.01.png`
+- Animation ranges: `$YT_BASE_DIR/CLEOPATRA/frames/frame__HHMMSS.FF.png` (FF = frame number within each second, 01–60)
 
 ---
 
 ## Phase 2: Multimodal LLM Analysis
 
 ### Objective
-Analyze the extracted frames and tags for the CLEOPATRA video using the multimodal LLM Kimi K2.5, after confirmation from the human via Telegram.
+Analyze the extracted frames using Kimi K2.5 to reverse-engineer the slot machine: symbols, reel layout, paytable, math model, and animations.
 
 ### Inputs
 - Frames: `$YT_BASE_DIR/CLEOPATRA/frames/`
-- Tags: `$YT_BASE_DIR/CLEOPATRA/tags.txt`
+- Tags: `$YT_BASE_DIR/CLEOPATRA/tags.txt` (read descriptions to understand what each frame shows)
 
 ### Actions
-- Use the tags.txt metadata to guide analysis of specific time ranges and frames.
-- Ask for approval once per Phase 2 run, record approval in MEMORY.md before executing, and do not re-ask on retries or command failures
-- Helper scripts are allowed if needed; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
-- Missing scripts must not block Phase 2; create them or proceed with direct multimodal analysis
-- When accessing frames, use absolute paths under `$YT_BASE_DIR` to avoid cwd issues
-- Identify:
-	- Symbols used in the slot machine
-	- Reel layout (number of reels and visible symbols per reel)
-	- Symbol landing animations for some symbols
+- Ask the human for approval once via Telegram before starting analysis; record approval in MEMORY.md; do not re-ask on retries
+- Use tags.txt descriptions to guide which frames to analyze for what purpose
+- Reverse-engineer and document:
+  1. **Symbol inventory** — all symbols (low/mid/high/special), their visual appearance, and estimated frequency
+  2. **Reel layout** — number of reels, visible rows per reel, total positions
+  3. **Paytable** — pay values for 3/4/5-of-a-kind per symbol (this is public information for real slot machines)
+  4. **Math model** — RTP estimate, hit frequency, volatility, max win
+  5. **Bonus features** — free spins, multipliers, special mechanics
+  6. **Animations** — symbol landing animations, spin animations, win celebrations (use animation-range frames)
+  7. **Visual style** — color palette, background theme, UI elements, typography
+- When accessing frames, use absolute paths under `$YT_BASE_DIR`
+- Helper scripts are allowed; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 - Do not create assets or implement the game in this phase
 
 ### Output
-- Generate `analysis.md` at `$YT_BASE_DIR/CLEOPATRA/analysis.md` containing the results.
-- Write any math model spreadsheets and CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`.
+- `$YT_BASE_DIR/CLEOPATRA/analysis.md` — comprehensive analysis document
+- `$YT_BASE_DIR/CLEOPATRA/output/` — math model spreadsheets and CSVs
 
 ---
 
 ## Phase 3: Symbol Asset Generation
 
 ### Objective
-Generate symbol texture assets that are very close to the original symbols in the extracted frames.
+Generate symbol texture assets that closely match the original Las Vegas slot machine — colorful, vibrant, same look and feel.
 
 ### Inputs
 - Frames: `$YT_BASE_DIR/CLEOPATRA/frames/`
@@ -84,11 +109,12 @@ Generate symbol texture assets that are very close to the original symbols in th
 - Analysis: `$YT_BASE_DIR/CLEOPATRA/analysis.md`
 
 ### Actions
-- Use Phase 1 frames, tags.txt, and Phase 2 analysis as the source of truth for symbol appearance.
-- Generate a texture per symbol that closely matches the original symbol in color, shape, lighting, and material.
-- Each asset filename must include the symbol name from the analysis.
-- Present all generated symbols to the user for review.
-- If the user rejects all or specific symbols, regenerate only the rejected symbols and re-present for review.
+- Use Phase 1 frames and Phase 2 analysis as the source of truth for symbol appearance
+- Generate a texture per symbol that closely matches the original in color, shape, lighting, and material
+- The goal is colorful, vibrant assets that match the Las Vegas slot machine feel
+- Each asset filename must include the symbol name from the analysis
+- Present all generated symbols to the user for review
+- If the user rejects all or specific symbols, regenerate only the rejected ones and re-present
 
 ### Output
-- Write symbol textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/`.
+- Symbol textures: `$YT_BASE_DIR/CLEOPATRA/output/symbols/`

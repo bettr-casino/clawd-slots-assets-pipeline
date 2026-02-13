@@ -8,35 +8,29 @@
 
 **Telegram Bot** — all interaction happens through Telegram messages using `TELEGRAM_API_KEY`.
 
-## Phase 1: Video Intake + Frame Extraction Interaction
+## Phase 1: Frame Extraction Interaction
 
-Ensure `YT_BASE_DIR` is set before starting downloads or extraction.
+### How It Works
+- The human manually reviews the YouTube video and authors `tags.txt` with timestamps and descriptions
+- `tags.txt` lives at `$YT_BASE_DIR/CLEOPATRA/tags.txt`
+- The bot reads tags.txt and extracts frames — **do not ask the human for timestamps or filenames**
+- Video filename (`CLEOPATRA`) and YouTube URL are hardcoded
 
-### Filename
-
-The video filename is hardcoded as `CLEOPATRA`. Do not ask the human for a filename.
-
-### Requesting Timestamps
-
-Before extraction, ask:
-
+### tags.txt Format (human-authored)
 ```
-Do you want to extract frames at specific timestamps?
-Reply with a space-separated list like: 00:14:00 00:21:35 00:34:12
-Or reply "skip" to finish.
-
-### YouTube URL
-
-The YouTube URL is hardcoded as `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`. Do not ask the human to confirm it.
+START_TS END_TS    description
+```
+- Single frame: start == end (one PNG)
+- Animation range: start < end (all frames at 60fps)
 
 ### Handling User Responses
 
 | User Says | Action |
 |-----------|--------|
-| `default` | Use `CLEOPATRA` (always) |
-| `<timestamps>` | Extract one frame per timestamp |
+| `start` | Read tags.txt and begin frame extraction |
+| `status` | Report current phase and progress |
 | `skip` | Skip extraction and mark phase complete |
-| Anything else | Ask for clarification with the expected format |
+| Anything else | Ask for clarification |
 
 ---
 

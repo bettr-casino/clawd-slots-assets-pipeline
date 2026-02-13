@@ -1,26 +1,20 @@
 # autonomous-9-step-loop.md
 This document replaces the old 9-step loop with the **three-phase workflow**.
 
-## Phase 1: Video Intake + Frame Extraction
+## Phase 1: Frame Extraction
 
 ### Steps
 
-1. **Collect Timestamps**
-	- YouTube URL is hardcoded: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation)
-	- Ask the human for timestamps to extract, e.g. `00:14:00 00:21:35 00:34:12`
-
-3. **Extract Frames (Auto-Download if Missing)**
-	- For each timestamp, extract a frame into `$YT_BASE_DIR/CLEOPATRA/frames/`. The script downloads the video from S3 if missing:
-
-	```bash
-	/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "CLEOPATRA" "00:14:00"
-	```
+1. **Read tags.txt** — human-authored file at `$YT_BASE_DIR/CLEOPATRA/tags.txt` (do not ask for timestamps)
+2. **Extract Frames** — for each tags.txt entry, run `extract-frame.sh` (auto-downloads video from S3 if missing)
+   - Single frame (start == end): one PNG
+   - Animation range (start < end): all frames at 60fps
 
 ### Output
 
 - Video stored at `$YT_BASE_DIR/CLEOPATRA/video/CLEOPATRA.webm`
 - Frames stored under `$YT_BASE_DIR/CLEOPATRA/frames/`
-- MEMORY.md updated with download status and extracted timestamps
+- MEMORY.md updated with extraction status
 
 ---
 
@@ -28,8 +22,8 @@ This document replaces the old 9-step loop with the **three-phase workflow**.
 
 After frame extraction and tags.txt are ready, confirm with the user before starting analysis.
 
-- Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
-- Identify slot symbols, reel layout, and symbol landing animations
+- Use Kimi K2.5 to analyze frames guided by tags.txt descriptions
+- Reverse-engineer: symbol inventory, reel layout, paytable, math model, bonus features, animations, visual style
 - Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
 - Write math model spreadsheets and CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`
 - Any bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`

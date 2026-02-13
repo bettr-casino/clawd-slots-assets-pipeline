@@ -2,31 +2,25 @@
 
 This file replaces the old mobile optimization workflow. It now defines **quality checks** for the three-phase intake, analysis, and symbol generation pipeline.
 
-## Phase 1: Intake QA
+## Phase 1: Frame Extraction QA
 
+- tags.txt exists and is human-authored at `yt/CLEOPATRA/tags.txt`
 - Local video file exists under `yt/CLEOPATRA/video/`
 - S3 download succeeded and file size is non-zero
 - Frames output directory exists at `yt/CLEOPATRA/frames/`
-- Timestamps are in `HH:MM:SS` format
-
-## Frame Extraction QA
-
-- Each requested timestamp produced exactly one frame
+- Each tags.txt entry produced the correct frames:
+  - Single frame entries: one PNG
+  - Animation range entries: 60fps frame sequence
 - Frame filenames are unique and traceable to timestamps
 - No ffmpeg errors or warnings reported
-- MEMORY.md captures the list of timestamps extracted
-
-## Delivery QA
-
-- Human confirmation recorded (download and timestamps)
-- MEMORY.md updated with final status
-- Any bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
+- MEMORY.md captures extraction status
 
 ## Phase 2 QA
 
-- tags.txt present and updated
-- analysis.md includes symbol inventory, reel layout, and animation notes
+- tags.txt present (human-authored, not modified by bot)
+- analysis.md includes: symbol inventory, reel layout, paytable, math model, bonus features, animations, visual style
 - analysis.md saved under `yt/CLEOPATRA/analysis.md`
+- Math model spreadsheets/CSVs saved under `yt/CLEOPATRA/output/`
 
 ## Phase 3 QA
 

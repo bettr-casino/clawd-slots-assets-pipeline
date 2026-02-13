@@ -48,10 +48,9 @@
 
 | State | Action |
 |-------|--------|
-| `idle` / starting | Use hardcoded filename `CLEOPATRA` and URL `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask the human for either) |
-| Ready, timestamps not requested | Ask the human for timestamps to extract |
-| Timestamps provided, frames not extracted | Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each timestamp (auto-downloads if missing) |
-| Frames extracted | Mark phase complete and proceed to Phase 2 |
+| `idle` / starting | Read `$YT_BASE_DIR/CLEOPATRA/tags.txt` (human-authored — do not ask for timestamps) |
+| tags.txt read, frames not extracted | Run `extract-frame.sh` for each tags.txt entry (auto-downloads video if missing) |
+| Frames extracted | Notify human via Telegram, mark phase complete, proceed to Phase 2 |
 
 ## Phase 2 Heartbeat Actions
 

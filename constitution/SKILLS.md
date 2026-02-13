@@ -1,6 +1,6 @@
 # SKILLS.md
 
-## Phase 1: Video Intake + Frame Extraction Skills
+## Phase 1: Frame Extraction Skills
 
 ### file_validation
 
@@ -14,17 +14,26 @@
 - **Requirements**: `curl` or `wget`
 - **Note**: Filename is hardcoded as `CLEOPATRA` for now
 
+### tags_txt_parsing
+
+- **Purpose**: Read human-authored `$YT_BASE_DIR/CLEOPATRA/tags.txt` to get timestamps and descriptions
+- **Format**: `START_TS END_TS\tdescription` — one entry per line
+- **Single frame**: start == end — extract one PNG
+- **Animation range**: start < end — extract all frames at 60fps
+
 ### ffmpeg_frame_extraction
 
-- **Purpose**: Extract a single frame at a specific timestamp
+- **Purpose**: Extract frames (single or animation range) from the video
 - **Tool**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh`
-- **Input**: `CLEOPATRA` (hardcoded), timestamp `HH:MM:SS`
-- **Output**: One PNG per timestamp in `$YT_BASE_DIR/CLEOPATRA/frames/` (auto-downloads video if missing)
+- **Input**: `CLEOPATRA` (hardcoded), start timestamp, optional end timestamp and comment
+- **Output**: PNGs in `$YT_BASE_DIR/CLEOPATRA/frames/` (auto-downloads video if missing)
+- **Single frame**: `frame__HHMMSS.01.png`
+- **Animation range**: `frame__HHMMSS.FF.png` (FF = frame within second, 01–60)
 
 ### telegram_messaging
 
 - **Purpose**: Communicate with Ron via Telegram
-- **Usage**: Request filename, confirm timestamps, and report completion
+- **Usage**: Report extraction progress, request Phase 2 approval, report results
 - **Configuration**: `TELEGRAM_API_KEY` for bot token
 
 ### exec (Command Execution)
@@ -38,10 +47,11 @@
 ## Phase 2: Multimodal LLM Analysis Skills
 
 ### multimodal_llm_analysis
-- **Purpose**: Analyze extracted frames and tags.txt for a specific video
-- **Tool**: Multimodal LLM (e.g., Kimi K2.5)
+- **Purpose**: Reverse-engineer slot machine from extracted frames guided by tags.txt descriptions
+- **Tool**: Kimi K2.5 (multimodal vision + text)
 - **Input**: Frames directory, tags.txt (use absolute paths under `$YT_BASE_DIR`)
-- **Output**: analysis.md with slot symbols, reel layout, and symbol animations
+- **Output**: analysis.md with symbol inventory, reel layout, paytable, math model, bonus features, animations, visual style
+- **Animation analysis**: Use animation-range frames to document spin/landing/win sequences
 - **Helper scripts**: If needed, place under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
 ---
@@ -79,7 +89,7 @@
 - **Strategy**:
   - Log errors in MEMORY.md
   - Retry S3 downloads when transient failures occur
-  - Ask the human for a new filename if the object is missing
+  - Report to the human via Telegram if the S3 object is missing
   - If Moonshot reports a missing API key but MOONSHOT_API_KEY env var exists, re-register the key in the OpenClaw auth store and retry
   - Send Telegram notification for unrecoverable issues
   - Never silently fail
@@ -105,7 +115,8 @@
 
 ## Tool Availability by Phase
 
-### Phase 1: Video Intake + Frame Extraction
+### Phase 1: Frame Extraction
+- tags_txt_parsing
 - file_validation
 - public_url_download
 - ffmpeg_frame_extraction
