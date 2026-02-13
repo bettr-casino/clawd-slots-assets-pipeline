@@ -20,8 +20,8 @@ OPENCLAW_CONFIG_FILE="$OPENCLAW_CONFIG_DIR/openclaw.json"
 GATEWAY_PORT=18789
 CLAWDBOT_SETUP_STATUS="Not run"
 MEDIA_TOOLS_STATUS="Not checked"
-OPENAI_FALLBACK_MODEL="openai/gpt-4o"
-XAI_FALLBACK_MODEL="xai/grok-vision-beta"
+# Moonshot-only — no fallback providers
+PRIMARY_MODEL="moonshot/kimi-k2.5"
 
 # Suppress OpenClaw banner noise during setup
 export OPENCLAW_NO_BANNER=1
@@ -183,164 +183,91 @@ install_just() {
     fi
 }
 
-ensure_fallbacks_in_config() {
+ensure_models_in_config() {
     if [[ ! -f "$OPENCLAW_CONFIG_FILE" ]]; then
-        print_warning "OpenClaw config file not found; skipping fallback file update"
+        print_warning "OpenClaw config file not found; skipping model config update"
         return 1
     fi
 
-    python3 - "$OPENCLAW_CONFIG_FILE" "$XAI_FALLBACK_MODEL" "$OPENAI_FALLBACK_MODEL" <<'PY'
+    python3 - "$OPENCLAW_CONFIG_FILE" <<'PY'
 import json
 import sys
+import os
 
 path = sys.argv[1]
-models = list(sys.argv[2:])
-auth_profiles = {
-    "openai:default": {"provider": "openai", "mode": "api_key"},
-    "xai:default": {"provider": "xai", "mode": "api_key"},
-}
-provider_defaults = {
-    "moonshot": {
-        "baseUrl": "https://api.moonshot.ai/v1",
-        "api": "openai-completions",
-        "models": [
-            {
-                "id": "kimi-k2.5",
-                "name": "Kimi K2.5",
-                "reasoning": False,
-                "input": ["text", "image"],
-                "cost": {
-                    "input": 0,
-                    "output": 0,
-                    "cacheRead": 0,
-                    "cacheWrite": 0,
-                },
-                "contextWindow": 512000,
-                "maxTokens": 16384,
-            }
-        ],
-    },
-    "openai": {
-        "baseUrl": "https://api.openai.com/v1",
-        "api": "openai-completions",
-        "models": [
-            {
-                "id": "gpt-4o",
-                "name": "GPT-4o",
-                "input": ["text", "image"],
-                "contextWindow": 400000,
-                "maxTokens": 16384,
-            }
-        ],
-    },
-    "xai": {
-        "baseUrl": "https://api.x.ai/v1",
-        "api": "openai-completions",
-        "models": [
-            {
-                "id": "grok-vision-beta",
-                "name": "Grok Vision Beta",
-                "input": ["text", "image"],
-                "contextWindow": 400000,
-                "maxTokens": 16384,
-            }
-        ],
-    },
+
+moonshot_provider = {
+    "baseUrl": "https://api.moonshot.ai/v1",
+    "api": "openai-completions",
+    "models": [
+        {
+            "id": "kimi-k2.5",
+            "name": "Kimi K2.5",
+            "reasoning": False,
+            "input": ["text", "image"],
+            "cost": {
+                "input": 0,
+                "output": 0,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+            },
+            "contextWindow": 256000,
+            "maxTokens": 16384,
+        }
+    ],
 }
 
 with open(path, "r", encoding="utf-8") as handle:
     data = json.load(handle)
+
 agents = data.setdefault("agents", {})
 defaults = agents.setdefault("defaults", {})
 agent_model_config = defaults.setdefault("model", {})
 defaults["maxConcurrent"] = 1
 defaults.setdefault("subagents", {})["maxConcurrent"] = 1
-defaults_models = defaults.setdefault("models", {})
-for entry in models:
-    defaults_models.setdefault(entry, {})
 
+# Set primary model — no fallbacks
+agent_model_config["primary"] = "moonshot/kimi-k2.5"
+agent_model_config.pop("fallbacks", None)
+
+# Remove stale fallback model refs
+defaults.pop("models", None)
+
+# Auth — Moonshot only
 auth = data.setdefault("auth", {})
 profiles = auth.setdefault("profiles", {})
-for key, value in auth_profiles.items():
-    profiles.setdefault(key, value)
+profiles["moonshot:default"] = {"provider": "moonshot", "mode": "api_key"}
+# Remove stale OpenAI/xAI auth
+profiles.pop("openai:default", None)
+profiles.pop("xai:default", None)
 
+# Providers — Moonshot only
 models_config = data.setdefault("models", {})
-models_config.setdefault("mode", "merge")
+models_config["mode"] = "merge"
 providers = models_config.setdefault("providers", {})
-for provider, payload in provider_defaults.items():
-    providers.setdefault(provider, payload)
-
-vision_ids = {
-    "kimi-k2.5",
-    "kimi-k2",
-    "gpt-4o",
-    "grok-2-vision",
-    "grok-vision-beta",
-}
-
-def ensure_image_input(model):
-    model_id = (model.get("id") or "").lower()
-    name = (model.get("name") or "").lower()
-    if (
-        model_id in vision_ids
-        or "vision" in model_id
-        or "vision" in name
-        or "kimi-k2" in model_id
-        or "kimi k2" in name
-    ):
-        inputs = list(model.get("input") or [])
-        if "text" not in inputs:
-            inputs.insert(0, "text")
-        if "image" not in inputs:
-            inputs.append("image")
-        model["input"] = inputs
-
-for payload in providers.values():
-    for model_def in payload.get("models", []):
-        ensure_image_input(model_def)
-
-available_models = set()
-for provider, payload in providers.items():
-    for model_def in payload.get("models", []):
-        model_id = model_def.get("id")
-        if model_id:
-            available_models.add(f"{provider}/{model_id}")
-
-preferred_primary = [
-    "moonshot/kimi-k2.5",
-    "xai/grok-vision-beta",
-    "openai/gpt-4o",
-]
-for candidate in preferred_primary:
-    if candidate in available_models:
-        agent_model_config["primary"] = candidate
-        break
-agent_model_config["fallbacks"] = [m for m in models if m in available_models]
+providers["moonshot"] = moonshot_provider
+# Remove stale providers
+providers.pop("openai", None)
+providers.pop("xai", None)
+providers.pop("grok", None)
 
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(data, handle, indent=2)
     handle.write("\n")
 
-# Also patch the agent-level models.json which OpenClaw uses at runtime
-import os
+# Also patch the agent-level models.json
 agent_models = os.path.expanduser("~/.openclaw/agents/main/agent/models.json")
 if os.path.isfile(agent_models):
     with open(agent_models, "r", encoding="utf-8") as handle:
         adata = json.load(handle)
     aprov = adata.setdefault("providers", {})
-    # Remove stale 'grok' provider — we use 'xai'
+    # Remove stale providers
     aprov.pop("grok", None)
-    # Ensure xai and openai providers exist with apiKey refs
-    for pname, pdef in provider_defaults.items():
-        entry = aprov.setdefault(pname, dict(pdef))
-        if pname == "moonshot":
-            entry["apiKey"] = "MOONSHOT_API_KEY"
-        elif pname == "xai":
-            entry["apiKey"] = "XAI_API_KEY"
-        elif pname == "openai":
-            entry["apiKey"] = "OPENAI_API_KEY"
-        for model in entry.get("models", []):
-            ensure_image_input(model)
+    aprov.pop("xai", None)
+    aprov.pop("openai", None)
+    # Ensure Moonshot is present
+    entry = aprov.setdefault("moonshot", dict(moonshot_provider))
+    entry["apiKey"] = "MOONSHOT_API_KEY"
     with open(agent_models, "w", encoding="utf-8") as handle:
         json.dump(adata, handle, indent=2)
         handle.write("\n")
@@ -381,8 +308,6 @@ def set_profile(provider, env_key):
     last_good[provider] = profile_id
 
 set_profile("moonshot", "MOONSHOT_API_KEY")
-set_profile("xai", "XAI_API_KEY")
-set_profile("openai", "OPENAI_API_KEY")
 
 with path.open("w", encoding="utf-8") as handle:
     json.dump(data, handle, indent=2, sort_keys=True)
@@ -403,8 +328,6 @@ step_check_prerequisites() {
 
     [[ -n "${BRAVE_API_KEY:-}" ]]    && print_success "BRAVE_API_KEY set"    || { print_error "BRAVE_API_KEY not set!"; all_ok=false; }
     [[ -n "${MOONSHOT_API_KEY:-}" ]] && print_success "MOONSHOT_API_KEY set" || { print_error "MOONSHOT_API_KEY not set!"; all_ok=false; }
-    [[ -n "${OPENAI_API_KEY:-}" ]]   && print_success "OPENAI_API_KEY set"   || { print_error "OPENAI_API_KEY not set!"; all_ok=false; }
-    [[ -n "${XAI_API_KEY:-}" ]]      && print_success "XAI_API_KEY set"      || { print_error "XAI_API_KEY not set!"; all_ok=false; }
     [[ -n "${TELEGRAM_API_KEY:-}" ]] && print_success "TELEGRAM_API_KEY set" || { print_error "TELEGRAM_API_KEY not set!"; all_ok=false; }
     [[ -n "${TAVILY_API_KEY:-}" ]]   && print_success "TAVILY_API_KEY set"   || { print_error "TAVILY_API_KEY not set!"; all_ok=false; }
     [[ -n "${YT_BASE_DIR:-}" ]]      && print_success "YT_BASE_DIR: $YT_BASE_DIR" || print_warning "YT_BASE_DIR not set"
@@ -537,38 +460,32 @@ MINCONF
 }
 
 step_configure_ai_models() {
-    print_header "Step 7: Configuring AI Models (Primary + Fallbacks)"
-    print_info "Setting up LLM fallback chain: kimi-k2.5 → grok-vision-beta → gpt-4o"
+    print_header "Step 7: Configuring AI Models (Moonshot only)"
+    print_info "Setting up single LLM provider: moonshot/kimi-k2.5 (no fallbacks)"
 
     # Set primary model
     print_info "Setting primary model to moonshot/kimi-k2.5..."
     openclaw models set "moonshot/kimi-k2.5" 2>/dev/null || \
         openclaw config set agents.defaults.model.primary "moonshot/kimi-k2.5" 2>/dev/null || true
 
-    # Set fallbacks
+    # Clear any stale fallbacks
     openclaw models fallbacks clear 2>/dev/null || true
-    openclaw models fallbacks add "$XAI_FALLBACK_MODEL" 2>/dev/null || true
-    openclaw models fallbacks add "$OPENAI_FALLBACK_MODEL" 2>/dev/null || true
 
-    # Register API keys
-    print_info "Registering API keys in OpenClaw auth store..."
+    # Register Moonshot API key
+    print_info "Registering Moonshot API key in OpenClaw auth store..."
     echo "$MOONSHOT_API_KEY" | openclaw models auth paste-token \
         --provider moonshot --profile-id "moonshot:default" 2>/dev/null || true
-    echo "$XAI_API_KEY" | openclaw models auth paste-token \
-        --provider xai --profile-id "xai:default" 2>/dev/null || true
-    echo "$OPENAI_API_KEY" | openclaw models auth paste-token \
-        --provider openai --profile-id "openai:default" 2>/dev/null || true
 
     ensure_agent_auth_profiles || true
 
-    if ensure_fallbacks_in_config; then
-        print_success "Fallback models written to config file"
+    if ensure_models_in_config; then
+        print_success "Moonshot model config written"
     else
-        print_warning "Could not write fallback models to config file"
+        print_warning "Could not write model config to file"
     fi
 
     openclaw models status 2>/dev/null || true
-    print_success "AI model configuration completed"
+    print_success "AI model configuration completed (Moonshot only)"
 }
 
 step_configure_brave() {
@@ -736,8 +653,7 @@ show_summary() {
     echo
     print_info "Configuration Summary:"
     echo "  • OpenClaw: Installed"
-    echo "  • Primary Model: moonshot/kimi-k2.5"
-    echo "  • Fallbacks: $XAI_FALLBACK_MODEL, $OPENAI_FALLBACK_MODEL"
+    echo "  • LLM: moonshot/kimi-k2.5 (Moonshot only, no fallbacks)"
     echo "  • Brave Search: Enabled"
     echo "  • Tavily Search: Enabled"
     echo "  • Agents Workspace: $CONSTITUTION_DIR"

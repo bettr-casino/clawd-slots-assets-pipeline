@@ -6,12 +6,12 @@ Prepare local video sources, analyze frames, and generate symbol textures throug
 
 **Key Rules:**
 - Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for timestamped frame extraction
-- Default video name when none is provided: `CLEOPATRA`
-- Store videos under `$YT_BASE_DIR/<file-name>/video/` and frames under `$YT_BASE_DIR/<file-name>/frames/`
+- Video filename is hardcoded as `CLEOPATRA` (do not ask the human for a filename)
+- Store videos under `$YT_BASE_DIR/CLEOPATRA/video/` and frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
 - `YT_BASE_DIR` must be set before downloads or extraction
-- `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` takes a **base file name** (no extension); if `.webm` is provided it is stripped before use
+- `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` takes the base file name `CLEOPATRA` (no extension)
 - The script downloads from S3 if the video is missing
-- S3 public URL format: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm`
+- S3 public URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
 - No game implementation occurs in this workflow; asset creation is limited to Phase 3 symbol textures
 - Always use absolute paths for file access and tool calls
 - Send Telegram updates at each decision point
@@ -40,13 +40,13 @@ Ensure the video file exists locally and extract frames at the requested timesta
 **Actions:**
 - For each timestamp, run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to capture a single frame
 - If the video is missing, the script downloads it from the public S3 URL
-- Public URL format: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm`
-- Store frames under `$YT_BASE_DIR/<file-name>/frames/`
+- Public URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
+- Store frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
 
 **Example:**
 
 ```bash
-/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "<file-name>" "00:14:00"
+/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "CLEOPATRA" "00:14:00"
 ```
 
 **Checkpoint:** Update MEMORY.md with video status and extracted timestamps.
@@ -56,11 +56,11 @@ Ensure the video file exists locally and extract frames at the requested timesta
 ## Phase 2: Multimodal LLM Analysis
 
 ### Objective
-Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) using a multimodal LLM (e.g., Kimi K2.5) after confirmation from the human via Telegram.
+Analyze the extracted frames and tags for the CLEOPATRA video using the multimodal LLM Kimi K2.5, after confirmation from the human via Telegram.
 
 ### Inputs
-- Frames: `$YT_BASE_DIR/<video-name>/frames/`
-- Tags: `$YT_BASE_DIR/<video-name>/tags.txt`
+- Frames: `$YT_BASE_DIR/CLEOPATRA/frames/`
+- Tags: `$YT_BASE_DIR/CLEOPATRA/tags.txt`
 
 ### Actions
 - Use the tags.txt metadata to guide analysis of specific time ranges and frames.
@@ -75,8 +75,8 @@ Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) 
 - Do not create assets or implement the game in this phase
 
 ### Output
-- Generate `analysis.md` at `$YT_BASE_DIR/<video-name>/analysis.md` containing the results.
-- Write any math model spreadsheets and CSVs to `$YT_BASE_DIR/<video-name>/output/`.
+- Generate `analysis.md` at `$YT_BASE_DIR/CLEOPATRA/analysis.md` containing the results.
+- Write any math model spreadsheets and CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`.
 
 ---
 
@@ -86,9 +86,9 @@ Analyze the extracted frames and tags for a specific video (default: CLEOPATRA) 
 Generate symbol texture assets that are very close to the original symbols in the extracted frames.
 
 ### Inputs
-- Frames: `$YT_BASE_DIR/<video-name>/frames/`
-- Tags: `$YT_BASE_DIR/<video-name>/tags.txt`
-- Analysis: `$YT_BASE_DIR/<video-name>/analysis.md`
+- Frames: `$YT_BASE_DIR/CLEOPATRA/frames/`
+- Tags: `$YT_BASE_DIR/CLEOPATRA/tags.txt`
+- Analysis: `$YT_BASE_DIR/CLEOPATRA/analysis.md`
 
 ### Actions
 - Use Phase 1 frames, tags.txt, and Phase 2 analysis as the source of truth for symbol appearance.
@@ -98,4 +98,4 @@ Generate symbol texture assets that are very close to the original symbols in th
 - If the user rejects all or specific symbols, regenerate only the rejected symbols and re-present for review.
 
 ### Output
-- Write symbol textures to `$YT_BASE_DIR/<video-name>/output/symbols/`.
+- Write symbol textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/`.

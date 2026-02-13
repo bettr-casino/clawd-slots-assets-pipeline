@@ -15,16 +15,16 @@ This document replaces the old 9-step loop with the **three-phase workflow**.
 	- Accept a list like `00:14:00 00:21:35 00:34:12`.
 
 3. **Extract Frames (Auto-Download if Missing)**
-	- For each timestamp, extract a frame into `$YT_BASE_DIR/<file-name>/frames/`. The script downloads the video from S3 if missing:
+	- For each timestamp, extract a frame into `$YT_BASE_DIR/CLEOPATRA/frames/`. The script downloads the video from S3 if missing:
 
 	```bash
-	/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "<file-name>" "00:14:00"
+	/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh "CLEOPATRA" "00:14:00"
 	```
 
 ### Output
 
-- Video stored at `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
-- Frames stored under `$YT_BASE_DIR/<file-name>/frames/`
+- Video stored at `$YT_BASE_DIR/CLEOPATRA/video/CLEOPATRA.webm`
+- Frames stored under `$YT_BASE_DIR/CLEOPATRA/frames/`
 - MEMORY.md updated with download status and extracted timestamps
 
 ---
@@ -35,8 +35,8 @@ After frame extraction and tags.txt are ready, confirm with the user before star
 
 - Use a multimodal LLM (e.g., Kimi K2.5) to analyze frames and tags.txt
 - Identify slot symbols, reel layout, and symbol landing animations
-- Write results to `$YT_BASE_DIR/<file-name>/analysis.md`
-- Write math model spreadsheets and CSVs to `$YT_BASE_DIR/<file-name>/output/`
+- Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
+- Write math model spreadsheets and CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`
 - Any bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
 ---
@@ -46,7 +46,7 @@ After frame extraction and tags.txt are ready, confirm with the user before star
 After Phase 2 analysis is complete, generate symbol textures using the frames, tags.txt, and analysis.md.
 
 - Generate a texture per symbol that closely matches the original symbol in the frames
-- Save textures under `$YT_BASE_DIR/<file-name>/output/symbols/` with filenames that include the symbol name
+- Save textures under `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
 - Present all symbol textures for review
 - If the user rejects all or specific symbols, regenerate only those symbols and re-present
 

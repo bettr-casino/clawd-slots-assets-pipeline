@@ -4,22 +4,22 @@
 
 ### file_validation
 
-- **Purpose**: Confirm the video file exists under `$YT_BASE_DIR/<file-name>/video/<file-name>.webm`
+- **Purpose**: Confirm the video file exists under `$YT_BASE_DIR/CLEOPATRA/video/CLEOPATRA.webm`
 - **Checks**: File path exists, file size > 0
 
 ### public_url_download (curl or wget)
 
 - **Purpose**: Download the source video from the public S3 URL
-- **Command**: `curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm" -o "$YT_BASE_DIR/<file-name>/video/<file-name>.webm"`
+- **Command**: `curl -L "https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm" -o "$YT_BASE_DIR/CLEOPATRA/video/CLEOPATRA.webm"`
 - **Requirements**: `curl` or `wget`
-- **Safety**: Only allow base filenames with `A-Z`, `a-z`, `0-9`, `_`, `-` (optional `.webm` suffix is stripped)
+- **Note**: Filename is hardcoded as `CLEOPATRA` for now
 
 ### ffmpeg_frame_extraction
 
 - **Purpose**: Extract a single frame at a specific timestamp
 - **Tool**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh`
-- **Input**: Base filename (optional `.webm` suffix), timestamp `HH:MM:SS`
-- **Output**: One PNG per timestamp in `$YT_BASE_DIR/<file-name>/frames/` (auto-downloads video if missing)
+- **Input**: `CLEOPATRA` (hardcoded), timestamp `HH:MM:SS`
+- **Output**: One PNG per timestamp in `$YT_BASE_DIR/CLEOPATRA/frames/` (auto-downloads video if missing)
 
 ### telegram_messaging
 
@@ -51,7 +51,7 @@
 ### symbol_texture_generation
 - **Purpose**: Generate symbol texture assets closely matching the original frame symbols
 - **Input**: Frames directory, tags.txt, analysis.md (use absolute paths under `$YT_BASE_DIR`)
-- **Output**: One texture per symbol under `$YT_BASE_DIR/<file-name>/output/symbols/`
+- **Output**: One texture per symbol under `$YT_BASE_DIR/CLEOPATRA/output/symbols/`
 - **Naming**: Asset filenames must include the symbol name
 - **Review**: Present all generated assets; regenerate only rejected symbols
 
@@ -80,7 +80,7 @@
   - Log errors in MEMORY.md
   - Retry S3 downloads when transient failures occur
   - Ask the human for a new filename if the object is missing
-  - If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store and retry
+  - If Moonshot reports a missing API key but MOONSHOT_API_KEY env var exists, re-register the key in the OpenClaw auth store and retry
   - Send Telegram notification for unrecoverable issues
   - Never silently fail
   - Use absolute paths when referencing files in logs or commands
@@ -88,10 +88,10 @@
 ### file_management
 
 - **Purpose**: Organize output files
-- **Videos**: `$YT_BASE_DIR/<file-name>/video/<file-name>.webm` (use absolute paths)
-- **Frames**: `$YT_BASE_DIR/<file-name>/frames/frame_<timestamp>.png` (use absolute paths)
-- **Output**: `$YT_BASE_DIR/<file-name>/output/` for math model spreadsheets and CSVs
-- **Symbols**: `$YT_BASE_DIR/<file-name>/output/symbols/` for texture assets
+- **Videos**: `$YT_BASE_DIR/CLEOPATRA/video/CLEOPATRA.webm` (use absolute paths)
+- **Frames**: `$YT_BASE_DIR/CLEOPATRA/frames/frame_<timestamp>.png` (use absolute paths)
+- **Output**: `$YT_BASE_DIR/CLEOPATRA/output/` for math model spreadsheets and CSVs
+- **Symbols**: `$YT_BASE_DIR/CLEOPATRA/output/symbols/` for texture assets
 - **Logs**: Intake progress in MEMORY.md
 
 ---
@@ -100,9 +100,7 @@
 
 | Key | Service | Purpose |
 |-----|---------|---------|
-| `MOONSHOT_API_KEY` | Moonshot AI | Primary LLM (Kimi K-2.5) |
-| `XAI_API_KEY` | xAI | Fallback LLM #1 (Grok Vision Beta) |
-| `OPENAI_API_KEY` | OpenAI | Fallback LLM #2 (GPT-4o) |
+| `MOONSHOT_API_KEY` | Moonshot AI | LLM — Kimi K-2.5 (sole provider) |
 | `TELEGRAM_API_KEY` | Telegram | Bot communication |
 
 ## Tool Availability by Phase

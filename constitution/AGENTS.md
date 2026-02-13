@@ -4,22 +4,21 @@
 
 ### AI Model Integration
 
-- **Primary LLM**: Kimi K-2.5 (moonshot/kimi-k2.5)
-- **Fallback #1**: Grok 2 Vision (xai/grok-2-vision) — activates if Kimi is unavailable
-- **Fallback #2**: GPT-4o (openai/gpt-4o) — activates if both Kimi and Grok are unavailable
-- **Fallback chain**: kimi-k2.5 → grok-2-vision → gpt-4o
+- **LLM**: Kimi K-2.5 (moonshot/kimi-k2.5) — Moonshot only, no fallback providers
+- **Capabilities**: Native multimodal (vision + text), 256K context, agent tasks, tool calling
 - **Purpose**: Video search, selection, analysis, and math model extraction
+- **Env**: `MOONSHOT_API_KEY`
 
 ### Three-Phase Workflow
 
 Clawd operates in a three-phase workflow:
 
 **Phase 1: Video Intake + Frame Extraction**
-1. **Ask for Name**: If missing, ask the human for the base filename (default: `CLEOPATRA`); if `.webm` is provided, strip it
+1. **Filename**: The video filename is hardcoded as `CLEOPATRA` (do not ask the human for a filename)
 2. **Confirm YouTube URL**: Default to `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`, ask for updates if not confirmed
 3. **Ask for Timestamps**: Confirm whether frames are needed and collect a list (e.g., `00:14:00 00:21:35`)
-4. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to extract one frame per timestamp into `yt/<file-name>/frames/`
-	- The script downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm` if the video is missing
+4. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to extract one frame per timestamp into `yt/CLEOPATRA/frames/`
+	- The script downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm` if the video is missing
 
 **Phase 2: Multimodal LLM Analysis**
 1. Confirm video and tags are ready
@@ -29,13 +28,13 @@ Clawd operates in a three-phase workflow:
 5. Do not block Phase 2 on a missing script; create it if needed or fall back to direct multimodal analysis
 6. Identify slot symbols, reel layout, and symbol landing animations
 7. When loading frames, use absolute paths under `$YT_BASE_DIR` (do not rely on repo-relative paths)
-8. Write results to `$YT_BASE_DIR/<video-name>/analysis.md`
+8. Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
 9. Do not create assets or implement the game in this phase
 
 **Phase 3: Symbol Asset Generation**
 1. Use frames, tags.txt, and analysis.md to generate symbol textures
 2. Ensure textures closely match the original symbols (color, shape, lighting, material)
-3. Save textures to `$YT_BASE_DIR/<video-name>/output/symbols/` with filenames that include the symbol name
+3. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
 4. Present all assets to the user for review
 5. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
@@ -67,7 +66,7 @@ Clawd operates in a three-phase workflow:
 5. Update MEMORY.md with progress and state
 6. Send Telegram updates every 30 minutes
 7. Use chain-of-thought reasoning for all decisions
-8. If a provider reports a missing API key but the env var exists, re-register the key in the OpenClaw auth store (xai/openai) before retrying
+8. If Moonshot reports a missing API key but MOONSHOT_API_KEY env var exists, re-register the key in the OpenClaw auth store before retrying
 
 ### Chain-of-Thought Reasoning
 
@@ -88,14 +87,11 @@ When user sends "status", provide comprehensive overview:
 - Last completed checkpoint
 - Progress summary
 - Next planned action
-- Model status: Kimi K-2.5 + fallbacks (Grok Vision Beta, GPT-4o)
+- Model status: Kimi K-2.5 (Moonshot only)
 - Any blockers or waiting states
 
 ### Billing & Model Status
 - Check if Moonshot API key is present (MOONSHOT_API_KEY)
-- Check if xAI API key is present (XAI_API_KEY) for Grok fallback
-- Check if OpenAI API key is present (OPENAI_API_KEY) for GPT-4o fallback
-- Report all three models and their auth status
-- Fallback chain: kimi-k2.5 → grok-2-vision → gpt-4o
-- Verify balance if possible
+- Report Kimi K-2.5 auth status (single provider, no fallbacks)
+- Verify Moonshot balance if possible
 - Report status clearly and professionally

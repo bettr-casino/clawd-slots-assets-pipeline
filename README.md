@@ -38,7 +38,7 @@ Clawd operates in a three-phase workflow:
     - Write analysis.md to the video folder
 3. **Phase 3: Symbol Asset Generation**
     - Generate symbol textures using frames, tags.txt, and analysis.md
-    - Save textures under yt/<file-name>/output/symbols/
+    - Save textures under yt/CLEOPATRA/output/symbols/
     - Present assets for approval; regenerate rejected symbols
 
 ## Repository Structure
@@ -124,7 +124,7 @@ If the process restarts, Clawd resumes from the last completed checkpoint automa
     - Summary message with analysis.md findings
     - Extracted frames and tags.txt entries
 3. After Phase 3 completes, review:
-    - Symbol texture assets under yt/<file-name>/output/symbols/
+    - Symbol texture assets under yt/CLEOPATRA/output/symbols/
 4. Provide clarification if Clawd encounters blockers
 
 ### For Clawd Operations

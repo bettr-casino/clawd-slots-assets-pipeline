@@ -4,10 +4,9 @@ This file replaces the old mobile optimization workflow. It now defines **qualit
 
 ## Phase 1: Intake QA
 
-- Local video file exists under `yt/<file-name>/video/`
-- If missing, filename was confirmed with the human (default: `CLEOPATRA.webm`)
+- Local video file exists under `yt/CLEOPATRA/video/`
 - S3 download succeeded and file size is non-zero
-- Frames output directory exists at `yt/<file-name>/frames/`
+- Frames output directory exists at `yt/CLEOPATRA/frames/`
 - Timestamps are in `HH:MM:SS` format
 
 ## Frame Extraction QA
@@ -27,11 +26,11 @@ This file replaces the old mobile optimization workflow. It now defines **qualit
 
 - tags.txt present and updated
 - analysis.md includes symbol inventory, reel layout, and animation notes
-- analysis.md saved under `yt/<file-name>/analysis.md`
+- analysis.md saved under `yt/CLEOPATRA/analysis.md`
 
 ## Phase 3 QA
 
-- Symbol textures exist under `yt/<file-name>/output/symbols/`
+- Symbol textures exist under `yt/CLEOPATRA/output/symbols/`
 - Filenames include symbol names
 - User review captured (approve all, reject all, or reject list)
 - Rejected symbols regenerated and re-reviewed if needed

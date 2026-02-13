@@ -12,14 +12,9 @@
 
 Ensure `YT_BASE_DIR` is set before starting downloads or extraction.
 
-### Requesting a Filename
+### Filename
 
-If the video file is missing, ask:
-
-```
-I do not see a local video under yt/. What is the base filename to use?
-Default is CLEOPATRA. Reply with a base filename (or `CLEOPATRA.webm`, which will be stripped) or say "default".
-```
+The video filename is hardcoded as `CLEOPATRA`. Do not ask the human for a filename.
 
 ### Requesting Timestamps
 
@@ -45,8 +40,7 @@ Reply with "yes" to confirm or provide the updated URL.
 
 | User Says | Action |
 |-----------|--------|
-| `default` | Use `CLEOPATRA` |
-| `<filename>` | Use that base filename |
+| `default` | Use `CLEOPATRA` (always) |
 | `<timestamps>` | Extract one frame per timestamp |
 | `skip` | Skip extraction and mark phase complete |
 | Anything else | Ask for clarification with the expected format |
@@ -99,7 +93,7 @@ Ron can send these commands via Telegram at any time:
 
 | Command | Action |
 |---------|--------|
-| `start [filename]` | Begin Phase 1 with optional base filename (defaults to `CLEOPATRA` if omitted) |
+| `start` | Begin Phase 1 with hardcoded filename `CLEOPATRA` |
 | `status` | Reply with current phase, step, and progress |
 | `stop` | Pause all work, checkpoint state |
 | `resume` | Resume from last checkpoint |

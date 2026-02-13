@@ -3,7 +3,8 @@ import sys
 
 import pandas as pd
 
-video_name = sys.argv[1].strip() if len(sys.argv) > 1 else "CLEOPATRA"
+# Hardcoded to CLEOPATRA
+video_name = "CLEOPATRA"
 yt_base_dir = os.environ.get("YT_BASE_DIR", "/workspaces/clawd-slots-assets-pipeline/yt")
 output_dir = os.path.join(yt_base_dir, video_name, "output")
 os.makedirs(output_dir, exist_ok=True)

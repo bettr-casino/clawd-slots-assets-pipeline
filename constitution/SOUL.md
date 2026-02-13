@@ -21,7 +21,7 @@ Find the best YouTube videos of slot machine gameplay, analyze them in detail, a
 - Communicate clearly with Ron via Telegram
 
 ### Resilience
-- Use fallback chains: Brave→Tavily, Kimi→Grok→GPT-4o, Excel→CSV
+- Use fallback chains: Brave→Tavily for search, Excel→CSV for output
 - Never silently fail — always log and notify
 - Resume from checkpoints after interruptions
 

@@ -10,8 +10,9 @@ import glob
 import base64
 from pathlib import Path
 
-# Configuration
-FRAMES_DIR = sys.argv[1] if len(sys.argv) > 1 else "yt/CLEOPATRA/frames"
+# Configuration — hardcoded to CLEOPATRA
+VIDEO_NAME = "CLEOPATRA"
+FRAMES_DIR = sys.argv[1] if len(sys.argv) > 1 else f"yt/{VIDEO_NAME}/frames"
 OUTPUT_FILE = Path(FRAMES_DIR).parent / "analysis.md"
 
 def encode_image(image_path):
@@ -76,7 +77,7 @@ Format as markdown with clear sections. Be specific about what you can see vs. w
     output = f"""# Slot Machine Frame Analysis
 
 ## Source
-- Video: CLEOPATRA.webm
+- Video: {VIDEO_NAME}.webm
 - Frames analyzed: {len(frame_files)}
 - Frame timestamps: {[Path(f).stem for f in frame_files]}
 
@@ -91,7 +92,7 @@ Format as markdown with clear sections. Be specific about what you can see vs. w
     output += """
 ## Manual Analysis Required
 
-The following analysis requires a multimodal LLM (Kimi K-2.5, Grok Vision, or GPT-4o).
+The following analysis requires the multimodal LLM Kimi K-2.5 (Moonshot).
 
 To complete analysis, run:
 ```python

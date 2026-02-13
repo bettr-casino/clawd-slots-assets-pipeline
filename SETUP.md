@@ -28,13 +28,13 @@ This script will:
 - Run health checks
 
 Notes:
-- Video downloads use the public URL `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm` by default
+- Video downloads use the public URL `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm` (hardcoded)
 - AWS CLI is optional; configure it if you prefer authenticated access
 - Set `YT_BASE_DIR` to the local yt root (example: `/workspaces/clawd-slots-assets-pipeline/yt`)
 
 **Prerequisites for automated setup:**
+- `MOONSHOT_API_KEY` environment variable must be set (sole LLM provider)
 - `BRAVE_API_KEY` environment variable must be set
-- `MOONSHOT_API_KEY` environment variable must be set
 - Telegram bot token for @clawd_slots_bot
 
 If you prefer manual setup or need to troubleshoot, continue with the detailed instructions below.
@@ -79,9 +79,7 @@ Set up the Moonshot AI provider for LLM capabilities:
 
 The configuration includes:
 - **Base URL**: `https://api.moonshot.ai/v1`
-- **Models**: 
-  - `kimi-k2.5` (256K context window)
-  - `kimi-k2.5` (primary model)
+- **Model**: `kimi-k2.5` (256K context window, multimodal — sole provider, no fallbacks)
 
 ### 4. Configure Agents
 

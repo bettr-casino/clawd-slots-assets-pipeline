@@ -4,31 +4,18 @@
 
 ### Public S3 HTTP
 - **Purpose**: Download source videos from the public asset bucket
-- **Usage**: `curl -L https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/<file-name>.webm -o $YT_BASE_DIR/<file-name>/video/<file-name>.webm`
+- **Usage**: `curl -L https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm -o $YT_BASE_DIR/CLEOPATRA/video/CLEOPATRA.webm`
 - **Requires**: `YT_BASE_DIR` set to the local yt root
 
 ## AI Models
 
-### Kimi K-2.5 (Primary)
+### Kimi K-2.5 (Primary — Moonshot only)
 - **Provider**: moonshot
 - **Model ID**: `moonshot/kimi-k2.5`
-- **Capabilities**: Vision analysis, reasoning, code generation
+- **Capabilities**: Vision analysis (native multimodal), reasoning, code generation, agent tasks
+- **Context Window**: 256K tokens
 - **Env**: `MOONSHOT_API_KEY`
-
-### Grok 2 Vision (Fallback #1)
-- **Provider**: xai
-- **Model ID**: `xai/grok-2-vision`
-- **Capabilities**: Vision analysis, reasoning
-- **Env**: `XAI_API_KEY`
-
-### GPT-4o (Fallback #2)
-- **Provider**: openai
-- **Model ID**: `openai/gpt-4o`
-- **Capabilities**: Vision analysis, reasoning, code generation
-- **Env**: `OPENAI_API_KEY`
-
-### Fallback Chain
-`kimi-k2.5` → `grok-2-vision` → `gpt-4o`
+- **No fallback models** — all inference runs through Moonshot
 
 ---
 
@@ -41,7 +28,7 @@
 
 ### extract-frame.sh
 - **Purpose**: Wrapper script for consistent frame extraction
-- **Usage**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh <file-name> <timestamp>` (optional `.webm` suffix is stripped)
+- **Usage**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh CLEOPATRA <timestamp>`
 
 ### Multimodal LLM (Kimi K2.5)
 - **Purpose**: Analyze frames and tags.txt for slot machine analysis
@@ -81,7 +68,7 @@
 - **Path**: `/workspaces/clawd-slots-assets-pipeline`
 - **Constitution**: `constitution/` — bot behavior and workflow definitions
 - **Scripts**: `scripts/` — setup and utility scripts
-- **Output**: Math model spreadsheets saved in `$YT_BASE_DIR/<file-name>/output/`
+- **Output**: Math model spreadsheets saved in `$YT_BASE_DIR/CLEOPATRA/output/`
 
 ---
 
@@ -98,7 +85,5 @@
 |------|---------|--------------|
 | Public S3 HTTP | ✅ | — |
 | Kimi K-2.5 | ✅ | MOONSHOT_API_KEY |
-| Grok Vision | ✅ | XAI_API_KEY |
-| GPT-4o | ✅ | OPENAI_API_KEY |
 | ffmpeg | ✅ | — |
 | Telegram | ✅ | TELEGRAM_API_KEY |

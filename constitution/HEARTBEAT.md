@@ -48,7 +48,7 @@
 
 | State | Action |
 |-------|--------|
-| `idle` / no filename | Ask the human for a base filename (default: `CLEOPATRA`); strip `.webm` if provided |
+| `idle` / no filename | Use the hardcoded filename `CLEOPATRA` and proceed (do not ask the human) |
 | Filename set, URL not confirmed | Confirm YouTube URL (default: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`) |
 | URL confirmed, timestamps not requested | Ask whether to extract timestamps |
 | Timestamps provided, frames not extracted | Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each timestamp (auto-downloads if missing) |
