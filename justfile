@@ -2,8 +2,6 @@ set shell := ["bash", "-cu"]
 
 start:
     @test -n "$MOONSHOT_API_KEY" || (echo "Missing MOONSHOT_API_KEY" && exit 1)
-    @test -n "$OPENAI_API_KEY" || (echo "Missing OPENAI_API_KEY" && exit 1)
-    @test -n "$XAI_API_KEY" || (echo "Missing XAI_API_KEY" && exit 1)
     @if [ -f ".pid.current" ] && kill -0 "$(cat .pid.current)" 2>/dev/null; then \
         echo "Gateway already running (pid $(cat .pid.current))"; \
         exit 0; \
@@ -33,8 +31,6 @@ stop:
 
 restart:
     @test -n "$MOONSHOT_API_KEY" || (echo "Missing MOONSHOT_API_KEY" && exit 1)
-    @test -n "$OPENAI_API_KEY" || (echo "Missing OPENAI_API_KEY" && exit 1)
-    @test -n "$XAI_API_KEY" || (echo "Missing XAI_API_KEY" && exit 1)
     @if [ -f .pid.current ]; then \
         PID="$(cat .pid.current)"; \
         if kill -0 "$PID" 2>/dev/null; then \
