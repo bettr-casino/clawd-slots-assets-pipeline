@@ -48,9 +48,8 @@
 
 | State | Action |
 |-------|--------|
-| `idle` / no filename | Use the hardcoded filename `CLEOPATRA` and proceed (do not ask the human) |
-| Filename set, URL not confirmed | Confirm YouTube URL (default: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`) |
-| URL confirmed, timestamps not requested | Ask whether to extract timestamps |
+| `idle` / starting | Use hardcoded filename `CLEOPATRA` and URL `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask the human for either) |
+| Ready, timestamps not requested | Ask the human for timestamps to extract |
 | Timestamps provided, frames not extracted | Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each timestamp (auto-downloads if missing) |
 | Frames extracted | Mark phase complete and proceed to Phase 2 |
 

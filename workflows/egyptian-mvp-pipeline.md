@@ -3,16 +3,11 @@ This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) 
 
 ## Phase 1: Video Intake + Frame Extraction
 
-### Step 1: Confirm YouTube URL
+### Step 1: Collect Timestamps
 
-Ask the human to confirm the YouTube URL.
+YouTube URL is hardcoded: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation).
 
-- Default URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`
-- If not confirmed, request the updated URL
-
-### Step 2: Collect Timestamps
-
-Ask the human if they want to extract timestamps. If yes, request a list like:
+Ask the human for timestamps to extract, e.g.:
 
 ```
 00:14:00 00:21:35 00:34:12

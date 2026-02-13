@@ -22,18 +22,11 @@ Prepare local video sources, analyze frames, and generate symbol textures throug
 ### Objective
 Ensure the video file exists locally and extract frames at the requested timestamps.
 
-### Step 1.1: Confirm YouTube URL
+### Step 1.1: Collect Timestamps
 
 **Actions:**
-- Ask the human to confirm the YouTube URL
-- Default URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`
-- If not confirmed, request the updated URL
-
-### Step 1.2: Confirm Timestamps
-
-**Actions:**
-- Ask the human if they want to extract timestamps
-- If yes, request a list like `00:14:00 00:21:35 00:34:12`
+- YouTube URL is hardcoded: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation)
+- Ask the human for timestamps to extract, e.g. `00:14:00 00:21:35 00:34:12`
 
 ### Step 1.3: Extract Frames (Auto-Download if Missing)
 

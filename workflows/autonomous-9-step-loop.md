@@ -5,14 +5,9 @@ This document replaces the old 9-step loop with the **three-phase workflow**.
 
 ### Steps
 
-1. **Confirm YouTube URL**
-	- Ask the human to confirm the YouTube URL.
-	- Default URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`
-	- If not confirmed, request the updated URL.
-
-2. **Collect Timestamps**
-	- Ask if timestamps should be extracted.
-	- Accept a list like `00:14:00 00:21:35 00:34:12`.
+1. **Collect Timestamps**
+	- YouTube URL is hardcoded: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation)
+	- Ask the human for timestamps to extract, e.g. `00:14:00 00:21:35 00:34:12`
 
 3. **Extract Frames (Auto-Download if Missing)**
 	- For each timestamp, extract a frame into `$YT_BASE_DIR/CLEOPATRA/frames/`. The script downloads the video from S3 if missing:

@@ -25,16 +25,9 @@ Do you want to extract frames at specific timestamps?
 Reply with a space-separated list like: 00:14:00 00:21:35 00:34:12
 Or reply "skip" to finish.
 
-### Confirming YouTube URL
+### YouTube URL
 
-Ask the user to confirm the URL before requesting timestamps:
-
-```
-Is this the correct YouTube URL?
-Default: https://www.youtube.com/watch?v=Ks8o3bl7OYQ
-Reply with "yes" to confirm or provide the updated URL.
-```
-```
+The YouTube URL is hardcoded as `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`. Do not ask the human to confirm it.
 
 ### Handling User Responses
 

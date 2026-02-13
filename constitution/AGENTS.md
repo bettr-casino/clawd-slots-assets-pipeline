@@ -15,8 +15,8 @@ Clawd operates in a three-phase workflow:
 
 **Phase 1: Video Intake + Frame Extraction**
 1. **Filename**: The video filename is hardcoded as `CLEOPATRA` (do not ask the human for a filename)
-2. **Confirm YouTube URL**: Default to `https://www.youtube.com/watch?v=Ks8o3bl7OYQ`, ask for updates if not confirmed
-3. **Ask for Timestamps**: Confirm whether frames are needed and collect a list (e.g., `00:14:00 00:21:35`)
+2. **YouTube URL**: Hardcoded as `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (do not ask for confirmation)
+3. **Ask for Timestamps**: Collect a list of timestamps from the human (e.g., `00:14:00 00:21:35`)
 4. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` to extract one frame per timestamp into `yt/CLEOPATRA/frames/`
 	- The script downloads `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm` if the video is missing
 
