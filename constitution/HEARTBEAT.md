@@ -44,11 +44,19 @@
 └─────────────────────────────────────┘
 ```
 
+## Phase 0 Heartbeat Actions
+
+| State | Action |
+|-------|--------|
+| `idle` / starting / Phase 0 | Do nothing — wait for human to send `start` on Telegram |
+| Human sends `start` | Transition to Phase 1 |
+| Human sends `status` | Reply: "Phase 0 — Waiting for you to approve tags.txt. Send `start` when ready." |
+
 ## Phase 1 Heartbeat Actions
 
 | State | Action |
 |-------|--------|
-| `idle` / starting | Read `$YT_BASE_DIR/CLEOPATRA/tags.txt` (human-authored — do not ask for timestamps) |
+| Phase 1 starting | Read `$YT_BASE_DIR/CLEOPATRA/tags.txt` (human-authored, already approved) |
 | tags.txt read, frames not extracted | Run `extract-frame.sh` for each tags.txt entry (auto-downloads video if missing) |
 | Frames extracted | Notify human via Telegram, mark phase complete, proceed to Phase 2 |
 
@@ -79,10 +87,16 @@ Always write MEMORY.md using this exact format. Keep it human-readable and unamb
 ## Status
 | Field              | Value                          |
 |--------------------|--------------------------------|
-| Phase              | 1 / 2 / 3 / idle              |
+| Phase              | 0 / 1 / 2 / 3 / idle          |
 | Step               | (current step name)            |
-| Status             | Not started / In progress / Complete / Blocked |
+| Status             | Waiting / In progress / Complete / Blocked |
 | Last updated       | (ISO timestamp)                |
+
+## Phase 0: Human Preparation
+| Field              | Value                          |
+|--------------------|--------------------------------|
+| tags.txt authored  | Yes / No / In progress         |
+| Approval           | Waiting / Approved (timestamp) |
 
 ## Phase 1: Frame Extraction
 | Field              | Value                          |

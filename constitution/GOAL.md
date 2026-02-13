@@ -2,13 +2,14 @@
 
 ## Primary Goal
 
-Reverse-engineer a Las Vegas CLEOPATRA slot machine from a YouTube video to build a social casino slot (not real money) with the same look, feel, and animations. The human manually reviews the video, authors `tags.txt` with timestamps and descriptions, and the bot processes those tags to extract frames, analyze symbols/paytable/animations, and generate assets.
+Reverse-engineer a Las Vegas CLEOPATRA slot machine from a YouTube video to build a social casino slot (not real money) with the same look, feel, and animations. The human manually reviews the video, authors `tags.txt` with timestamps and descriptions, approves it, and the bot processes those tags to extract frames, analyze symbols/paytable/animations, and generate assets.
 
 **Key Rules:**
 - Video filename: `CLEOPATRA` (hardcoded — do not ask)
 - YouTube URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (hardcoded — do not ask)
 - S3 URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
 - `tags.txt` is **human-authored** — the bot reads it, never writes or modifies it
+- The bot **waits in Phase 0** until the human sends `start` to approve tags.txt
 - Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for frame extraction
 - Store videos under `$YT_BASE_DIR/CLEOPATRA/video/` and frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
 - `YT_BASE_DIR` must be set before downloads or extraction
@@ -35,6 +36,24 @@ Examples:
 ```
 
 The bot must parse tags.txt and use the descriptions to understand what each frame or sequence represents.
+
+---
+
+## Phase 0: Human Preparation (Wait for Approval)
+
+### Objective
+Wait for the human to finish reviewing the video and authoring `tags.txt`. The bot does **nothing** until the human sends `start` on Telegram.
+
+### What the human does (outside the bot)
+1. Watch the YouTube video
+2. Identify timestamps of interest (single frames for stills, ranges for animations)
+3. Edit `$YT_BASE_DIR/CLEOPATRA/tags.txt` with entries
+4. Send `start` on Telegram when ready
+
+### Bot behavior during Phase 0
+- **Do not** read tags.txt, extract frames, or do any processing
+- **Do** respond to `status` with: "Phase 0 — Waiting for you to approve tags.txt. Send `start` when ready."
+- On receiving `start`: transition to Phase 1
 
 ---
 

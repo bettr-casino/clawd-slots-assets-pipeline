@@ -1,5 +1,9 @@
 # cleopatra-research.md
-This workflow is a **game-specific instance** of the three-phase pipeline, scoped to Cleopatra or Cleopatra-style slots.
+This workflow is a **game-specific instance** of the four-phase (0–3) pipeline, scoped to Cleopatra or Cleopatra-style slots.
+
+## Phase 0: Human Preparation
+- Human reviews video, authors `tags.txt`, sends `start` on Telegram to approve
+- Bot waits — does not process anything until `start` is received
 
 ## Phase 1: Frame Extraction (Cleopatra Focus)
 

@@ -1,5 +1,10 @@
 # autonomous-9-step-loop.md
-This document replaces the old 9-step loop with the **three-phase workflow**.
+This document replaces the old 9-step loop with the **four-phase workflow** (Phase 0–3).
+
+## Phase 0: Human Preparation
+
+- Human reviews video, authors `tags.txt`, sends `start` on Telegram to approve
+- Bot waits — does not process anything until `start` is received
 
 ## Phase 1: Frame Extraction
 
@@ -43,6 +48,6 @@ After Phase 2 analysis is complete, generate symbol textures using the frames, t
 
 ## Rules
 
-- Follow all three phases in order.
+- Follow all four phases (0–3) in order.
 - Always checkpoint progress in MEMORY.md.
 - If the video already exists, skip the download step.

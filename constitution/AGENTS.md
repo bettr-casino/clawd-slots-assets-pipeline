@@ -9,12 +9,18 @@
 - **Purpose**: Frame analysis, paytable/math reverse-engineering, and symbol asset generation
 - **Env**: `MOONSHOT_API_KEY`
 
-### Three-Phase Workflow
+### Four-Phase Workflow
 
-Clawd operates in a three-phase workflow:
+Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
+
+**Phase 0: Human Preparation (Wait for Approval)**
+- The human reviews the video and authors `tags.txt` with timestamps and descriptions
+- The bot does **nothing** until the human sends `start` on Telegram
+- On `status`: reply "Phase 0 — Waiting for you to approve tags.txt. Send `start` when ready."
+- On `start`: transition to Phase 1
 
 **Phase 1: Frame Extraction**
-1. **Read tags.txt**: The human authors `$YT_BASE_DIR/CLEOPATRA/tags.txt` with timestamps and descriptions — do not ask the human for timestamps; read the file
+1. **Read tags.txt**: Read `$YT_BASE_DIR/CLEOPATRA/tags.txt` — the human has already approved it
 2. **Extract Frames**: Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for each tags.txt entry
    - Single frame entries (start == end): one PNG
    - Animation range entries (start < end): all frames at 60fps
@@ -53,6 +59,7 @@ Clawd operates in a three-phase workflow:
 
 **Telegram (Primary Channel):**
 - 30-minute heartbeat progress updates to Ron
+- Phase 0: Wait for `start` (tags.txt approval)
 - Phase 1: Notify when frame extraction is complete
 - Phase 2: Request approval before starting analysis
 - Blocker notifications and clarification questions
@@ -61,7 +68,7 @@ Clawd operates in a three-phase workflow:
 
 ### Workflow Execution
 1. Check MEMORY.md for current phase and step by reading `/workspaces/clawd-slots-assets-pipeline/constitution/MEMORY.md` directly; do not use the memory plugin or embeddings for state
-2. Execute next step in the three-phase workflow
+2. Execute next step in the four-phase workflow (Phase 0–3)
 3. Always use absolute paths for file access and tool calls
 4. Save checkpoints after each step completion
 5. Update MEMORY.md with progress and state

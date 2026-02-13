@@ -1,5 +1,9 @@
-# Egyptian MVP Pipeline (Three-Phase Workflow)
-This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) using the three-phase intake, analysis, and symbol asset generation process.
+# Egyptian MVP Pipeline (Four-Phase Workflow)
+This workflow is for **Egyptian-themed slot machines** (Cleopatra, Luxor, etc.) using the four-phase (0–3) workflow.
+
+## Phase 0: Human Preparation
+- Human reviews video, authors `tags.txt`, sends `start` on Telegram to approve
+- Bot waits — does not process anything until `start` is received
 
 ## Phase 1: Frame Extraction
 

@@ -1,5 +1,9 @@
-# Cleopatra Grand Benchmark (Three-Phase Workflow)
-This workflow applies the three-phase intake, analysis, and symbol asset generation process to the Cleopatra Grand slot machine.
+# Cleopatra Grand Benchmark (Four-Phase Workflow)
+This workflow applies the four-phase (0–3) workflow to the Cleopatra Grand slot machine.
+
+## Phase 0: Human Preparation
+- Human reviews video, authors `tags.txt`, sends `start` on Telegram to approve
+- Bot waits — does not process anything until `start` is received
 
 ## Phase 1: Frame Extraction (Cleopatra Grand)
 
