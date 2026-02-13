@@ -69,12 +69,55 @@
 | Rejected symbols provided | Regenerate only rejected symbols and re-present for review |
 | Symbols approved | Mark phase complete |
 
+## MEMORY.md Checkpoint Format
+
+Always write MEMORY.md using this exact format. Keep it human-readable and unambiguous.
+
+```markdown
+# MEMORY.md
+
+## Status
+| Field              | Value                          |
+|--------------------|--------------------------------|
+| Phase              | 1 / 2 / 3 / idle              |
+| Step               | (current step name)            |
+| Status             | Not started / In progress / Complete / Blocked |
+| Last updated       | (ISO timestamp)                |
+
+## Phase 1: Frame Extraction
+| Field              | Value                          |
+|--------------------|--------------------------------|
+| tags.txt           | Not read / Read (N entries)    |
+| Video              | Not downloaded / Downloaded (size) |
+| Frames extracted   | None / N of M                  |
+| Frame list         | (list each frame + description)|
+
+## Phase 2: Analysis
+| Field              | Value                          |
+|--------------------|--------------------------------|
+| Approval           | Not requested / Requested / Approved (timestamp) |
+| Analysis           | Not started / In progress / Complete |
+| Output files       | (list files written)           |
+
+## Phase 3: Asset Generation
+| Field              | Value                          |
+|--------------------|--------------------------------|
+| Symbols generated  | None / N of M                  |
+| User review        | Not presented / Pending / Approved / Rejected (list) |
+| Output files       | (list files written)           |
+
+## Log
+| Timestamp | Event |
+|-----------|-------|
+| ...       | ...   |
+```
+
 ## Heartbeat Rules
 
 1. **One step per heartbeat**: Complete one meaningful step, checkpoint, then yield
-2. **Never skip checkpointing**: Always update MEMORY.md after work
+2. **Never skip checkpointing**: Always update MEMORY.md after work using the format above
 3. **Respect user wait**: If waiting for user input, don't do busy work
-4. **Log everything**: Every heartbeat should produce a log entry
+4. **Log everything**: Every heartbeat should produce a log entry in the Log table
 5. **Handle errors in-cycle**: If a step fails, try fallback, log error, checkpoint
 6. **Memory source**: Always read MEMORY.md directly from disk and do not use embeddings or the memory plugin for state
 
