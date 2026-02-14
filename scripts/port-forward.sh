@@ -8,7 +8,7 @@ CHECK_INTERVAL_SECONDS="${CHECK_INTERVAL_SECONDS:-1}"
 RETRY_DELAY_SECONDS="${RETRY_DELAY_SECONDS:-10}"
 MAX_RETRIES="${MAX_RETRIES:-0}" # 0 = infinite
 GATEWAY_READY_TIMEOUT_SECONDS="${GATEWAY_READY_TIMEOUT_SECONDS:-30}"
-SSH_TIMEOUT_SECONDS="${SSH_TIMEOUT_SECONDS:-20}"
+SSH_TIMEOUT_SECONDS="${SSH_TIMEOUT_SECONDS:-30}"
 
 # Optional manual override:
 #   CODESPACE=<name> ./scripts/port-forward.sh
@@ -42,8 +42,9 @@ log() {
 }
 
 run_ssh_with_timeout() {
-  # Usage: run_ssh_with_timeout "<gh codespace ssh args...>"
+  # Usage: run_ssh_with_timeout "<gh codespace ssh args...>" "<label>"
   local cmd="$1"
+  local label="${2:-ssh command}"
   bash -lc "$cmd" &
   local cmd_pid=$!
   local waited=0
@@ -52,11 +53,14 @@ run_ssh_with_timeout() {
     if [ "$waited" -ge "$SSH_TIMEOUT_SECONDS" ]; then
       kill "$cmd_pid" 2>/dev/null || true
       wait "$cmd_pid" 2>/dev/null || true
+      printf "\r[%s] %s timed out at %2ss/%2ss\n" "$(date '+%H:%M:%S')" "$label" "$waited" "$SSH_TIMEOUT_SECONDS"
       return 124
     fi
+    printf "\r[%s] %s: %2ss/%2ss" "$(date '+%H:%M:%S')" "$label" "$waited" "$SSH_TIMEOUT_SECONDS"
     sleep 1
     waited=$((waited + 1))
   done
+  printf "\r[%s] %s: done (%2ss)        \n" "$(date '+%H:%M:%S')" "$label" "$waited"
 
   wait "$cmd_pid"
 }
@@ -119,19 +123,19 @@ run_once() {
 
 ensure_gateway_ready() {
   log "Checking gateway inside Codespace..."
-  if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${PORT}/'\" >/dev/null 2>&1"; then
+  if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${PORT}/'\" >/dev/null 2>&1" "gateway probe"; then
     log "Gateway already listening on ${PORT}."
     return 0
   fi
 
   log "Gateway not reachable on ${PORT}; running just restart..."
-  if ! run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'cd /workspaces/clawd-slots-assets-pipeline && just restart'\" >/dev/null 2>&1"; then
+  if ! run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'cd /workspaces/clawd-slots-assets-pipeline && just restart'\" >/dev/null 2>&1" "just restart"; then
     log "Gateway restart command timed out after ${SSH_TIMEOUT_SECONDS}s."
   fi
 
   elapsed=0
   while [ "$elapsed" -lt "$GATEWAY_READY_TIMEOUT_SECONDS" ]; do
-    if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${PORT}/'\" >/dev/null 2>&1"; then
+    if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${PORT}/'\" >/dev/null 2>&1" "gateway probe"; then
       log "Gateway is now listening on ${PORT}."
       return 0
     fi
