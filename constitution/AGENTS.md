@@ -52,13 +52,14 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 2. Ensure textures closely match the original symbols (color, shape, lighting, material)
 3. Use Phase 2 analysis to identify which symbols appear in approved frame list (file contains frames only)
 4. For each symbol, analyze approved frames and select the cleanest non-blurred reference frame(s).
-5. Apply quality gate before presenting any symbol:
+5. Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbol_boundaries.py` for CV-first symbol boundary detection and candidate crops (not LLM-only boundaries).
+6. Apply quality gate before presenting any symbol:
    - Reject cropped/partial symbols
    - Reject images containing multiple symbols or unrelated UI/reel fragments
    - Regenerate until each file is a clean, full single-symbol texture
-6. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
-7. Present all assets to the user for review
-8. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
+7. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
+8. Present all assets to the user for review
+9. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 

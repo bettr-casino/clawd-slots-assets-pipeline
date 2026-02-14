@@ -153,6 +153,7 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
 - Identify which symbols appear in human-approved frames using Phase 2 analysis context (the file itself contains frame names only)
 - For each symbol, scan all candidate frames in relevant tagged ranges and score frame quality (blur, occlusion, crop, symbol centering, lighting).
 - Select the cleanest non-blurred frame(s) per symbol as canonical references before texture generation.
+- Run CV-first boundary extraction (`/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbol_boundaries.py`) on approved frames to get precise symbol crops before generation.
 - Generate a texture per symbol that closely matches the original in color, shape, lighting, and material
 - The goal is colorful, vibrant assets that match the Las Vegas slot machine feel
 - Enforce symbol quality gates before presenting to the user:
