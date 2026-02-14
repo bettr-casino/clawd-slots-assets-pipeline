@@ -5,9 +5,9 @@ set -euo pipefail
 # Default flow:
 #  1) Auto-commit local changes (custom COMMIT_MSG or generated from diff)
 #  2) Push to GitHub
-#  3) In Codespace: stash constitution/MEMORY.md if dirty
+#  3) In Codespace: preserve runtime constitution/MEMORY.md
 #  4) Pull latest (ff-only)
-#  5) Restart gateway via just restart
+#  5) Restore runtime MEMORY.md and restart gateway
 #
 # Usage:
 #   ./scripts/sync-codespace.sh
@@ -119,17 +119,27 @@ fi
 log "Pushing local branch..."
 git push
 
-log "Syncing in Codespace (stash $STASH_PATH if needed, pull, restart)..."
+log "Syncing in Codespace (preserve $STASH_PATH, pull, restore, restart)..."
 gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' bash -l -c '
 set -eo pipefail
 cd \"\$WORKSPACE\"
 
-if ! git diff --quiet -- \"\$STASH_PATH\"; then
-  git stash push -m \"auto-sync: stash runtime memory state\" \"\$STASH_PATH\" >/dev/null
-  echo \"Stashed \$STASH_PATH before pull\"
+# Preserve runtime MEMORY.md snapshot so pull/template updates do not wipe live state.
+RUNTIME_MEM_BAK=\"\"
+if [ -f \"\$STASH_PATH\" ]; then
+  RUNTIME_MEM_BAK=\"\$(mktemp)\"
+  cp \"\$STASH_PATH\" \"\$RUNTIME_MEM_BAK\"
+  echo \"Saved runtime \$STASH_PATH snapshot\"
 fi
 
 git pull --ff-only
+
+if [ -n \"\$RUNTIME_MEM_BAK\" ] && [ -f \"\$RUNTIME_MEM_BAK\" ]; then
+  cp \"\$RUNTIME_MEM_BAK\" \"\$STASH_PATH\"
+  rm -f \"\$RUNTIME_MEM_BAK\"
+  echo \"Restored runtime \$STASH_PATH after pull\"
+fi
+
 just restart
 '"
 
