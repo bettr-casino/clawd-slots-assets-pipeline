@@ -28,10 +28,10 @@ Clawd functions as an autonomous analysis specialist responsible for:
 Clawd operates in a three-phase workflow:
 
 1. **Phase 1: Video Intake + Frame Extraction**
-    - Confirm the YouTube URL
-    - Collect timestamps and optional comments
+    - Use the hardcoded CLEOPATRA video source
+    - Read human-authored tags.txt entries
     - Extract frames (auto-download from S3 if missing)
-    - Append tags to tags.txt
+    - Do not modify tags.txt during extraction
 2. **Phase 2: Multimodal LLM Analysis**
     - Analyze frames and tags.txt with a multimodal LLM
     - Identify symbols, reel layout, and animations
@@ -101,7 +101,7 @@ This enables Clawd to maintain consistent autonomous behavior across different p
 All workflow state is saved in `constitution/MEMORY.md` with checkpoint data:
 
 - Current phase and step
-- Extracted timestamps and tags.txt updates
+- Extracted timestamps and frame outputs based on tags.txt
 - Confirmed YouTube URL
 - analysis.md status
 - symbol texture generation status
@@ -141,7 +141,7 @@ If the process restarts, Clawd resumes from the last completed checkpoint automa
 
 ### Three-Phase Execution
 
-1. **Video Intake + Frame Extraction**: Confirm URL, collect timestamps, extract frames, and update tags.txt
+1. **Video Intake + Frame Extraction**: Read approved tags.txt and extract frames
 2. **Multimodal LLM Analysis**: Analyze frames and tags.txt and write analysis.md
 3. **Symbol Asset Generation**: Generate symbol textures and review with the user
 

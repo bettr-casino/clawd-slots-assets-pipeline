@@ -3,6 +3,8 @@ set -euo pipefail
 
 if [[ $# -lt 2 ]]; then
   echo "Usage: $0 <file-name> <timestamp HH:MM:SS> [end-timestamp HH:MM:SS] [# comment]"
+  echo "Note: tags.txt is human-owned and is NOT modified by default."
+  echo "Set ALLOW_TAGS_APPEND=1 to opt in to appending comment lines."
   exit 1
 fi
 
@@ -65,16 +67,32 @@ ts_to_seconds() {
   echo $((10#$h * 3600 + 10#$m * 60 + 10#$s))
 }
 
+append_tag_line() {
+  local tags_file="$1"
+  local line="$2"
+  mkdir -p "$(dirname "$tags_file")"
+  if [[ -f "$tags_file" ]] && [[ -s "$tags_file" ]]; then
+    # Ensure a trailing newline exists before appending to avoid glued lines.
+    last_char="$(tail -c 1 "$tags_file" 2>/dev/null || true)"
+    if [[ -n "${last_char}" ]]; then
+      printf "\n" >> "$tags_file"
+    fi
+  fi
+  printf "%s\n" "$line" >> "$tags_file"
+}
+
 if [[ -z "$end_ts" ]]; then
   safe_stamp="${start_ts//:/_}"
   output_file="$frames_dir/frame__${safe_stamp}.01.png"
 
   ffmpeg -y -ss "$start_ts" -i "$video_path" -frames:v 1 "$output_file" -hide_banner -loglevel error
   echo "Wrote $output_file"
-  if [[ -n "$comment" ]]; then
+  if [[ -n "$comment" && "${ALLOW_TAGS_APPEND:-0}" == "1" ]]; then
     tags_file="$frames_dir/../tags.txt"
     # Format: 00:00:16.01 00:00:16.01    comment
-    printf "%s %s\t%s\n" "${start_ts}.01" "${start_ts}.01" "$comment" >> "$tags_file"
+    append_tag_line "$tags_file" "${start_ts}.01 ${start_ts}.01\t${comment}"
+  elif [[ -n "$comment" ]]; then
+    echo "Skipping tags.txt append (ALLOW_TAGS_APPEND is not set to 1)"
   fi
   exit 0
 fi
@@ -92,7 +110,7 @@ temp_dir="$(mktemp -d)"
   ffmpeg -y -ss "$start_ts" -t "$duration_seconds" -i "$video_path" -vf "fps=60" \
     -start_number 0 "$temp_dir/frame_%06d.png" -hide_banner -loglevel error
 
-  if [[ -n "$comment" ]]; then
+  if [[ -n "$comment" && "${ALLOW_TAGS_APPEND:-0}" == "1" ]]; then
     tags_file="$frames_dir/../tags.txt"
     # Format: 00:00:24.01 00:00:32.01    comment
     start_tag="${start_ts}.01"
@@ -101,7 +119,9 @@ temp_dir="$(mktemp -d)"
     mm=$(printf "%02d" $(((end_seconds % 3600) / 60)))
     ss=$(printf "%02d" $((end_seconds % 60)))
     end_tag="${hh}:${mm}:${ss}.01"
-    printf "%s %s\t%s\n" "$start_tag" "$end_tag" "$comment" >> "$tags_file"
+    append_tag_line "$tags_file" "${start_tag} ${end_tag}\t${comment}"
+  elif [[ -n "$comment" ]]; then
+    echo "Skipping tags.txt append (ALLOW_TAGS_APPEND is not set to 1)"
   fi
 
   shopt -s nullglob
