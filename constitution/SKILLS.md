@@ -65,6 +65,8 @@
 - **Approval gate**: Start only after explicit human approval of `symbol-frames.txt` is recorded in MEMORY.md
 - **Existing output check**: Inspect `$YT_BASE_DIR/CLEOPATRA/output/symbols/symbol_*.png`; require human `reuse` vs `regenerate` decision before proceeding
 - **Boundary extraction**: Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbol_boundaries.py` to produce CV-based symbol crops before generation
+- **Object detection + tracking**: Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_yolo_track.py` to detect symbol candidates with YOLO, track across frames, and export final symbol crops
+- **LLM critic pass**: Optionally use `--llm-review` to have Kimi choose best tracked candidate crop before final export
 - **Frame selection**: Evaluate all candidate frames for each symbol and pick the sharpest non-blurred frame(s) before generation
 - **Output**: One texture per symbol under `$YT_BASE_DIR/CLEOPATRA/output/symbols/`
 - **Naming**: Asset filenames must include the symbol name
