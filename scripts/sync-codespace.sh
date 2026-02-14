@@ -24,6 +24,8 @@ set -euo pipefail
 #   AUTO_COMMIT=1|0  (default: 1)
 #   RESET_RUNTIME_CACHE=auto|always|never (default: auto)
 #   OPENCLAW_DB_PATH=/home/codespace/.openclaw/memory/main.sqlite
+#   OPENCLAW_SESSIONS_DIR=/home/codespace/.openclaw/agents/main/sessions
+#   OPENCLAW_AGENT_STATE_DIR=/home/codespace/.openclaw/agents/main/agent
 
 REPO="${REPO:-bettr-casino/clawd-slots-assets-pipeline}"
 WORKSPACE="${WORKSPACE:-/workspaces/clawd-slots-assets-pipeline}"
@@ -31,6 +33,8 @@ STASH_PATH="${STASH_PATH:-constitution/MEMORY.md}"
 AUTO_COMMIT="${AUTO_COMMIT:-1}"
 RESET_RUNTIME_CACHE="${RESET_RUNTIME_CACHE:-auto}"
 OPENCLAW_DB_PATH="${OPENCLAW_DB_PATH:-/home/codespace/.openclaw/memory/main.sqlite}"
+OPENCLAW_SESSIONS_DIR="${OPENCLAW_SESSIONS_DIR:-/home/codespace/.openclaw/agents/main/sessions}"
+OPENCLAW_AGENT_STATE_DIR="${OPENCLAW_AGENT_STATE_DIR:-/home/codespace/.openclaw/agents/main/agent}"
 
 log() {
   echo "[$(date '+%H:%M:%S')] $*"
@@ -149,7 +153,7 @@ log "Pushing local branch..."
 git push
 
 log "Syncing in Codespace (preserve $STASH_PATH, pull, restore, restart)..."
-gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' RESET_RUNTIME_CACHE='$RESET_RUNTIME_CACHE_FLAG' OPENCLAW_DB_PATH='$OPENCLAW_DB_PATH' bash -l -c '
+gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' RESET_RUNTIME_CACHE='$RESET_RUNTIME_CACHE_FLAG' OPENCLAW_DB_PATH='$OPENCLAW_DB_PATH' OPENCLAW_SESSIONS_DIR='$OPENCLAW_SESSIONS_DIR' OPENCLAW_AGENT_STATE_DIR='$OPENCLAW_AGENT_STATE_DIR' bash -l -c '
 set -eo pipefail
 cd \"\$WORKSPACE\"
 
@@ -170,13 +174,34 @@ if [ -n \"\$RUNTIME_MEM_BAK\" ] && [ -f \"\$RUNTIME_MEM_BAK\" ]; then
 fi
 
 if [ \"\${RESET_RUNTIME_CACHE:-0}\" = \"1\" ]; then
+  TS=\"\$(date +%Y%m%d%H%M%S)\"
   DB_PATH=\"\${OPENCLAW_DB_PATH:-/home/codespace/.openclaw/memory/main.sqlite}\"
   if [ -f \"\$DB_PATH\" ]; then
-    DB_BAK=\"\${DB_PATH}.bak.\$(date +%Y%m%d%H%M%S)\"
+    DB_BAK=\"\${DB_PATH}.bak.\$TS\"
     mv \"\$DB_PATH\" \"\$DB_BAK\"
     echo \"Reset runtime OpenClaw DB: \$DB_PATH -> \$DB_BAK\"
   else
     echo \"Runtime OpenClaw DB not found at \$DB_PATH (skip reset)\"
+  fi
+
+  SESSIONS_DIR=\"\${OPENCLAW_SESSIONS_DIR:-/home/codespace/.openclaw/agents/main/sessions}\"
+  if [ -d \"\$SESSIONS_DIR\" ]; then
+    SESSIONS_BAK=\"\${SESSIONS_DIR}.bak.\$TS\"
+    mv \"\$SESSIONS_DIR\" \"\$SESSIONS_BAK\"
+    mkdir -p \"\$SESSIONS_DIR\"
+    echo \"Reset runtime OpenClaw sessions: \$SESSIONS_DIR -> \$SESSIONS_BAK\"
+  else
+    echo \"Runtime OpenClaw sessions dir not found at \$SESSIONS_DIR (skip reset)\"
+  fi
+
+  AGENT_STATE_DIR=\"\${OPENCLAW_AGENT_STATE_DIR:-/home/codespace/.openclaw/agents/main/agent}\"
+  if [ -d \"\$AGENT_STATE_DIR\" ]; then
+    AUTH_FILE=\"\$AGENT_STATE_DIR/auth-profiles.json\"
+    if [ -f \"\$AUTH_FILE\" ]; then
+      AUTH_BAK=\"\${AUTH_FILE}.bak.\$TS\"
+      mv \"\$AUTH_FILE\" \"\$AUTH_BAK\"
+      echo \"Reset runtime agent auth profiles: \$AUTH_FILE -> \$AUTH_BAK\"
+    fi
   fi
 fi
 
