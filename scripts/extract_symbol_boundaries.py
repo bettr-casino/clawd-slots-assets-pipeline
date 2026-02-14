@@ -83,6 +83,11 @@ def parse_args() -> argparse.Namespace:
         default=0.20,
         help="Lower values keep more crops; raise to filter fuzzy crops.",
     )
+    parser.add_argument(
+        "--allow-non-yolo-override",
+        action="store_true",
+        help="Explicit human override to allow this non-YOLO extraction path.",
+    )
     return parser.parse_args()
 
 
@@ -281,6 +286,12 @@ def save_report(candidates: List[Candidate], output_dir: Path) -> None:
 
 def main() -> None:
     args = parse_args()
+    if not args.allow_non_yolo_override:
+        raise SystemExit(
+            "Blocked by policy: non-YOLO extraction is disabled by default.\n"
+            "If explicitly instructed by a human, rerun with:\n"
+            "  --allow-non-yolo-override"
+        )
 
     global cv2, np
     try:

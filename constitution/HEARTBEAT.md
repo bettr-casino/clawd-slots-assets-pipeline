@@ -168,7 +168,7 @@ Always write MEMORY.md using this exact format. Keep it human-readable and unamb
 2. **Never skip checkpointing**: Always update MEMORY.md after work using the format above
 3. **Respect user wait**: If waiting for user input, don't do busy work
 4. **Log everything**: Every heartbeat should produce a log entry in the Log table
-5. **Handle errors in-cycle**: If a step fails, try fallback, log error, checkpoint
+5. **Handle errors in-cycle**: If a step fails, block for human decision, log error, checkpoint (no automatic fallback)
 6. **Memory source**: Always read MEMORY.md directly from disk and do not use embeddings or the memory plugin for state
 7. **No inference transitions**: Never infer phase transitions from filesystem state alone; transitions must follow explicit MEMORY.md gate fields
 
