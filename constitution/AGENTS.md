@@ -99,6 +99,18 @@ When user sends "status", provide comprehensive overview:
 - Model status: Kimi K-2.5 (Moonshot only)
 - Any blockers or waiting states
 
+### Phase Handoff Status Rule
+- When Phase **N** is marked **Complete**, status must also include a short section for Phase **N+1**.
+- The Phase **N+1** section must include:
+  - `Readiness` (Ready / Waiting / Blocked)
+  - `Required approval` (if any)
+  - `Next action` (single concrete action)
+- Do not skip Phase **N+1** visibility even if no work has started yet.
+
+Example:
+- `Phase 1: Complete`
+- `Phase 2: Ready (Approval pending) -> Next action: Ask for analysis approval`
+
 ### Billing & Model Status
 - Check if Moonshot API key is present (MOONSHOT_API_KEY)
 - Report Kimi K-2.5 auth status (single provider, no fallbacks)
