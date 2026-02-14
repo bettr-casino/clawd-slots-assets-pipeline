@@ -57,15 +57,16 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 5. Ensure textures closely match the original symbols (color, shape, lighting, material)
 6. Use Phase 2 analysis to identify which symbols appear in approved frame list (file contains frames only)
 7. For each symbol, analyze approved frames and select the cleanest non-blurred reference frame(s).
-8. Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbol_boundaries.py` for CV-first symbol boundary detection and candidate crops (not LLM-only boundaries).
-9. Apply quality gate before presenting any symbol:
+8. Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_yolo_track.py` as the default extraction path (YOLO detection + ByteTrack + optional LLM critic).
+9. If YOLO/tracking extraction fails or produces low-quality crops, fall back to `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbol_boundaries.py`.
+10. Apply quality gate before presenting any symbol:
    - Reject cropped/partial symbols
    - Reject images containing multiple symbols or unrelated UI/reel fragments
    - Regenerate until each file is a clean, full single-symbol texture
-10. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
-11. Present all assets to the user for review
-12. Include a compact preview set (up to 8 symbols) as 100x100 thumbnails with full-size links
-13. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
+11. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
+12. Present all assets to the user for review
+13. Include a compact preview set (up to 8 symbols) as 100x100 thumbnails with full-size links
+14. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 
