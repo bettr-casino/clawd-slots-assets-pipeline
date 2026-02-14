@@ -58,7 +58,7 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 6. Use Phase 2 analysis to identify which symbols appear in approved frame list (file contains frames only)
 7. For each symbol, analyze approved frames and select the cleanest non-blurred reference frame(s).
 8. Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_yolo_track.py` as the default extraction path (YOLO detection + ByteTrack + optional LLM critic).
-9. If YOLO/tracking extraction fails or produces low-quality crops, fall back to `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbol_boundaries.py`.
+9. If YOLO/tracking extraction fails or produces low-quality crops, pause and ask for human decision; do not auto-fallback.
 10. Apply quality gate before presenting any symbol:
    - Reject cropped/partial symbols
    - Reject images containing multiple symbols or unrelated UI/reel fragments

@@ -92,7 +92,8 @@ After Phase 2 analysis is complete, generate symbol textures from the frames, ta
   - `reuse symbols` (review existing files), or
   - `regenerate symbols` (create a fresh batch now)
 - Record the user decision in MEMORY.md and do not claim new generation without a regenerate decision.
-- For regeneration, use YOLO+tracking extraction as the default path and CV extraction as fallback if quality is poor.
+- For regeneration, always use YOLO+tracking extraction.
+- Do not switch to non-YOLO extraction automatically; if YOLO fails or quality is poor, pause and ask for human decision.
 - Present all generated symbol textures to the user with symbol names.
 - Include a compact preview set in the review message (up to 8 symbols) as 100x100 thumbnails when UI rendering supports it.
 - Prefer Gateway-accessible HTTP links for previews; if unavailable, attach/embed preview images directly.
