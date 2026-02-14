@@ -36,13 +36,14 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 6. Use absolute paths under `$YT_BASE_DIR`
 7. Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
 8. Write math model spreadsheets/CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`
-9. Generate `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` as a plain list of frame filenames (one per line, no symbol labels)
+9. Ensure `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` exists as a template file only; do not auto-populate entries
 10. Do not create assets or implement the game in this phase
 
 **Phase 2.5: Human Approval Gate (symbol-frames.txt)**
 1. Present `symbol-frames.txt` to human for approval
 2. Wait for explicit approval before Phase 3
-3. Human may edit `symbol-frames.txt`; bot must use approved version as-is
+3. Human must author entries in `symbol-frames.txt`; bot must use approved version as-is
+4. If `symbol-frames.txt` is empty, remain blocked in Phase 2.5 and request entries
 
 **Phase 3: Symbol Asset Generation**
 1. Use approved `symbol-frames.txt`, frames, and analysis.md to generate symbol textures

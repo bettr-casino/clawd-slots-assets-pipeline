@@ -9,6 +9,7 @@ Reverse-engineer a Las Vegas CLEOPATRA slot machine from a YouTube video to buil
 - YouTube URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (hardcoded — do not ask)
 - S3 URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
 - `tags.txt` is **human-authored** — the bot reads it, never writes or modifies it
+- `symbol-frames.txt` entries are **human-authored** — bot may create template file only
 - The bot **waits in Phase 0** until the human sends `start` to approve tags.txt
 - Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for frame extraction
 - Store videos under `$YT_BASE_DIR/CLEOPATRA/video/` and frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
@@ -110,15 +111,13 @@ Analyze the extracted frames using Kimi K2.5 to reverse-engineer the slot machin
 - When accessing frames, use absolute paths under `$YT_BASE_DIR`
 - Helper scripts are allowed; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 - Do not create assets or implement the game in this phase
-- Generate `symbol-frames.txt` as a candidate frame list for symbol generation:
-  - Plain list of frame filenames only (one per line)
-  - No symbol labels in this file
-  - Include only clean candidate frames likely to contain distinct symbols
+- Ensure `symbol-frames.txt` exists as a template file if missing (do not auto-populate entries).
+- Ask the human to add frame entries manually after reviewing extracted frames.
 
 ### Output
 - `$YT_BASE_DIR/CLEOPATRA/analysis.md` — comprehensive analysis document
 - `$YT_BASE_DIR/CLEOPATRA/output/` — math model spreadsheets and CSVs
-- `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` — candidate frame list (filenames only)
+- `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` — human-authored frame list (filenames only)
 
 ---
 
@@ -129,8 +128,9 @@ Pause after analysis and wait for explicit human approval of `symbol-frames.txt`
 
 ### Rules
 - Do not enter Phase 3 until `symbol-frames.txt` approval is recorded in MEMORY.md
-- Human can edit `symbol-frames.txt` directly; bot must use the approved version
+- Human must author entries in `symbol-frames.txt`; bot must use the approved version as-is
 - `symbol-frames.txt` format is strict: one frame filename per line, no symbol labels
+- If `symbol-frames.txt` has no entries, remain in Phase 2.5 and ask human to populate it
 
 ---
 
@@ -148,7 +148,7 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
 ### Actions
 - Use Phase 1 frames and Phase 2 analysis as the source of truth for symbol appearance
 - Use only approved frames listed in `symbol-frames.txt` as visual references
-- Identify which symbols appear in approved frames using Phase 2 analysis context (the file itself contains frame names only)
+- Identify which symbols appear in human-approved frames using Phase 2 analysis context (the file itself contains frame names only)
 - For each symbol, scan all candidate frames in relevant tagged ranges and score frame quality (blur, occlusion, crop, symbol centering, lighting).
 - Select the cleanest non-blurred frame(s) per symbol as canonical references before texture generation.
 - Generate a texture per symbol that closely matches the original in color, shape, lighting, and material

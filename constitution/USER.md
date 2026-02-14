@@ -56,11 +56,11 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 - Notify user that analysis will use the extracted frames and tags.txt
 - Ask for confirmation to proceed once per Phase 2 run, record approval in MEMORY.md before executing, and do not re-ask on retries or command failures
 - After analysis, send summary and link to analysis.md
-- Generate and present `symbol-frames.txt` (frame list only) for human approval before Phase 3
+- Ensure `symbol-frames.txt` exists (template only), then ask human to populate and approve it before Phase 3
 
 ### symbol-frames.txt Approval
 - `symbol-frames.txt` is a plain list of frame filenames (one per line, no symbol labels)
-- Human can edit this file directly before approval
+- Human authors the entries in this file directly before approval
 - Bot must wait for explicit approval before generating symbols
 
 ---
