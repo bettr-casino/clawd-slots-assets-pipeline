@@ -120,8 +120,8 @@ log "Pushing local branch..."
 git push
 
 log "Syncing in Codespace (stash $STASH_PATH if needed, pull, restart)..."
-gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' bash -lc '
-set -euo pipefail
+gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' bash -l -c '
+set -eo pipefail
 cd \"\$WORKSPACE\"
 
 if ! git diff --quiet -- \"\$STASH_PATH\"; then
