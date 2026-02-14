@@ -148,6 +148,9 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
 - Approved frame list: `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt`
 
 ### Actions
+- Before generating, check for existing files matching `$YT_BASE_DIR/CLEOPATRA/output/symbols/symbol_*.png`
+- If existing symbols are found, ask human whether to `reuse` existing files or `regenerate` for this run; record decision in MEMORY.md
+- Do not report existing symbols as newly generated unless regeneration happened in the current run
 - Use Phase 1 frames and Phase 2 analysis as the source of truth for symbol appearance
 - Use only approved frames listed in `symbol-frames.txt` as visual references
 - Identify which symbols appear in human-approved frames using Phase 2 analysis context (the file itself contains frame names only)

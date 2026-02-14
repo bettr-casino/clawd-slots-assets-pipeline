@@ -71,6 +71,10 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 
 After Phase 2 analysis is complete, generate symbol textures from the frames, tags.txt, and analysis.md.
 
+- If existing symbol files are already present in `output/symbols`, ask the user to choose:
+  - `reuse symbols` (review existing files), or
+  - `regenerate symbols` (create a fresh batch now)
+- Record the user decision in MEMORY.md and do not claim new generation without a regenerate decision.
 - Present all generated symbol textures to the user with symbol names.
 - Ask the user to approve all, reject all, or reject specific symbols by name.
 - If any symbols are rejected, regenerate only those symbols and re-present for review.
