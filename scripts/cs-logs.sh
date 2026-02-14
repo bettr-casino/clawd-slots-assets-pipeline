@@ -45,8 +45,8 @@ echo "Lines:     $LINES"
 
 if [ "$FOLLOW" -eq 1 ]; then
   echo "Mode:      follow"
-  gh codespace ssh -c "$CODESPACE" -- "LINES='$LINES' bash -lc 'openclaw logs --tail \"\$LINES\" --follow'"
+  gh codespace ssh -c "$CODESPACE" -- "LINES='$LINES' bash -lc 'openclaw logs --limit \"\$LINES\" --follow'"
 else
   echo "Mode:      tail"
-  gh codespace ssh -c "$CODESPACE" -- "LINES='$LINES' bash -lc 'openclaw logs --tail \"\$LINES\"'"
+  gh codespace ssh -c "$CODESPACE" -- "LINES='$LINES' bash -lc 'openclaw logs --limit \"\$LINES\"'"
 fi
