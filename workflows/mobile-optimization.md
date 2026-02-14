@@ -26,5 +26,7 @@ This file replaces the old mobile optimization workflow. It now defines **qualit
 
 - Symbol textures exist under `yt/CLEOPATRA/output/symbols/`
 - Filenames include symbol names
+- Each texture is a full, clean single-symbol image (no cropped/partial symbols)
+- No reel strips, neighboring symbols, or UI fragments in final textures
 - User review captured (approve all, reject all, or reject list)
 - Rejected symbols regenerated and re-reviewed if needed

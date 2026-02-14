@@ -41,9 +41,13 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 **Phase 3: Symbol Asset Generation**
 1. Use frames, tags.txt, and analysis.md to generate symbol textures
 2. Ensure textures closely match the original symbols (color, shape, lighting, material)
-3. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
-4. Present all assets to the user for review
-5. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
+3. Apply quality gate before presenting any symbol:
+   - Reject cropped/partial symbols
+   - Reject images containing multiple symbols or unrelated UI/reel fragments
+   - Regenerate until each file is a clean, full single-symbol texture
+4. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
+5. Present all assets to the user for review
+6. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 

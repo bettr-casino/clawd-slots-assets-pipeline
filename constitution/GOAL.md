@@ -131,9 +131,13 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
 - Use Phase 1 frames and Phase 2 analysis as the source of truth for symbol appearance
 - Generate a texture per symbol that closely matches the original in color, shape, lighting, and material
 - The goal is colorful, vibrant assets that match the Las Vegas slot machine feel
+- Enforce symbol quality gates before presenting to the user:
+  - Full symbol only (no cropped/partial/truncated symbol content)
+  - One symbol per file (no neighboring symbols, UI fragments, or reel strips)
+  - Clean image composition suitable for direct in-game use
 - Each asset filename must include the symbol name from the analysis
 - Present all generated symbols to the user for review
-- If the user rejects all or specific symbols, regenerate only the rejected ones and re-present
+- If the user rejects all or specific symbols (including "partial/cropped"), regenerate only the rejected ones and re-present
 
 ### Output
 - Symbol textures: `$YT_BASE_DIR/CLEOPATRA/output/symbols/`

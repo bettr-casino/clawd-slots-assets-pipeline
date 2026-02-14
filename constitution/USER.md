@@ -77,6 +77,7 @@ Reply with one of:
 - "approve all"
 - "reject all"
 - "reject: <symbol-name-1>, <symbol-name-2>"
+- "reject partial: <symbol-name-1>, <symbol-name-2>" (for cropped/partial symbols)
 ```
 
 ## General Rules

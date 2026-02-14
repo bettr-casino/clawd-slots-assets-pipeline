@@ -81,6 +81,7 @@
 | State | Action |
 |-------|--------|
 | Analysis ready, symbols not generated | Generate symbol textures from frames, tags.txt, and analysis.md |
+| Symbols generated, quality not validated | Run quality gate: full symbol only, no cropped/partial assets, no multi-symbol/reel fragments; regenerate failed assets |
 | Symbols generated, review not recorded | Present assets to user for review with approve/reject options |
 | Rejected symbols provided | Regenerate only rejected symbols and re-present for review |
 | Symbols approved | Mark phase complete |
