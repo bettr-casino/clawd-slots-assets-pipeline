@@ -9,6 +9,7 @@ Use this file to checkpoint progress after each step.
 - Status:
 - Base filename:
 - Confirmed YouTube URL:
+- Phase 0 YouTube URL:
 - Timestamps:
 - Video status (downloaded/missing):
 - Frames extracted:

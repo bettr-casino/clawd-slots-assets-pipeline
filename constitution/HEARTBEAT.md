@@ -95,6 +95,7 @@ Always write MEMORY.md using this exact format. Keep it human-readable and unamb
 ## Phase 0: Human Preparation
 | Field              | Value                          |
 |--------------------|--------------------------------|
+| YouTube URL        | Hardcoded URL / Updated value  |
 | tags.txt authored  | Yes / No / In progress         |
 | Approval           | Waiting / Approved (timestamp) |
 
