@@ -14,3 +14,7 @@ yt/**
 *.log
 .pid.current
 .log.current
+
+# Python cache artifacts
+__pycache__/
+*.pyc
