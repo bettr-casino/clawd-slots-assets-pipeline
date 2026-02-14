@@ -64,6 +64,14 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 - Bot never creates or edits this file
 - Bot must wait for explicit approval before generating symbols
 - File existence is not approval; approval must be an explicit human message and be recorded in MEMORY.md
+- Even if the file exists and has entries, Phase 3 is blocked until the human sends explicit approval for `symbol-frames.txt`
+
+### Phase 2.5 Approval Responses
+| User Says | Action |
+|-----------|--------|
+| `approve symbol-frames` | Record approval in MEMORY.md and proceed to Phase 3 |
+| `status` | Reply that bot is waiting for explicit `symbol-frames.txt` approval |
+| Anything else | Stay in Phase 2.5 and remind user to approve `symbol-frames.txt` |
 
 ---
 

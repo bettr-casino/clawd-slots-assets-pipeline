@@ -83,6 +83,7 @@
 - `symbol-frames.txt` existence (or non-empty content) is not approval.
 - Do not enter Phase 3 unless explicit human approval is recorded in MEMORY.md with timestamp.
 - Never infer approval from filesystem state alone.
+- On `status` while in Phase 2.5, explicitly report "Waiting for symbol-frames.txt approval".
 
 ## Phase 3 Heartbeat Actions
 
