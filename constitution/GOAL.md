@@ -132,6 +132,7 @@ Pause after analysis and wait for explicit human approval of `symbol-frames.txt`
 - `symbol-frames.txt` format is strict: one frame filename per line, no symbol labels
 - If `symbol-frames.txt` is missing, remain in Phase 2.5 and ask human to create it
 - If `symbol-frames.txt` has no entries, remain in Phase 2.5 and ask human to populate it
+- `symbol-frames.txt` existing (even with entries) must never be treated as implicit approval
 
 ---
 

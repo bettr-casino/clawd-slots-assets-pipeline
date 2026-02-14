@@ -63,6 +63,7 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 - Human authors the entries in this file directly before approval
 - Bot never creates or edits this file
 - Bot must wait for explicit approval before generating symbols
+- File existence is not approval; approval must be an explicit human message and be recorded in MEMORY.md
 
 ---
 

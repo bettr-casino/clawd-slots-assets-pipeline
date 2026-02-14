@@ -76,8 +76,13 @@
 | Approval recorded | Run multimodal LLM analysis on frames and tags.txt (do not re-ask on retries) |
 | Analysis complete, symbol-frames file missing | Ask human to create `symbol-frames.txt` in repo and wait |
 | symbol-frames file exists but empty | Wait for human to add entries and approve |
-| symbol-frames has entries, approval not recorded | Ask for human approval of `symbol-frames.txt` and wait |
-| symbol-frames approved | Mark Phase 2.5 complete and proceed to Phase 3 |
+| symbol-frames has entries, approval not recorded | Ask for human approval of `symbol-frames.txt` and wait (do not proceed) |
+| Explicit human approval recorded in MEMORY.md | Mark Phase 2.5 complete and proceed to Phase 3 |
+
+**Hard Gate Rule (Phase 2.5 -> Phase 3):**
+- `symbol-frames.txt` existence (or non-empty content) is not approval.
+- Do not enter Phase 3 unless explicit human approval is recorded in MEMORY.md with timestamp.
+- Never infer approval from filesystem state alone.
 
 ## Phase 3 Heartbeat Actions
 

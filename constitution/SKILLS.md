@@ -62,6 +62,7 @@
 ### symbol_texture_generation
 - **Purpose**: Generate symbol texture assets closely matching the original frame symbols
 - **Input**: Frames directory, tags.txt, analysis.md, approved `symbol-frames.txt` (use absolute paths under `$YT_BASE_DIR`)
+- **Approval gate**: Start only after explicit human approval of `symbol-frames.txt` is recorded in MEMORY.md
 - **Frame selection**: Evaluate all candidate frames for each symbol and pick the sharpest non-blurred frame(s) before generation
 - **Output**: One texture per symbol under `$YT_BASE_DIR/CLEOPATRA/output/symbols/`
 - **Naming**: Asset filenames must include the symbol name

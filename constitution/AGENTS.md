@@ -45,6 +45,7 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 3. Human must author entries in `symbol-frames.txt`; bot must use approved version as-is
 4. If `symbol-frames.txt` is empty, remain blocked in Phase 2.5 and request entries
 5. Bot must never create or edit `symbol-frames.txt`
+6. `symbol-frames.txt` existence does not imply approval; only explicit human approval recorded in MEMORY.md unlocks Phase 3
 
 **Phase 3: Symbol Asset Generation**
 1. Use approved `symbol-frames.txt`, frames, and analysis.md to generate symbol textures
