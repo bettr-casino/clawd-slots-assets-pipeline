@@ -1,4 +1,4 @@
-00:00:16.01 00:00:16.01    game banner, denom
-00:00:23.01	00:00:23.01    initial screen with symbols
-00:00:24.01 00:00:32.01	   complete spin with animation
-
+00:00:16.01 00:00:16.01     game banner, denom
+00:02:54.01 00:02:54.59     full screen with some of the symbols
+00:03:14.01 00:03:14.59     full screen with some of the symbols
+00:03:18.01 00:03:18.59     full screen with some of the symbols
