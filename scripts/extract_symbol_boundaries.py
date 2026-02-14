@@ -68,6 +68,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-aspect-ratio", type=float, default=0.35)
     parser.add_argument("--max-aspect-ratio", type=float, default=1.9)
     parser.add_argument("--padding", type=int, default=8)
+    parser.add_argument(
+        "--padding-ratio",
+        type=float,
+        default=0.22,
+        help="Extra expansion around a candidate as ratio of max(box width, box height).",
+    )
+    parser.add_argument("--min-padding", type=int, default=10)
+    parser.add_argument("--max-padding", type=int, default=80)
     parser.add_argument("--max-crops-per-frame", type=int, default=8)
     parser.add_argument(
         "--min-score",
@@ -198,7 +206,13 @@ def detect_candidates(
         center_bias = 1.0 - (
             abs(cx - w / 2.0) / (w / 2.0) * 0.35 + abs(cy - h / 2.0) / (h / 2.0) * 0.65
         )
-        score = max(0.0, center_bias) * 0.55 + min(1.0, edge_density * 2.0) * 0.45
+        area_bonus = min(1.0, area_ratio / 0.12)
+        # Larger boxes are favored to reduce partial-symbol crops.
+        score = (
+            max(0.0, center_bias) * 0.45
+            + min(1.0, edge_density * 2.0) * 0.25
+            + area_bonus * 0.30
+        )
         raw_boxes.append((x, y, cw, ch, score))
 
     merged = nms_boxes(raw_boxes, iou_thresh=0.35)
@@ -312,10 +326,12 @@ def main() -> None:
         h, w = image.shape[:2]
         frame_stem = Path(frame_name).stem
         for idx, (x, y, bw, bh, score) in enumerate(boxes, start=1):
-            x0 = max(0, x - args.padding)
-            y0 = max(0, y - args.padding)
-            x1 = min(w, x + bw + args.padding)
-            y1 = min(h, y + bh + args.padding)
+            dynamic_pad = int(max(bw, bh) * args.padding_ratio) + args.padding
+            dynamic_pad = max(args.min_padding, min(args.max_padding, dynamic_pad))
+            x0 = max(0, x - dynamic_pad)
+            y0 = max(0, y - dynamic_pad)
+            x1 = min(w, x + bw + dynamic_pad)
+            y1 = min(h, y + bh + dynamic_pad)
 
             crop = image[y0:y1, x0:x1]
             if crop.size == 0:
