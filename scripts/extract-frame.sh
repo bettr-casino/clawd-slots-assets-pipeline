@@ -66,7 +66,7 @@ ts_to_seconds() {
 }
 
 if [[ -z "$end_ts" ]]; then
-  safe_stamp="${start_ts//:/}"
+  safe_stamp="${start_ts//:/_}"
   output_file="$frames_dir/frame__${safe_stamp}.01.png"
 
   ffmpeg -y -ss "$start_ts" -i "$video_path" -frames:v 1 "$output_file" -hide_banner -loglevel error
@@ -117,7 +117,7 @@ temp_dir="$(mktemp -d)"
     hh=$(printf "%02d" $((absolute_seconds / 3600)))
     mm=$(printf "%02d" $(((absolute_seconds % 3600) / 60)))
     ss=$(printf "%02d" $((absolute_seconds % 60)))
-    stamp="${hh}${mm}${ss}"
+    stamp="${hh}_${mm}_${ss}"
     frame_suffix=$(printf "%02d" "$frame_in_second")
     output_file="$frames_dir/frame__${stamp}.${frame_suffix}.png"
 

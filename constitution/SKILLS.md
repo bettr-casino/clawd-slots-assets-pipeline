@@ -27,8 +27,8 @@
 - **Tool**: `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh`
 - **Input**: `CLEOPATRA` (hardcoded), start timestamp, optional end timestamp and comment
 - **Output**: PNGs in `$YT_BASE_DIR/CLEOPATRA/frames/` (auto-downloads video if missing)
-- **Single frame**: `frame__HHMMSS.01.png`
-- **Animation range**: `frame__HHMMSS.FF.png` (FF = frame within second, 01–60)
+- **Single frame**: `frame__HH_MM_SS.01.png`
+- **Animation range**: `frame__HH_MM_SS.FF.png` (FF = frame within second, 01–60)
 
 ### telegram_messaging
 

@@ -82,8 +82,8 @@ Read `tags.txt` (authored by the human), download the video if missing, and extr
 ```
 
 ### Output
-- Single frames: `$YT_BASE_DIR/CLEOPATRA/frames/frame__HHMMSS.01.png`
-- Animation ranges: `$YT_BASE_DIR/CLEOPATRA/frames/frame__HHMMSS.FF.png` (FF = frame number within each second, 01–60)
+- Single frames: `$YT_BASE_DIR/CLEOPATRA/frames/frame__HH_MM_SS.01.png`
+- Animation ranges: `$YT_BASE_DIR/CLEOPATRA/frames/frame__HH_MM_SS.FF.png` (FF = frame number within each second, 01–60)
 
 ---
 
