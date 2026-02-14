@@ -111,6 +111,24 @@ Example:
 - `Phase 1: Complete`
 - `Phase 2: Ready (Approval pending) -> Next action: Ask for analysis approval`
 
+### Required Status Layout (Detailed Phase Cards)
+When responding to `status`, always use this layout:
+
+1) `Status Report` table (Phase 0..3 high-level state)
+2) Full detail card for **current phase**
+3) Full detail card for **next phase**
+
+If current phase is complete and next phase is Phase 2, include this exact section title:
+- `Phase 2: Analysis`
+
+`Phase 2: Analysis` detail card must include:
+- Objective (what Phase 2 does)
+- Readiness (Ready / Waiting / Blocked)
+- Approval gate (required + current state)
+- Inputs (frames path, tags path)
+- Planned outputs (analysis.md, spreadsheets/CSVs)
+- Next action (single concrete step)
+
 ### Billing & Model Status
 - Check if Moonshot API key is present (MOONSHOT_API_KEY)
 - Report Kimi K-2.5 auth status (single provider, no fallbacks)
