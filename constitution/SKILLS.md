@@ -52,7 +52,7 @@
 - **Input**: Frames directory, tags.txt (use absolute paths under `$YT_BASE_DIR`)
 - **Output**: analysis.md with symbol inventory, reel layout, paytable, math model, bonus features, animations, visual style
 - **Animation analysis**: Use animation-range frames to document spin/landing/win sequences
-- **Additional output**: ensure `symbol-frames.txt` template exists (frame filenames only; no symbol labels). Human provides entries.
+- **Additional output**: none for `symbol-frames.txt`; human creates and owns this file entirely
 - **Helper scripts**: If needed, place under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
 ---

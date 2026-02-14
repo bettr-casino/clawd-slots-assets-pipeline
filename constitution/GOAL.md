@@ -9,7 +9,7 @@ Reverse-engineer a Las Vegas CLEOPATRA slot machine from a YouTube video to buil
 - YouTube URL: `https://www.youtube.com/watch?v=Ks8o3bl7OYQ` (hardcoded — do not ask)
 - S3 URL: `https://bettr-casino-assets.s3.us-west-2.amazonaws.com/yt/CLEOPATRA.webm`
 - `tags.txt` is **human-authored** — the bot reads it, never writes or modifies it
-- `symbol-frames.txt` entries are **human-authored** — bot may create template file only
+- `symbol-frames.txt` is **fully human-authored** — bot must never create or modify this file
 - The bot **waits in Phase 0** until the human sends `start` to approve tags.txt
 - Use `ffmpeg` via `/workspaces/clawd-slots-assets-pipeline/scripts/extract-frame.sh` for frame extraction
 - Store videos under `$YT_BASE_DIR/CLEOPATRA/video/` and frames under `$YT_BASE_DIR/CLEOPATRA/frames/`
@@ -111,7 +111,7 @@ Analyze the extracted frames using Kimi K2.5 to reverse-engineer the slot machin
 - When accessing frames, use absolute paths under `$YT_BASE_DIR`
 - Helper scripts are allowed; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 - Do not create assets or implement the game in this phase
-- Ensure `symbol-frames.txt` exists as a template file if missing (do not auto-populate entries).
+- If `symbol-frames.txt` is missing, stop and ask the human to create it in the repository.
 - Ask the human to add frame entries manually after reviewing extracted frames.
 
 ### Output
@@ -130,6 +130,7 @@ Pause after analysis and wait for explicit human approval of `symbol-frames.txt`
 - Do not enter Phase 3 until `symbol-frames.txt` approval is recorded in MEMORY.md
 - Human must author entries in `symbol-frames.txt`; bot must use the approved version as-is
 - `symbol-frames.txt` format is strict: one frame filename per line, no symbol labels
+- If `symbol-frames.txt` is missing, remain in Phase 2.5 and ask human to create it
 - If `symbol-frames.txt` has no entries, remain in Phase 2.5 and ask human to populate it
 
 ---
