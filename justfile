@@ -87,3 +87,6 @@ reset-memory:
     else \
         echo "No main.sqlite found"; \
     fi
+
+annotate:
+    @python3 scripts/annotate_tool.py --root . --host 0.0.0.0 --port "${ANNOTATE_PORT:-18790}"
