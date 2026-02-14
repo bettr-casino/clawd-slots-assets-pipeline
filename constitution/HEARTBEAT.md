@@ -52,6 +52,10 @@
 | Human sends `start` | Transition to Phase 1 |
 | Human sends `status` | Reply: "Phase 0 — Waiting for you to approve tags.txt. Send `start` when ready." |
 
+**Hard Gate Rule (Phase 0):**
+- Never transition out of Phase 0 unless explicit human `start` approval is recorded in MEMORY.md.
+- Existing files (tags.txt, video, frames) must never be used as implied approval.
+
 ## Phase 1 Heartbeat Actions
 
 | State | Action |
@@ -59,6 +63,10 @@
 | Phase 1 starting | Read `$YT_BASE_DIR/CLEOPATRA/tags.txt` (human-authored, already approved) |
 | tags.txt read, frames not extracted | Run `extract-frame.sh` for each tags.txt entry (auto-downloads video if missing) |
 | Frames extracted | Notify human via Telegram, mark phase complete, proceed to Phase 2 |
+
+**Hard Gate Rule (Phase 1 -> Phase 2):**
+- Do not enter Phase 2 unless MEMORY.md shows Phase 0 Approval as Approved (timestamped).
+- Existing extracted frames must not auto-advance phase without prior Phase 0 approval.
 
 ## Phase 2 Heartbeat Actions
 
@@ -135,6 +143,7 @@ Always write MEMORY.md using this exact format. Keep it human-readable and unamb
 4. **Log everything**: Every heartbeat should produce a log entry in the Log table
 5. **Handle errors in-cycle**: If a step fails, try fallback, log error, checkpoint
 6. **Memory source**: Always read MEMORY.md directly from disk and do not use embeddings or the memory plugin for state
+7. **No inference transitions**: Never infer phase transitions from filesystem state alone; transitions must follow explicit MEMORY.md gate fields
 
 ## Idle Behavior
 

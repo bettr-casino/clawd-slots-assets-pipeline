@@ -18,6 +18,7 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 - The bot does **nothing** until the human sends `start` on Telegram
 - On `status`: reply "Phase 0 — Waiting for you to approve tags.txt. Send `start` when ready."
 - On `start`: transition to Phase 1
+- Never infer approval from existing files (`tags.txt`, downloaded video, or extracted frames)
 
 **Phase 1: Frame Extraction**
 1. **Read tags.txt**: Read `$YT_BASE_DIR/CLEOPATRA/tags.txt` — the human has already approved it
