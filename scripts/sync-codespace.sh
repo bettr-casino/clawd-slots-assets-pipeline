@@ -22,11 +22,15 @@ set -euo pipefail
 #   STASH_PATH=constitution/MEMORY.md
 #   COMMIT_MSG="custom commit message"
 #   AUTO_COMMIT=1|0  (default: 1)
+#   RESET_RUNTIME_CACHE=auto|always|never (default: auto)
+#   OPENCLAW_DB_PATH=/home/codespace/.openclaw/memory/main.sqlite
 
 REPO="${REPO:-bettr-casino/clawd-slots-assets-pipeline}"
 WORKSPACE="${WORKSPACE:-/workspaces/clawd-slots-assets-pipeline}"
 STASH_PATH="${STASH_PATH:-constitution/MEMORY.md}"
 AUTO_COMMIT="${AUTO_COMMIT:-1}"
+RESET_RUNTIME_CACHE="${RESET_RUNTIME_CACHE:-auto}"
+OPENCLAW_DB_PATH="${OPENCLAW_DB_PATH:-/home/codespace/.openclaw/memory/main.sqlite}"
 
 log() {
   echo "[$(date '+%H:%M:%S')] $*"
@@ -47,6 +51,8 @@ if [ -z "${CODESPACE:-}" ]; then
 fi
 
 log "Using Codespace: $CODESPACE"
+
+CHANGED_FILES_STAGED=""
 
 generate_commit_message() {
   local file_count
@@ -95,6 +101,7 @@ if [ -n "$(git status --porcelain)" ]; then
   if [ "$AUTO_COMMIT" = "1" ] || [ -n "${COMMIT_MSG:-}" ]; then
     log "Auto-committing local changes..."
     git add -A
+    CHANGED_FILES_STAGED="$(git diff --cached --name-only || true)"
     if [ -z "${COMMIT_MSG:-}" ]; then
       COMMIT_MSG="$(generate_commit_message)"
     fi
@@ -108,6 +115,28 @@ else
   log "No local changes to commit."
 fi
 
+RESET_RUNTIME_CACHE_FLAG="0"
+case "$RESET_RUNTIME_CACHE" in
+  always)
+    RESET_RUNTIME_CACHE_FLAG="1"
+    ;;
+  never)
+    RESET_RUNTIME_CACHE_FLAG="0"
+    ;;
+  auto)
+    if [ -n "${CHANGED_FILES_STAGED:-}" ] && echo "$CHANGED_FILES_STAGED" | grep -Eq '^constitution/|^workflows/'; then
+      RESET_RUNTIME_CACHE_FLAG="1"
+    fi
+    ;;
+  *)
+    echo "Invalid RESET_RUNTIME_CACHE value: $RESET_RUNTIME_CACHE"
+    echo "Use one of: auto, always, never"
+    exit 1
+    ;;
+esac
+
+log "Runtime cache reset mode: $RESET_RUNTIME_CACHE (reset=${RESET_RUNTIME_CACHE_FLAG})"
+
 # Require clean local tree before sync unless COMMIT_MSG handled it.
 if [ -n "$(git status --porcelain)" ]; then
   echo "Local working tree is not clean."
@@ -120,7 +149,7 @@ log "Pushing local branch..."
 git push
 
 log "Syncing in Codespace (preserve $STASH_PATH, pull, restore, restart)..."
-gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' bash -l -c '
+gh codespace ssh -c "$CODESPACE" -- "WORKSPACE='$WORKSPACE' STASH_PATH='$STASH_PATH' RESET_RUNTIME_CACHE='$RESET_RUNTIME_CACHE_FLAG' OPENCLAW_DB_PATH='$OPENCLAW_DB_PATH' bash -l -c '
 set -eo pipefail
 cd \"\$WORKSPACE\"
 
@@ -138,6 +167,17 @@ if [ -n \"\$RUNTIME_MEM_BAK\" ] && [ -f \"\$RUNTIME_MEM_BAK\" ]; then
   cp \"\$RUNTIME_MEM_BAK\" \"\$STASH_PATH\"
   rm -f \"\$RUNTIME_MEM_BAK\"
   echo \"Restored runtime \$STASH_PATH after pull\"
+fi
+
+if [ \"\${RESET_RUNTIME_CACHE:-0}\" = \"1\" ]; then
+  DB_PATH=\"\${OPENCLAW_DB_PATH:-/home/codespace/.openclaw/memory/main.sqlite}\"
+  if [ -f \"\$DB_PATH\" ]; then
+    DB_BAK=\"\${DB_PATH}.bak.\$(date +%Y%m%d%H%M%S)\"
+    mv \"\$DB_PATH\" \"\$DB_BAK\"
+    echo \"Reset runtime OpenClaw DB: \$DB_PATH -> \$DB_BAK\"
+  else
+    echo \"Runtime OpenClaw DB not found at \$DB_PATH (skip reset)\"
+  fi
 fi
 
 just restart
