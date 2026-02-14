@@ -85,6 +85,7 @@
 - Do not enter Phase 3 unless explicit human approval is recorded in MEMORY.md with timestamp.
 - Never infer approval from filesystem state alone.
 - On `status` while in Phase 2.5, explicitly report "Waiting for symbol-frames.txt approval".
+- On Phase 2 approval prompts, never show `skip` as Phase 3; always show Phase 2.5 routing.
 
 ## Phase 3 Heartbeat Actions
 

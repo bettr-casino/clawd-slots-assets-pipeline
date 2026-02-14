@@ -59,6 +59,14 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 - If `symbol-frames.txt` is missing, ask human to create it in repo, then populate and approve it before Phase 3
 - If user replies `skip`, do not run analysis and move to Phase 2.5 (`symbol-frames.txt` approval gate)
 
+### Phase 2 Approval Prompt (exact reply options)
+Reply with:
+- `approve` — Start Phase 2 analysis
+- `skip` — Skip analysis to Phase 2.5 (`symbol-frames.txt` approval gate)
+- `status` — Show this status again
+
+Never display: `skip — Skip to Phase 3` while in Phase 2.
+
 ### symbol-frames.txt Approval
 - `symbol-frames.txt` is a plain list of frame filenames (one per line, no symbol labels)
 - Human authors the entries in this file directly before approval

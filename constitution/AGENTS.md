@@ -39,6 +39,7 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 9. If `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` is missing, stop and ask the human to create it in the repository
 10. Do not create assets or implement the game in this phase
 11. If human sends `skip`, bypass analysis and transition to Phase 2.5 approval gate
+12. Never present `skip` as "Skip to Phase 3" while in Phase 2
 
 **Phase 2.5: Human Approval Gate (symbol-frames.txt)**
 1. Present `symbol-frames.txt` to human for approval
@@ -119,6 +120,13 @@ When user sends "status", provide comprehensive overview:
 - Next planned action
 - Model status: Kimi K-2.5 (Moonshot only)
 - Any blockers or waiting states
+
+### Phase 2 Reply Text Rule
+- When Phase 2 is waiting for approval, allowed reply options are:
+  - `approve` — Start Phase 2 analysis
+  - `skip` — Skip analysis to Phase 2.5 (`symbol-frames.txt` approval gate)
+  - `status` — Show current status
+- Never output `skip — Skip to Phase 3` from Phase 2 status or approval prompts.
 
 ### Phase Handoff Status Rule
 - When Phase **N** is marked **Complete**, status must also include a short section for Phase **N+1**.
