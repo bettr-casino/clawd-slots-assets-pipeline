@@ -69,6 +69,7 @@
 - **Output**: One texture per symbol under `$YT_BASE_DIR/CLEOPATRA/output/symbols/`
 - **Naming**: Asset filenames must include the symbol name
 - **Review**: Present all generated assets; regenerate only rejected symbols
+- **Preview UX**: Provide up to 8 thumbnail previews (100x100) plus full-size links for fast human review
 
 ## Cross-Cutting Skills
 

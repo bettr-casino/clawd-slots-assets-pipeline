@@ -99,6 +99,7 @@ Analyze the extracted frames using Kimi K2.5 to reverse-engineer the slot machin
 
 ### Actions
 - Ask the human for approval once via Telegram before starting analysis; record approval in MEMORY.md; do not re-ask on retries
+- If the human replies `skip`, do not run analysis and transition directly to Phase 2.5 for `symbol-frames.txt` approval
 - Use tags.txt descriptions to guide which frames to analyze for what purpose
 - Reverse-engineer and document:
   1. **Symbol inventory** — all symbols (low/mid/high/special), their visual appearance, and estimated frequency
@@ -166,6 +167,7 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
   - Clean image composition suitable for direct in-game use
 - Each asset filename must include the symbol name from the analysis
 - Present all generated symbols to the user for review
+- Include a compact preview set (up to 8 symbols) as 100x100 thumbnails with full-size links when available in UI
 - If the user rejects all or specific symbols (including "partial/cropped"), regenerate only the rejected ones and re-present
 
 ### Output

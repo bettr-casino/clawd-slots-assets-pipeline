@@ -38,6 +38,7 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 8. Write math model spreadsheets/CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`
 9. If `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` is missing, stop and ask the human to create it in the repository
 10. Do not create assets or implement the game in this phase
+11. If human sends `skip`, bypass analysis and transition to Phase 2.5 approval gate
 
 **Phase 2.5: Human Approval Gate (symbol-frames.txt)**
 1. Present `symbol-frames.txt` to human for approval
@@ -62,7 +63,8 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
    - Regenerate until each file is a clean, full single-symbol texture
 10. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
 11. Present all assets to the user for review
-12. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
+12. Include a compact preview set (up to 8 symbols) as 100x100 thumbnails with full-size links
+13. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 

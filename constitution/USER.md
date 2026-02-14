@@ -57,6 +57,7 @@ After frame extraction and tags.txt are ready, confirm with the user via Telegra
 - Ask for confirmation to proceed once per Phase 2 run, record approval in MEMORY.md before executing, and do not re-ask on retries or command failures
 - After analysis, send summary and link to analysis.md
 - If `symbol-frames.txt` is missing, ask human to create it in repo, then populate and approve it before Phase 3
+- If user replies `skip`, do not run analysis and move to Phase 2.5 (`symbol-frames.txt` approval gate)
 
 ### symbol-frames.txt Approval
 - `symbol-frames.txt` is a plain list of frame filenames (one per line, no symbol labels)
@@ -84,6 +85,9 @@ After Phase 2 analysis is complete, generate symbol textures from the frames, ta
   - `regenerate symbols` (create a fresh batch now)
 - Record the user decision in MEMORY.md and do not claim new generation without a regenerate decision.
 - Present all generated symbol textures to the user with symbol names.
+- Include a compact preview set in the review message (up to 8 symbols) as 100x100 thumbnails when UI rendering supports it.
+- Prefer Gateway-accessible HTTP links for previews; if unavailable, attach/embed preview images directly.
+- Always include a full-size link/path for each symbol in addition to thumbnail preview.
 - Ask the user to approve all, reject all, or reject specific symbols by name.
 - If any symbols are rejected, regenerate only those symbols and re-present for review.
 
