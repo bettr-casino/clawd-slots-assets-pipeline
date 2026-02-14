@@ -5,6 +5,7 @@ yt/**
 !yt/**/
 !yt/**/analysis.md
 !yt/**/tags.txt
+!yt/**/symbol-frames.txt
 !yt/**/output/
 !yt/**/output/**
 
