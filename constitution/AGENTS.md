@@ -36,19 +36,26 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 6. Use absolute paths under `$YT_BASE_DIR`
 7. Write results to `$YT_BASE_DIR/CLEOPATRA/analysis.md`
 8. Write math model spreadsheets/CSVs to `$YT_BASE_DIR/CLEOPATRA/output/`
-9. Do not create assets or implement the game in this phase
+9. Generate `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` as a plain list of frame filenames (one per line, no symbol labels)
+10. Do not create assets or implement the game in this phase
+
+**Phase 2.5: Human Approval Gate (symbol-frames.txt)**
+1. Present `symbol-frames.txt` to human for approval
+2. Wait for explicit approval before Phase 3
+3. Human may edit `symbol-frames.txt`; bot must use approved version as-is
 
 **Phase 3: Symbol Asset Generation**
-1. Use frames, tags.txt, and analysis.md to generate symbol textures
+1. Use approved `symbol-frames.txt`, frames, and analysis.md to generate symbol textures
 2. Ensure textures closely match the original symbols (color, shape, lighting, material)
-3. For each symbol, analyze all candidate frames from relevant tagged ranges and select the cleanest non-blurred reference frame(s).
-4. Apply quality gate before presenting any symbol:
+3. Use Phase 2 analysis to identify which symbols appear in approved frame list (file contains frames only)
+4. For each symbol, analyze approved frames and select the cleanest non-blurred reference frame(s).
+5. Apply quality gate before presenting any symbol:
    - Reject cropped/partial symbols
    - Reject images containing multiple symbols or unrelated UI/reel fragments
    - Regenerate until each file is a clean, full single-symbol texture
-5. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
-6. Present all assets to the user for review
-7. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
+6. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
+7. Present all assets to the user for review
+8. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 

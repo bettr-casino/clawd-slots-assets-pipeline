@@ -110,10 +110,27 @@ Analyze the extracted frames using Kimi K2.5 to reverse-engineer the slot machin
 - When accessing frames, use absolute paths under `$YT_BASE_DIR`
 - Helper scripts are allowed; bot-generated scripts must live under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 - Do not create assets or implement the game in this phase
+- Generate `symbol-frames.txt` as a candidate frame list for symbol generation:
+  - Plain list of frame filenames only (one per line)
+  - No symbol labels in this file
+  - Include only clean candidate frames likely to contain distinct symbols
 
 ### Output
 - `$YT_BASE_DIR/CLEOPATRA/analysis.md` — comprehensive analysis document
 - `$YT_BASE_DIR/CLEOPATRA/output/` — math model spreadsheets and CSVs
+- `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt` — candidate frame list (filenames only)
+
+---
+
+## Phase 2.5: Human Approval of symbol-frames.txt
+
+### Objective
+Pause after analysis and wait for explicit human approval of `symbol-frames.txt` before any symbol generation.
+
+### Rules
+- Do not enter Phase 3 until `symbol-frames.txt` approval is recorded in MEMORY.md
+- Human can edit `symbol-frames.txt` directly; bot must use the approved version
+- `symbol-frames.txt` format is strict: one frame filename per line, no symbol labels
 
 ---
 
@@ -126,9 +143,12 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
 - Frames: `$YT_BASE_DIR/CLEOPATRA/frames/`
 - Tags: `$YT_BASE_DIR/CLEOPATRA/tags.txt`
 - Analysis: `$YT_BASE_DIR/CLEOPATRA/analysis.md`
+- Approved frame list: `$YT_BASE_DIR/CLEOPATRA/symbol-frames.txt`
 
 ### Actions
 - Use Phase 1 frames and Phase 2 analysis as the source of truth for symbol appearance
+- Use only approved frames listed in `symbol-frames.txt` as visual references
+- Identify which symbols appear in approved frames using Phase 2 analysis context (the file itself contains frame names only)
 - For each symbol, scan all candidate frames in relevant tagged ranges and score frame quality (blur, occlusion, crop, symbol centering, lighting).
 - Select the cleanest non-blurred frame(s) per symbol as canonical references before texture generation.
 - Generate a texture per symbol that closely matches the original in color, shape, lighting, and material

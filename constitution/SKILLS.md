@@ -52,6 +52,7 @@
 - **Input**: Frames directory, tags.txt (use absolute paths under `$YT_BASE_DIR`)
 - **Output**: analysis.md with symbol inventory, reel layout, paytable, math model, bonus features, animations, visual style
 - **Animation analysis**: Use animation-range frames to document spin/landing/win sequences
+- **Additional output**: `symbol-frames.txt` candidate list (frame filenames only; no symbol labels)
 - **Helper scripts**: If needed, place under `/workspaces/clawd-slots-assets-pipeline/scripts/`
 
 ---
@@ -60,7 +61,7 @@
 
 ### symbol_texture_generation
 - **Purpose**: Generate symbol texture assets closely matching the original frame symbols
-- **Input**: Frames directory, tags.txt, analysis.md (use absolute paths under `$YT_BASE_DIR`)
+- **Input**: Frames directory, tags.txt, analysis.md, approved `symbol-frames.txt` (use absolute paths under `$YT_BASE_DIR`)
 - **Frame selection**: Evaluate all candidate frames for each symbol and pick the sharpest non-blurred frame(s) before generation
 - **Output**: One texture per symbol under `$YT_BASE_DIR/CLEOPATRA/output/symbols/`
 - **Naming**: Asset filenames must include the symbol name

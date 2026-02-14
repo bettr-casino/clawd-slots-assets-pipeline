@@ -74,7 +74,9 @@
 |-------|--------|
 | Frames and tags.txt ready, approval not recorded | Ask once for approval to start analysis, record approval in MEMORY.md immediately |
 | Approval recorded | Run multimodal LLM analysis on frames and tags.txt (do not re-ask on retries) |
-| Analysis complete | Write results to analysis.md and mark phase complete |
+| Analysis complete, symbol-frames not generated | Generate `symbol-frames.txt` (filenames only) |
+| symbol-frames generated, approval not recorded | Ask for human approval of `symbol-frames.txt` and wait |
+| symbol-frames approved | Mark Phase 2.5 complete and proceed to Phase 3 |
 
 ## Phase 3 Heartbeat Actions
 
