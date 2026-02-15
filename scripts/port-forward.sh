@@ -2,13 +2,14 @@
 set -euo pipefail
 
 REPO="${REPO:-bettr-casino/clawd-slots-assets-pipeline}"
-# Back-compat:
-# - PORT is treated as gateway/health-check port unless overridden.
-# - FORWARD_PORTS supports multiple forwarded ports, comma-separated.
-PORT="${PORT:-18789}"
-GATEWAY_PORT="${GATEWAY_PORT:-$PORT}"
-ANNOTATE_PORT="${ANNOTATE_PORT:-18792}"
-FORWARD_PORTS="${FORWARD_PORTS:-18789,${ANNOTATE_PORT}}"
+# Usage:
+#   ./scripts/port-forward.sh            # forward 18789 (default)
+#   ./scripts/port-forward.sh 18792      # forward 18792
+#   PORT=18792 ./scripts/port-forward.sh # same via env
+PORT="${1:-${PORT:-18789}}"
+GATEWAY_PORT="${GATEWAY_PORT:-18789}"
+FORWARD_PORTS="${FORWARD_PORTS:-${PORT}}"
+HEALTHCHECK_PORT="${HEALTHCHECK_PORT:-}"
 STARTUP_TIMEOUT_SECONDS="${STARTUP_TIMEOUT_SECONDS:-15}"
 CHECK_INTERVAL_SECONDS="${CHECK_INTERVAL_SECONDS:-1}"
 RETRY_DELAY_SECONDS="${RETRY_DELAY_SECONDS:-10}"
@@ -32,6 +33,7 @@ fi
 echo "Forwarding local ports ${FORWARD_PORTS} -> Codespace ${CODESPACE}"
 echo "Retry delay: ${RETRY_DELAY_SECONDS}s (MAX_RETRIES=${MAX_RETRIES})"
 echo "Gateway port: ${GATEWAY_PORT}"
+echo "Requested port: ${PORT}"
 echo "Gateway check timeout: ${GATEWAY_READY_TIMEOUT_SECONDS}s"
 echo "SSH timeout: ${SSH_TIMEOUT_SECONDS}s"
 
@@ -102,7 +104,14 @@ run_once() {
   gh codespace ports forward "${mappings[@]}" -c "$CODESPACE" >"$LOG_FILE" 2>&1 &
   FWD_PID="$!"
 
-  # Fail fast if tunnel never becomes reachable.
+  # Optional health check: only used when forwarding the gateway port unless
+  # explicitly overridden with HEALTHCHECK_PORT.
+  local hc_port="${HEALTHCHECK_PORT}"
+  if [[ -z "$hc_port" ]] && [[ ",${FORWARD_PORTS}," == *",${GATEWAY_PORT},"* ]]; then
+    hc_port="${GATEWAY_PORT}"
+  fi
+
+  # Fail fast if tunnel never becomes reachable (when health check is enabled).
   elapsed=0
   while [ "$elapsed" -lt "$STARTUP_TIMEOUT_SECONDS" ]; do
     if ! kill -0 "$FWD_PID" 2>/dev/null; then
@@ -113,8 +122,13 @@ run_once() {
       return 1
     fi
 
-    if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${GATEWAY_PORT}/"; then
-      echo "Port forward is live on http://127.0.0.1:${GATEWAY_PORT}"
+    if [[ -z "$hc_port" ]]; then
+      echo "Port forward process started (no startup HTTP health check)."
+      break
+    fi
+
+    if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${hc_port}/"; then
+      echo "Port forward is live on http://127.0.0.1:${hc_port}"
       break
     fi
 
@@ -122,11 +136,13 @@ run_once() {
     elapsed=$((elapsed + CHECK_INTERVAL_SECONDS))
   done
 
-  if ! curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${GATEWAY_PORT}/"; then
-    echo "Port forward did not become reachable within ${STARTUP_TIMEOUT_SECONDS}s."
-    echo "---- gh output ----"
-    cat "$LOG_FILE"
-    return 1
+  if [[ -n "$hc_port" ]]; then
+    if ! curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${hc_port}/"; then
+      echo "Port forward did not become reachable within ${STARTUP_TIMEOUT_SECONDS}s."
+      echo "---- gh output ----"
+      cat "$LOG_FILE"
+      return 1
+    fi
   fi
 
   # Block while forward is healthy; returns when process exits.
@@ -173,14 +189,18 @@ attempt=0
 while true; do
   echo ""
   log "===== Attempt $((attempt + 1)) ====="
-  if ! ensure_gateway_ready; then
-    attempt=$((attempt + 1))
-    if [ "$MAX_RETRIES" -gt 0 ] && [ "$attempt" -ge "$MAX_RETRIES" ]; then
-      log "Reached MAX_RETRIES=${MAX_RETRIES} while waiting for gateway. Exiting."
-      exit 1
+  if [[ ",${FORWARD_PORTS}," == *",${GATEWAY_PORT},"* ]]; then
+    if ! ensure_gateway_ready; then
+      attempt=$((attempt + 1))
+      if [ "$MAX_RETRIES" -gt 0 ] && [ "$attempt" -ge "$MAX_RETRIES" ]; then
+        log "Reached MAX_RETRIES=${MAX_RETRIES} while waiting for gateway. Exiting."
+        exit 1
+      fi
+      countdown_retry "$RETRY_DELAY_SECONDS"
+      continue
     fi
-    countdown_retry "$RETRY_DELAY_SECONDS"
-    continue
+  else
+    log "Skipping gateway readiness check (gateway port not requested)."
   fi
 
   if run_once; then
