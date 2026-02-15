@@ -454,7 +454,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--port",
         type=int,
-        default=int(os.environ.get("ANNOTATE_PORT", "18892")),
+        default=int(os.environ.get("ANNOTATE_PORT", "18792")),
     )
     return parser.parse_args()
 
