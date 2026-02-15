@@ -89,4 +89,4 @@ reset-memory:
     fi
 
 annotate:
-    @python3 scripts/annotate_tool.py --root . --host 0.0.0.0 --port "${ANNOTATE_PORT:-18790}"
+    @python3 scripts/annotate_tool.py --root . --host 0.0.0.0 --port "${ANNOTATE_PORT:-18792}"

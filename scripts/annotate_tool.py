@@ -451,7 +451,7 @@ def parse_args() -> argparse.Namespace:
         help="Workspace root directory to browse/save files (default: current directory).",
     )
     parser.add_argument("--host", default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=18790)
+    parser.add_argument("--port", type=int, default=18792)
     return parser.parse_args()
 
 
