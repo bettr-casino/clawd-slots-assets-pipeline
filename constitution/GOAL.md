@@ -158,9 +158,13 @@ Generate symbol texture assets that closely match the original Las Vegas slot ma
 - Identify which symbols appear in human-approved frames using Phase 2 analysis context (the file itself contains frame names only)
 - For each symbol, scan all candidate frames in relevant tagged ranges and score frame quality (blur, occlusion, crop, symbol centering, lighting).
 - Select the cleanest non-blurred frame(s) per symbol as canonical references before texture generation.
-- Run YOLO object detection + ByteTrack by default (`/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_yolo_track.py`) to detect and track candidate symbol objects across approved frames.
-- Optionally run LLM critic selection on tracked candidates (`--llm-review`) so Kimi picks the best extraction before final symbol export.
-- If YOLO/tracking extraction is unavailable or low quality, pause and ask for human instruction; do not auto-fallback to non-YOLO extraction.
+- Run annotation-first extraction by default (`/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_from_annotations.py`):
+  - read approved `symbol-frames.txt`
+  - load `<frame>_annotated.json` rectangle boxes per frame
+  - crop symbols from source frames
+  - deduplicate duplicate symbols across frames
+- Optionally run Kimi labeling/ranking on deduplicated candidates (`--llm-label`) before final export.
+- If required annotation JSON files are missing or invalid, pause and ask for human instruction; do not auto-switch to detector pipelines.
 - Generate a texture per symbol that closely matches the original in color, shape, lighting, and material
 - The goal is colorful, vibrant assets that match the Las Vegas slot machine feel
 - Enforce symbol quality gates before presenting to the user:

@@ -64,9 +64,9 @@
 - **Input**: Frames directory, tags.txt, analysis.md, approved `symbol-frames.txt` (use absolute paths under `$YT_BASE_DIR`)
 - **Approval gate**: Start only after explicit human approval of `symbol-frames.txt` is recorded in MEMORY.md
 - **Existing output check**: Inspect `$YT_BASE_DIR/CLEOPATRA/output/symbols/symbol_*.png`; require human `reuse` vs `regenerate` decision before proceeding
-- **Default extraction path**: Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_yolo_track.py` to detect symbol candidates with YOLO, track across frames, and export final symbol crops
-- **Extraction policy**: Always use YOLO+tracking path for symbol detection. If YOLO fails/low quality, block and request human decision (no automatic fallback).
-- **LLM critic pass**: Optionally use `--llm-review` to have Kimi choose best tracked candidate crop before final export
+- **Default extraction path**: Run `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_from_annotations.py` to crop symbols from human-drawn annotation boxes
+- **Extraction policy**: Use annotation JSON files (`<frame>_annotated.json`) for approved frames; deduplicate duplicate symbols across frames before final export
+- **LLM critic pass**: Optionally use `--llm-label` to have Kimi label/rank deduplicated symbol crops before final export
 - **Frame selection**: Evaluate all candidate frames for each symbol and pick the sharpest non-blurred frame(s) before generation
 - **Output**: One texture per symbol under `$YT_BASE_DIR/CLEOPATRA/output/symbols/`
 - **Naming**: Asset filenames must include the symbol name

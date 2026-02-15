@@ -90,3 +90,6 @@ reset-memory:
 
 annotate:
     @python3 scripts/annotate_tool.py --root . --host 0.0.0.0 --port "${ANNOTATE_PORT:-18792}"
+
+extract-annotated-symbols:
+    @python3 scripts/extract_symbols_from_annotations.py --video-name CLEOPATRA --llm-label

@@ -94,8 +94,8 @@
 | Phase 3 starting, existing `symbol_*.png` found, decision not recorded | Ask human: reuse existing symbols or regenerate; record decision in MEMORY.md; do not generate yet |
 | Existing symbols found, decision=`reuse` | Skip regeneration and move to user review for existing assets |
 | Existing symbols found, decision=`regenerate` | Regenerate symbols (overwrite or replace existing files), then continue quality gate |
-| Analysis ready, symbols not generated | Run YOLO+tracking extraction (`extract_symbols_yolo_track.py`) and generate symbol textures |
-| YOLO+tracking extraction fails or quality gate fails | Pause and ask human for next action; do not auto-fallback to non-YOLO extraction |
+| Analysis ready, symbols not generated | Run annotation-first extraction (`extract_symbols_from_annotations.py`) and generate symbol textures |
+| Annotation JSON missing/invalid for approved frames | Pause and ask human for next action; do not auto-switch to detector pipelines |
 | Symbols generated, quality not validated | Run quality gate: full symbol only, no cropped/partial assets, no multi-symbol/reel fragments; regenerate failed assets |
 | Symbols generated, review not recorded | Present assets to user for review with approve/reject options |
 | Rejected symbols provided | Regenerate only rejected symbols and re-present for review |
@@ -108,9 +108,9 @@
 - During review, include up to 8 thumbnail previews (100x100) with clickable full-size links when possible.
 
 **Hard Gate Rule (Phase 3 Extraction Method):**
-- Always use YOLO+tracking extraction for symbol detection.
-- Do not auto-switch to contour/CV fallback extraction.
-- If YOLO is unavailable or fails quality gates, block and request explicit human instruction.
+- Always use annotation-first extraction from approved frame annotation JSON files when available.
+- Do not auto-switch to YOLO/Detectron/CV detector pipelines.
+- If annotation inputs are missing or fail quality gates, block and request explicit human instruction.
 
 ## MEMORY.md Checkpoint Format
 

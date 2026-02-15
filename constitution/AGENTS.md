@@ -57,16 +57,17 @@ Clawd operates in a four-phase workflow (Phase 0 through Phase 3):
 5. Ensure textures closely match the original symbols (color, shape, lighting, material)
 6. Use Phase 2 analysis to identify which symbols appear in approved frame list (file contains frames only)
 7. For each symbol, analyze approved frames and select the cleanest non-blurred reference frame(s).
-8. Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_yolo_track.py` as the default extraction path (YOLO detection + ByteTrack + optional LLM critic).
-9. If YOLO/tracking extraction fails or produces low-quality crops, pause and ask for human decision; do not auto-fallback.
-10. Apply quality gate before presenting any symbol:
+8. Use `/workspaces/clawd-slots-assets-pipeline/scripts/extract_symbols_from_annotations.py` as the default extraction path when approved frames have annotation JSON files.
+9. Read rectangle boxes from `<frame>_annotated.json`, crop from source frames, deduplicate across frames, and optionally use Kimi to label/rank final picks.
+10. If required annotation JSON files are missing for approved frames, pause and ask for human decision; do not auto-switch to detector pipelines.
+11. Apply quality gate before presenting any symbol:
    - Reject cropped/partial symbols
    - Reject images containing multiple symbols or unrelated UI/reel fragments
    - Regenerate until each file is a clean, full single-symbol texture
-11. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
-12. Present all assets to the user for review
-13. Include a compact preview set (up to 8 symbols) as 100x100 thumbnails with full-size links
-14. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
+12. Save textures to `$YT_BASE_DIR/CLEOPATRA/output/symbols/` with filenames that include the symbol name
+13. Present all assets to the user for review
+14. Include a compact preview set (up to 8 symbols) as 100x100 thumbnails with full-size links
+15. If the user rejects all or specific symbols, regenerate only rejected assets and re-present
 
 ### Frame Extraction Tools
 
