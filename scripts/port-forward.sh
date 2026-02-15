@@ -2,7 +2,12 @@
 set -euo pipefail
 
 REPO="${REPO:-bettr-casino/clawd-slots-assets-pipeline}"
+# Back-compat:
+# - PORT is treated as gateway/health-check port unless overridden.
+# - FORWARD_PORTS supports multiple forwarded ports, comma-separated.
 PORT="${PORT:-18789}"
+GATEWAY_PORT="${GATEWAY_PORT:-$PORT}"
+FORWARD_PORTS="${FORWARD_PORTS:-18789,18792}"
 STARTUP_TIMEOUT_SECONDS="${STARTUP_TIMEOUT_SECONDS:-15}"
 CHECK_INTERVAL_SECONDS="${CHECK_INTERVAL_SECONDS:-1}"
 RETRY_DELAY_SECONDS="${RETRY_DELAY_SECONDS:-10}"
@@ -23,8 +28,9 @@ if [ -z "${CODESPACE:-}" ]; then
   exit 1
 fi
 
-echo "Forwarding local ${PORT} -> Codespace ${CODESPACE}:${PORT}"
+echo "Forwarding local ports ${FORWARD_PORTS} -> Codespace ${CODESPACE}"
 echo "Retry delay: ${RETRY_DELAY_SECONDS}s (MAX_RETRIES=${MAX_RETRIES})"
+echo "Gateway port: ${GATEWAY_PORT}"
 echo "Gateway check timeout: ${GATEWAY_READY_TIMEOUT_SECONDS}s"
 echo "SSH timeout: ${SSH_TIMEOUT_SECONDS}s"
 
@@ -77,7 +83,22 @@ countdown_retry() {
 
 run_once() {
   LOG_FILE="$(mktemp -t port-forward.XXXXXX.log)"
-  gh codespace ports forward "${PORT}:${PORT}" -c "$CODESPACE" >"$LOG_FILE" 2>&1 &
+  local mappings=()
+  local p=""
+  IFS=',' read -r -a _ports <<< "$FORWARD_PORTS"
+  for p in "${_ports[@]}"; do
+    p="$(echo "$p" | tr -d '[:space:]')"
+    if [[ -z "$p" ]]; then
+      continue
+    fi
+    mappings+=("${p}:${p}")
+  done
+  if [[ "${#mappings[@]}" -eq 0 ]]; then
+    echo "No ports to forward. Set FORWARD_PORTS (e.g. 18789,18792)."
+    return 1
+  fi
+
+  gh codespace ports forward "${mappings[@]}" -c "$CODESPACE" >"$LOG_FILE" 2>&1 &
   FWD_PID="$!"
 
   # Fail fast if tunnel never becomes reachable.
@@ -91,8 +112,8 @@ run_once() {
       return 1
     fi
 
-    if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${PORT}/"; then
-      echo "Port forward is live on http://127.0.0.1:${PORT}"
+    if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${GATEWAY_PORT}/"; then
+      echo "Port forward is live on http://127.0.0.1:${GATEWAY_PORT}"
       break
     fi
 
@@ -100,7 +121,7 @@ run_once() {
     elapsed=$((elapsed + CHECK_INTERVAL_SECONDS))
   done
 
-  if ! curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${PORT}/"; then
+  if ! curl -s -o /dev/null --max-time 2 "http://127.0.0.1:${GATEWAY_PORT}/"; then
     echo "Port forward did not become reachable within ${STARTUP_TIMEOUT_SECONDS}s."
     echo "---- gh output ----"
     cat "$LOG_FILE"
@@ -123,20 +144,20 @@ run_once() {
 
 ensure_gateway_ready() {
   log "Checking gateway inside Codespace..."
-  if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${PORT}/'\" >/dev/null 2>&1" "gateway probe"; then
-    log "Gateway already listening on ${PORT}."
+  if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${GATEWAY_PORT}/'\" >/dev/null 2>&1" "gateway probe"; then
+    log "Gateway already listening on ${GATEWAY_PORT}."
     return 0
   fi
 
-  log "Gateway not reachable on ${PORT}; running just restart..."
+  log "Gateway not reachable on ${GATEWAY_PORT}; running just restart..."
   if ! run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'cd /workspaces/clawd-slots-assets-pipeline && just restart'\" >/dev/null 2>&1" "just restart"; then
     log "Gateway restart command timed out after ${SSH_TIMEOUT_SECONDS}s."
   fi
 
   elapsed=0
   while [ "$elapsed" -lt "$GATEWAY_READY_TIMEOUT_SECONDS" ]; do
-    if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${PORT}/'\" >/dev/null 2>&1" "gateway probe"; then
-      log "Gateway is now listening on ${PORT}."
+    if run_ssh_with_timeout "gh codespace ssh -c \"$CODESPACE\" -- \"bash -l -c 'curl -s -o /dev/null --max-time 3 http://127.0.0.1:${GATEWAY_PORT}/'\" >/dev/null 2>&1" "gateway probe"; then
+      log "Gateway is now listening on ${GATEWAY_PORT}."
       return 0
     fi
     sleep 2
